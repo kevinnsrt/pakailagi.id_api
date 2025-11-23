@@ -11,3 +11,6 @@ Route::get('/user', function (Request $request) {
 // products
 Route::get('/products',[ProductsController::class,'index']);
 Route::post('/products',[ProductsController::class,'store']);
+
+// firebase auth
+Route::post('/firebase-login', [FirebaseAuthController::class, 'login']);
