@@ -8,38 +8,39 @@ use App\Models\User;
 
 class FirebaseAuthController extends Controller
 {
-    //
+    //  
 
-   public function register(Request $request)
+public function register(Request $request)
 {
-    $validated = $request->validate([
-        'uid' => 'required|string',
-        'username' => 'required|string',
-        'number' => 'required|string',
-        'location' => 'required|string',
-    ]);
-
-    // 1. Verifikasi Firebase ID Token
-    $firebase = app('firebase.auth');
-
     try {
-        $verifiedIdToken = $firebase->verifyIdToken($request->bearerToken());
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'No token provided'], 401);
+        }
+
+        $auth = app('firebase.auth');
+        $verified = $auth->verifyIdToken($token);
+
+        $userData = $verified->claims();
+
+        // buat user
+        $user = User::create([
+            'uid' => $request->uid,
+            'name' => $request->username,
+            'number' => $request->number,
+            'location' => $request->location,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'user' => $user
+        ]);
+
     } catch (\Exception $e) {
-        return response()->json(['error' => 'Invalid Firebase token'], 401);
+        return response()->json(['error' => $e->getMessage()], 500);
     }
-
-    // 2. Simpan ke database
-    $user = User::create([
-        'uid' => $validated['uid'],
-        'username' => $validated['username'],
-        'number' => $validated['number'],
-        'location' => $validated['location'],
-    ]);
-
-    return response()->json([
-        'message' => 'User registered',
-        'user' => $user
-    ], 200);
 }
+
 
 }
