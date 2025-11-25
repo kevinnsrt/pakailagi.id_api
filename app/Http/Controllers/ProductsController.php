@@ -20,33 +20,45 @@ class ProductsController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
-        $request->validate([
-            'name'=> 'required|string',
-            'description'=>'required|string',
-            'price' => 'required|integer'
-        ]);
+{
+    $request->validate([
+        'name'=> 'required|string',
+        'deskripsi'=>'required|string',
+        'kondisi'=>'required|string',
+        'ukuran'=>'required|string',
+        'kategori'=>'required|string',
+        'price' => 'required|integer',
+        'image' => 'required|image|mimes:jpg,jpeg,png,svg'
+    ]);
 
-        $data = Product::create([
-            'name' => $request->name,
-            'description'=> $request->description,
-            'price'=> $request->price
-        ]);
+    $path = $request->file('image')->store('products', 'public');
 
-        return response()->json([
-            'message'=> 'success'
-        ]);
+    $data = Product::create([
+        'name' => $request->name,   
+        'price'=> $request->price,
+        'deskripsi'=> $request->deskripsi,
+        'kondisi'=> $request->kondisi,
+        'kategori'=> $request->kategori,
+        'ukuran'=> $request->ukuran,
+        'image_path'=> $path // sudah benar
+    ]);
 
-        
+    return view('dashboard');
+}
+
+
+    public function tambah_barang (){
+        return view ('tambah-barang');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show()
     {
         //
+        $data = Product::all();
+         return view('content', compact('data'));
     }
 
     /**

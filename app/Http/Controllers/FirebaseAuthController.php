@@ -28,6 +28,7 @@ public function register(Request $request)
         $user = User::create([
             'uid' => $request->uid,
             'name' => $request->username,
+            'role' => 'client',
             'number' => $request->number,
             'location' => $request->location,
         ]);
@@ -40,6 +41,11 @@ public function register(Request $request)
     } catch (\Exception $e) {
         return response()->json(['error' => $e->getMessage()], 500);
     }
+}
+
+public function getUserdata(Request $request){
+    $data = User::where('uid',$request->uid)->get();
+    return response()->json($data);
 }
 
 

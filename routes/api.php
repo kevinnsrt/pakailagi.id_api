@@ -15,3 +15,4 @@ Route::post('/products',[ProductsController::class,'store']);
 
 // firebase auth
 Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
+Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);

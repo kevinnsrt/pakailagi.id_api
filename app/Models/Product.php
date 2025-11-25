@@ -11,7 +11,11 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'description',
-        'price'
+        'deskripsi',
+        'price',
+        'kondisi',
+        'ukuran',
+        'image_path',
+        'kategori'
     ];
 }
