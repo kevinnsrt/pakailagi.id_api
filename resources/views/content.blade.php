@@ -13,7 +13,7 @@
       alt="Shoes" />
   </figure>
   <div class="card-body">
-    <p class="font-bold text-lgx`">{{$item->name}}</p>
+    <p class="font-bold text-lg">{{$item->name}}</p>
     <p>Deskripsi: {{ $item->deskripsi }}</p>
     <p>Kondisi: {{ $item->kondisi }}</p>
     <p>Harga:IDR {{ $item->price }}</p>

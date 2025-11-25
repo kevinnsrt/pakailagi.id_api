@@ -4,17 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\URL;
 
 class ProductsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
-        $data = Product::all();
+        $data = Product::all()->map(function($product) {
+            // Mengubah image_path menjadi full URL
+            $product->image_path = URL::to('/storage/' . $product->image_path);
+            return $product;
+        });
+
         return response()->json($data);
     }
+
 
     /**
      * Store a newly created resource in storage.
