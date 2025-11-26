@@ -15,17 +15,6 @@ class ProductsController extends Controller
 
     public function index(Request $request)
     {
-        //  $idToken = $request->bearerToken();
-
-        // if (!$idToken) {
-        //     return response()->json(['error' => 'No token provided'], 401);
-        // }
-
-        // try {
-        //     $auth->verifyIdToken($idToken);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => 'Invalid token'], 401);
-        // }
 
         $token = $request->bearerToken();
 
@@ -53,29 +42,6 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
 {
-    //  $idToken = $request->bearerToken();
-
-    //     if (!$idToken) {
-    //         return response()->json(['error' => 'No token provided'], 401);
-    //     }
-
-    //     try {
-    //         $auth->verifyIdToken($idToken);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Invalid token'], 401);
-    //     }
-
-    $token = $request->bearerToken();
-
-        if (!$token) {
-            return response()->json(['error' => 'No token provided'], 401);
-        }
-
-        $auth = app('firebase.auth');
-        $verified = $auth->verifyIdToken($token);
-
-        $userData = $verified->claims();
-
 
     $request->validate([
         'name'=> 'required|string',
@@ -127,17 +93,7 @@ class ProductsController extends Controller
 
     public function filter(Request $request, Auth $auth)
 {
-     $token = $request->bearerToken();
-
-        if (!$token) {
-            return response()->json(['error' => 'No token provided'], 401);
-        }
-
-        $auth = app('firebase.auth');
-        $verified = $auth->verifyIdToken($token);
-
-        $userData = $verified->claims();
-
+     
 
     $data = Product::where('kategori', $request->kategori)
         ->get() 
