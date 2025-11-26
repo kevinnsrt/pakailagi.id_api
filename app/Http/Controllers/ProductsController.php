@@ -13,19 +13,19 @@ class ProductsController extends Controller
      */
 
 
-    public function index(Request $request, Auth $auth)
+    public function index(Request $request)
     {
-         $idToken = $request->bearerToken();
+        //  $idToken = $request->bearerToken();
 
-        if (!$idToken) {
-            return response()->json(['error' => 'No token provided'], 401);
-        }
+        // if (!$idToken) {
+        //     return response()->json(['error' => 'No token provided'], 401);
+        // }
 
-        try {
-            $auth->verifyIdToken($idToken);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Invalid token'], 401);
-        }
+        // try {
+        //     $auth->verifyIdToken($idToken);
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => 'Invalid token'], 401);
+        // }
 
         $data = Product::all()->map(function($product) {
             // Mengubah image_path menjadi full URL
@@ -40,19 +40,19 @@ class ProductsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Auth $auth)
+    public function store(Request $request)
 {
-     $idToken = $request->bearerToken();
+    //  $idToken = $request->bearerToken();
 
-        if (!$idToken) {
-            return response()->json(['error' => 'No token provided'], 401);
-        }
+    //     if (!$idToken) {
+    //         return response()->json(['error' => 'No token provided'], 401);
+    //     }
 
-        try {
-            $auth->verifyIdToken($idToken);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Invalid token'], 401);
-        }
+    //     try {
+    //         $auth->verifyIdToken($idToken);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Invalid token'], 401);
+    //     }
 
 
     $request->validate([
