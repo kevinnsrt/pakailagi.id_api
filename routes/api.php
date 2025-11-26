@@ -15,7 +15,7 @@ Route::middleware('firebase.auth')->group(function () {
 Route::get('/products',[ProductsController::class,'index']);
 Route::post('/products/kategori',[ProductsController::class,'filter']);
 
+});
 // firebase auth
 Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
 Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
-});
