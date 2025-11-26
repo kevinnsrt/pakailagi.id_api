@@ -16,8 +16,7 @@ class FirebaseAuthMiddleware
      */
 
         protected $firebaseAuth;
-        public function __construct(Auth $firebaseAuth){
-
+        public function __constructs(Auth $firebaseAuth){
             $this->firebaseAuth = $firebaseAuth;
         }
 
