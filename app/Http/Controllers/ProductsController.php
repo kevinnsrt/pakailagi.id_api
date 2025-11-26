@@ -15,6 +15,12 @@ class ProductsController extends Controller
 
     public function index()
     {
+         $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'No token provided'], 401);
+        }
+
         $data = Product::all()->map(function($product) {
             // Mengubah image_path menjadi full URL
             $product->image_path = URL::to('/storage/' . $product->image_path);
@@ -30,6 +36,12 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
 {
+     $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'No token provided'], 401);
+        }
+
     $request->validate([
         'name'=> 'required|string',
         'deskripsi'=>'required|string',
@@ -80,6 +92,12 @@ class ProductsController extends Controller
 
     public function filter(Request $request)
 {
+     $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'No token provided'], 401);
+        }
+        
     $data = Product::where('kategori', $request->kategori)
         ->get() 
         ->map(function ($product) {
