@@ -13,12 +13,18 @@ class ProductsController extends Controller
      */
 
 
-    public function index()
+    public function index(Request $request, Auth $auth)
     {
-         $token = $request->bearerToken();
+         $idToken = $request->bearerToken();
 
-        if (!$token) {
+        if (!$idToken) {
             return response()->json(['error' => 'No token provided'], 401);
+        }
+
+        try {
+            $auth->verifyIdToken($idToken);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid token'], 401);
         }
 
         $data = Product::all()->map(function($product) {
@@ -34,13 +40,20 @@ class ProductsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Auth $auth)
 {
-     $token = $request->bearerToken();
+     $idToken = $request->bearerToken();
 
-        if (!$token) {
+        if (!$idToken) {
             return response()->json(['error' => 'No token provided'], 401);
         }
+
+        try {
+            $auth->verifyIdToken($idToken);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid token'], 401);
+        }
+
 
     $request->validate([
         'name'=> 'required|string',
@@ -90,14 +103,21 @@ class ProductsController extends Controller
         //
     }
 
-    public function filter(Request $request)
+    public function filter(Request $request, Auth $auth)
 {
-     $token = $request->bearerToken();
+     $idToken = $request->bearerToken();
 
-        if (!$token) {
+        if (!$idToken) {
             return response()->json(['error' => 'No token provided'], 401);
         }
-        
+
+        try {
+            $auth->verifyIdToken($idToken);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid token'], 401);
+        }
+
+
     $data = Product::where('kategori', $request->kategori)
         ->get() 
         ->map(function ($product) {
