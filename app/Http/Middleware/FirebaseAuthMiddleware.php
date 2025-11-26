@@ -9,39 +9,32 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FirebaseAuthMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
 
-        protected $firebaseAuth;
-        public function __constructs(Auth $firebaseAuth){
-            $this->firebaseAuth = $firebaseAuth;
-        }
+ protected $tokenVerifier;
 
-    public function handle(Request $request, Closure $next): Response
+    public function __construct(Verifier $tokenVerifier)
     {
-        $token = $request->bearerToken();
+        $this->tokenVerifier = $tokenVerifier;
+    }
 
-        if(!$token){
-            return response()->json([
-                'error'=> 'Unauthorized'
-            ],401);
+    public function handle(Request $request, Closure $next)
+    {
+        $header = $request->header('Authorization');
+
+        if (!$header || !preg_match('/Bearer\s(\S+)/', $header, $matches)) {
+            return response()->json(['message' => 'Unauthorized: Token not provided'], 401);
         }
 
-        try{
-            $verifiedToken = $this->firebaseAuth->verifyIdToken($token);
-            $request->attributes->add([
-                'firebase_user'=> $verifiedToken->getClaim('sub')
-            ]);
+        $idToken = $matches[1];
+
+        try {
+            $verifiedIdToken = $this->tokenVerifier->verifyIdToken($idToken);
+            $request->attributes->set('firebase_uid', $verifiedIdToken->claims()->get('sub'));
+            // Optionally, you can also retrieve and set other claims like email, etc.
+        } catch (InvalidToken $e) {
+            return response()->json(['message' => 'Unauthorized: Invalid token'], 401);
         }
 
-        catch(\Exception $e){
-            return response()->json([
-                'error'=>'Unauthorized'
-            ],401);
-        }
         return $next($request);
     }
 }
