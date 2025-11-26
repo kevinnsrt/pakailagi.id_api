@@ -11,7 +11,7 @@ Route::get('/user', function (Request $request) {
 
 // products
 Route::get('/products',[ProductsController::class,'index']);
-Route::post('/products/kategor',[ProductsController::class,'filter']);
+Route::post('/products/kategori',[ProductsController::class,'filter']);
 
 // firebase auth
 Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
