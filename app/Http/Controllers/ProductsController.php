@@ -16,16 +16,16 @@ class ProductsController extends Controller
     public function index(Request $request)
     {
 
-        $token = $request->bearerToken();
+        // $token = $request->bearerToken();
 
-        if (!$token) {
-            return response()->json(['error' => 'No token provided'], 401);
-        }
+        // if (!$token) {
+        //     return response()->json(['error' => 'No token provided'], 401);
+        // }
 
-        $auth = app('firebase.auth');
-        $verified = $auth->verifyIdToken($token);
+        // $auth = app('firebase.auth');
+        // $verified = $auth->verifyIdToken($token);
 
-        $userData = $verified->claims();
+        // $userData = $verified->claims();
 
         $data = Product::all()->map(function($product) {
             // Mengubah image_path menjadi full URL
@@ -91,7 +91,7 @@ class ProductsController extends Controller
         //
     }
 
-    public function filter(Request $request, Auth $auth)
+    public function filter(Request $request)
 {
      
 
