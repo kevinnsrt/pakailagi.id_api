@@ -27,6 +27,17 @@ class ProductsController extends Controller
         //     return response()->json(['error' => 'Invalid token'], 401);
         // }
 
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'No token provided'], 401);
+        }
+
+        $auth = app('firebase.auth');
+        $verified = $auth->verifyIdToken($token);
+
+        $userData = $verified->claims();
+
         $data = Product::all()->map(function($product) {
             // Mengubah image_path menjadi full URL
             $product->image_path = URL::to('/storage/' . $product->image_path);
@@ -53,6 +64,17 @@ class ProductsController extends Controller
     //     } catch (\Exception $e) {
     //         return response()->json(['error' => 'Invalid token'], 401);
     //     }
+
+    $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'No token provided'], 401);
+        }
+
+        $auth = app('firebase.auth');
+        $verified = $auth->verifyIdToken($token);
+
+        $userData = $verified->claims();
 
 
     $request->validate([
@@ -105,17 +127,16 @@ class ProductsController extends Controller
 
     public function filter(Request $request, Auth $auth)
 {
-     $idToken = $request->bearerToken();
+     $token = $request->bearerToken();
 
-        if (!$idToken) {
+        if (!$token) {
             return response()->json(['error' => 'No token provided'], 401);
         }
 
-        try {
-            $auth->verifyIdToken($idToken);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Invalid token'], 401);
-        }
+        $auth = app('firebase.auth');
+        $verified = $auth->verifyIdToken($token);
+
+        $userData = $verified->claims();
 
 
     $data = Product::where('kategori', $request->kategori)
