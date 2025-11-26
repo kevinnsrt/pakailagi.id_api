@@ -78,6 +78,16 @@ class ProductsController extends Controller
         //
     }
 
+    public function filter(Request $request){
+            $data = Product::where('kategori',$request->kategori)->map(function($product) {
+            // Mengubah image_path menjadi full URL
+            $product->image_path = URL::to('/storage/' . $product->image_path);
+            return $product;
+        });
+
+        return response()->json($data);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
