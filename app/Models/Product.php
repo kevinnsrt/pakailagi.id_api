@@ -20,7 +20,7 @@ class Product extends Model
         'kategori'
     ];
 
-    public function productsToCart()
+    public function carts()
 {
     return $this->hasMany(Product::class);
 }

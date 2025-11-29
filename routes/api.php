@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\FirebaseAuthController;
 
@@ -19,8 +20,7 @@ Route::post('/products/kategori',[ProductsController::class,'filter']);
 Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
 Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
 
-// carts
-Route::post('/carts', [CartController::class, 'create']);
-
 });
+// carts
+Route::post('/carts', [CartController::class, 'store']);
 

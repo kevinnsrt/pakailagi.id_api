@@ -17,23 +17,14 @@ class Cart extends Model
         'status'
     ];
 
-     public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-     public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
-
-    public function cartToUsers()
-    {
-        return $this->hasMany(User::class);
-    }
-
-    public function cartToProducts()
+    public function user(): BelongsTo
 {
-    return $this->hasMany(Apply::class);
+    return $this->belongsTo(User::class, 'uid', 'uid');
 }
+
+public function product(): BelongsTo
+{
+    return $this->belongsTo(Product::class, 'product_id', 'id');
+}
+
 }

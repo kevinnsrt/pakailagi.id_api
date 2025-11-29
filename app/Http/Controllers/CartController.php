@@ -20,7 +20,22 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'uid' => 'required|string',
+            'product_id'=>'required|string',
+        ]);
+
+        $data = Cart::create([
+            'uid' => (string) $request->uid,
+            'product_id'=>$request->product_id,
+            'status'=> 'Dikeranjang'
+        ]);
+
+        return response()->json([
+            'status'=>'success',
+            'message'=> 'Barang berhasil ditambahkan ke keranjang'
+        ]);
     }
 
     /**

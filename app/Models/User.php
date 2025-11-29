@@ -17,6 +17,12 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'uid', 'uid');
+    }
+
     protected $fillable = [
         'uid',
         'name',
