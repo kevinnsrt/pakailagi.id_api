@@ -32,16 +32,14 @@ return new class extends Migration
         });
 
         Schema::create('sessions', function (Blueprint $table) {
-        $table->string('id')->primary();
-        $table->string('user_id')->nullable()->index(); // Ubah dari foreignId ke string
-        $table->string('ip_address', 45)->nullable();
-        $table->text('user_agent')->nullable();
-        $table->longText('payload');
-        $table->integer('last_activity')->index();
+            $table->string('id')->primary();
+            $table->string('user_id')->nullable()->index(); // Ubah di sini
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
 
-        // Tambahkan foreign key manual jika mau enforce constraint
-        // $table->foreign('user_id')->references('uid')->on('users')->onDelete('cascade');
-    });
 
     }
 
