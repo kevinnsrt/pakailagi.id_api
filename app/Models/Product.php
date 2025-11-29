@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Cart;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -18,4 +19,10 @@ class Product extends Model
         'image_path',
         'kategori'
     ];
+
+    public function productsToCart()
+{
+    return $this->hasMany(Product::class);
+}
+    
 }
