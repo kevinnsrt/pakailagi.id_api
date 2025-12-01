@@ -41,9 +41,10 @@ class CartController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Cart $cart)
+    public function show(Request $request)
     {
-        //
+        $data = Cart::where('uid',$request->uid)->get();
+        return response()->json($data);
     }
 
     /**
