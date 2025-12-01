@@ -44,7 +44,7 @@ class CartController extends Controller
      */
     public function show(Request $request)
     {
-        $data = Product::all()->map(function($product) {
+        $data = Cart::all()->map(function($product) {
             // Mengubah image_path menjadi full URL
             $product->image_path = URL::to('/storage/' . $product->image_path);
             return $product;
