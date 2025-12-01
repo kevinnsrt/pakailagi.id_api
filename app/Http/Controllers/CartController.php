@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class CartController extends Controller
 {
@@ -41,14 +42,16 @@ class CartController extends Controller
     /**
      * Display the specified resource.
      */
-public function show(Request $request)
-{
-    $data = Cart::with('product')   // ← load relasi product
-                ->where('uid', $request->uid)
-                ->get();
+    public function show(Request $request)
+    {
+        $data = Product::all()->map(function($product) {
+            // Mengubah image_path menjadi full URL
+            $product->image_path = URL::to('/storage/' . $product->image_path);
+            return $product;
+        });
 
-    return response()->json($data);
-}
+        return response()->json($data);
+    }
 
 
     /**
