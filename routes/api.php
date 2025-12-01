@@ -21,12 +21,11 @@ Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
 Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
 
 // carts
-
-
-
-});
 Route::post('/carts', [CartController::class, 'store']);
 Route::post('/carts/user', [CartController::class, 'show']);
+
+});
+
 
 
 
