@@ -41,11 +41,15 @@ class CartController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
-    {
-        $data = Cart::where('uid',$request->uid)->get();
-        return response()->json($data);
-    }
+public function show(Request $request)
+{
+    $data = Cart::with('product')   // ← load relasi product
+                ->where('uid', $request->uid)
+                ->get();
+
+    return response()->json($data);
+}
+
 
     /**
      * Update the specified resource in storage.
