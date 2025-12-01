@@ -22,9 +22,11 @@ Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
 
 // carts
 Route::post('/carts', [CartController::class, 'store']);
-Route::post('/carts/user', [CartController::class, 'show']);
 
 });
+
+// testing tanpa token
+Route::post('/carts/user', [CartController::class, 'show']);
 
 
 
