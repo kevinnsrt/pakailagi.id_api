@@ -1,13 +1,13 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class wishlist extends Model
+class Wishlist extends Model
 {
-    //
-    //
-    protected $table = 'carts';
+    protected $table = 'wishlists';   // <-- tabel yang benar
 
     protected $fillable = [
         'uid',
@@ -23,5 +23,4 @@ class wishlist extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
-
 }

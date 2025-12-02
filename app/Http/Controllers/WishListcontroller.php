@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Wishlist;
@@ -22,7 +21,7 @@ class WishlistController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'uid' => 'required|string',
+            'uid'        => 'required|string',
             'product_id' => 'required|string',
         ]);
 
@@ -33,19 +32,19 @@ class WishlistController extends Controller
 
         if ($exists) {
             return response()->json([
-                'status' => 'gagal',
-                'message' => 'Produk sudah ada di wishlist'
+                'status'  => 'gagal',
+                'message' => 'Produk sudah ada di wishlist',
             ], 409);
         }
 
         Wishlist::create([
-            'uid' => (string) $request->uid,
+            'uid'        => (string) $request->uid,
             'product_id' => $request->product_id,
         ]);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Produk berhasil ditambahkan ke wishlist'
+            'status'  => 'success',
+            'message' => 'Produk berhasil ditambahkan ke wishlist',
         ]);
     }
 
@@ -54,6 +53,10 @@ class WishlistController extends Controller
      */
     public function show(Request $request)
     {
+
+        $request->validate([
+            'uid' => 'required|string',
+        ]);
         $data = Wishlist::with('product')
             ->where('uid', $request->uid)
             ->get()
@@ -82,18 +85,18 @@ class WishlistController extends Controller
     {
         $wishlist = Wishlist::find($id);
 
-        if (!$wishlist) {
+        if (! $wishlist) {
             return response()->json([
-                'status' => 'failed',
-                'message' => 'Data wishlist tidak ditemukan'
+                'status'  => 'failed',
+                'message' => 'Data wishlist tidak ditemukan',
             ], 404);
         }
 
         $wishlist->delete();
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Produk dihapus dari wishlist'
+            'status'  => 'success',
+            'message' => 'Produk dihapus dari wishlist',
         ]);
     }
 }

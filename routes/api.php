@@ -26,10 +26,11 @@ Route::middleware('firebase.auth')->group(function () {
 
 // wishlist
     Route::post('/wishlist', [WishlistController::class, 'store']);
-    Route::post('/wishlist/user', [WishlistController::class, 'show']);
+    // Route::post('/wishlist/user', [WishlistController::class, 'show']);
 
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 
 });
 
 // testing tanpa token
+Route::post('/wishlist/user', [WishlistController::class, 'show']);
