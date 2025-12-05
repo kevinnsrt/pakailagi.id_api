@@ -32,5 +32,5 @@ Route::middleware('firebase.auth')->group(function () {
 
 });
 
-// testing tanpa token
+// testing tanpa tokenn
 Route::post('/wishlist/user', [WishlistController::class, 'show']);
