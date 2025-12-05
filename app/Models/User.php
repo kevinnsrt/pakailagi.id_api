@@ -20,18 +20,23 @@ class User extends Authenticatable
 
     public function carts()
     {
-        return $this->hasMany(Cart::class, 'uid', 'uid');
+        return $this->hasMany(Cart::class, 'id', 'uid');
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Cart::class, 'id', 'uid');
     }
 
     protected $fillable = [
-        'uid',
+        'id',
         'name',
         'number',
         'location',
         'role'
     ];
 
-    protected $primaryKey = 'uid';
+    protected $primaryKey = 'id';
     protected $keyType = 'string';
     public $incrementing = false;
     /**

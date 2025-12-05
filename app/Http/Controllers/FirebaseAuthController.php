@@ -14,7 +14,7 @@ public function register(Request $request)
 {
         // buat user
         $user = User::create([
-            'uid' => $request->uid,
+            'id' => $request->uid,
             'name' => $request->username,
             'role' => 'client',
             'number' => $request->number,
