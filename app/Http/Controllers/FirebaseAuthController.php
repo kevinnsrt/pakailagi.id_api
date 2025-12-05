@@ -35,25 +35,15 @@ public function getUserdata(Request $request){
 
 public function registerGoogle(Request $request)
 {
-        // buat user
-
-        $user = User::where('id',$request->uid)->get();
-
-        if($user != null){
-
-            return responsse()->json([
-                'status'=> 'user sudah terdaftar'
-            ]);
-        } 
-        else if($user == null){
-
-            $user = User::create([
-            'id' => $request->uid,
+        
+            $user = User::firstOrCreate([
+            'id' => $request->uid],
+            [
             'name' => $request->username,
             'role' => 'client',
             'number' => $request->number,
             'location' => $request->location,
-        ]);
+            ]);
 
         return response()->json([
             'status' => 'success',
@@ -64,5 +54,3 @@ public function registerGoogle(Request $request)
 
 }
 
-
-}
