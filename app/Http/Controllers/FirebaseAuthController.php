@@ -29,7 +29,7 @@ public function register(Request $request)
 }
 
 public function getUserdata(Request $request){
-    $data = User::where('uid',$request->uid)->get();
+    $data = User::where('id',$request->uid)->get();
     return response()->json($data);
 }
 
