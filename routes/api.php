@@ -15,14 +15,17 @@ Route::middleware('firebase.auth')->group(function () {
 // products
     Route::get('/products', [ProductsController::class, 'index']);
     Route::post('/products/kategori', [ProductsController::class, 'filter']);
+    Route::post('/products/details', [ProductsController::class, 'details']);
 
 // firebase auth
     Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
     Route::post('/register-google', [FirebaseAuthController::class, 'registerGoogle']);
+    
+    Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
     // Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
 
 // carts
-    Route::post('/carts', [CartController::class, 'store']);
+
     Route::post('/carts/user', [CartController::class, 'show']);
 
 // wishlist
@@ -34,6 +37,6 @@ Route::middleware('firebase.auth')->group(function () {
 });
 
 // testing tanpa tokenn
+Route::post('/carts', [CartController::class, 'store']);
 Route::post('/wishlist/user', [WishlistController::class, 'show']);
-Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
-Route::post('/products/details', [ProductsController::class, 'details']);
+
