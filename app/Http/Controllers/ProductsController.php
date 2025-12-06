@@ -81,7 +81,7 @@ class ProductsController extends Controller
             ]);
         }   
 
-        return response()->json($product);
+        return response()->json([$product]);
     }
 
 
