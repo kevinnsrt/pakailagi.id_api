@@ -69,12 +69,19 @@ class ProductsController extends Controller
 }
 
     public function details(Request $request){
+
         $data = Product::findOrFail($request->id)
         ->get()
         ->map(function ($product) {
             $product->image_path = URL::to('/storage/' . $product->image_path);
             return $product;
         });
+
+        if($data == null){
+            return response()->json([
+                'message' == 'produk tidak ditemukan',
+            ]);
+        }
 
         return response()->json($data);
     }
