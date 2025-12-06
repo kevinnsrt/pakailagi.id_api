@@ -19,7 +19,7 @@ public function register(Request $request)
             'role' => 'client',
             'number' => $request->number,
             'location' => $request->location,
-        ]);
+        ]); 
 
         return response()->json([
             'status' => 'success',

@@ -68,6 +68,12 @@ class ProductsController extends Controller
     return view('dashboard');
 }
 
+    public function details(Request $request){
+        $data = Product::findOrFail($request->id)->get();
+
+        return response()->json($data);
+    }
+
 
     public function tambah_barang (){
         return view ('tambah-barang');
