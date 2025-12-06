@@ -33,7 +33,9 @@ class User extends Authenticatable
         'name',
         'number',
         'location',
-        'role'
+        'role',
+        'email',
+        'password'
     ];
 
     protected $primaryKey = 'id';
