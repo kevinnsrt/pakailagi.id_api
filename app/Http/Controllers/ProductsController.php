@@ -75,7 +75,7 @@ class ProductsController extends Controller
         $product->image_path = URL::to('/storage/' . $product->image_path);
 
 
-        if($data == null){
+        if($product == null){
             return response()->json([
                 'message' == 'produk tidak ditemukan',
             ]);
