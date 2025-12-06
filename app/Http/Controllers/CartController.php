@@ -27,12 +27,13 @@ class CartController extends Controller
             'product_id'=>'required|string',
         ]);
 
-        $uid = Cart::where('uid',$request->uid);
-        $product_id = Cart::where('product_id',$request->product_id);
+        $exists = Cart::where('uid',$request->uid)
+        ->where('product_id',$request->product_id)
+        ->exists();
 
-        if($uid && $product_id !=null){
+        if($exists){
             return response()->json([
-                'message'== 'barang sudah ada di produk'
+                'message'=> 'barang sudah ada di produk'
             ]);
         }
 

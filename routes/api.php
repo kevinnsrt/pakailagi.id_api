@@ -25,7 +25,6 @@ Route::middleware('firebase.auth')->group(function () {
     // Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
 
 // carts
-
     Route::post('/carts/user', [CartController::class, 'show']);
 
 // wishlist

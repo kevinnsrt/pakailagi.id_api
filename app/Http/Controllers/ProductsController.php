@@ -77,7 +77,7 @@ class ProductsController extends Controller
 
         if($product == null){
             return response()->json([
-                'message' == 'produk tidak ditemukan',
+                'message' => 'produk tidak ditemukan',
             ]);
         }   
 
