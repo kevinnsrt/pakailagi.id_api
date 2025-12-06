@@ -27,6 +27,15 @@ class CartController extends Controller
             'product_id'=>'required|string',
         ]);
 
+        $uid = Cart::where('uid',$request->uid);
+        $product_id = Cart::where('product_id',$request->product_id);
+
+        if($uid && $product_id !=null){
+            return response()->json([
+                'message'== 'barang sudah ada di produk'
+            ]);
+        }
+
         $data = Cart::create([
             'uid' => (string) $request->uid,
             'product_id'=>$request->product_id,
