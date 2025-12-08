@@ -84,6 +84,22 @@ class CartController extends Controller
         return response()->json($data);
     }
 
+     public function showProses(Request $request)
+    {
+        $data = Cart::with('product')
+            ->where('uid', $request->uid)
+            ->where('status','Diproses')
+            ->get()
+            ->map(function($cart) {
+                if ($cart->product && $cart->product->image_path) {
+                    $cart->product->image_path = URL::to('/storage/' . $cart->product->image_path);
+                }
+                return $cart;
+            });
+
+        return response()->json($data);
+    }
+
 
     /**
      * Update the specified resource in storage.
