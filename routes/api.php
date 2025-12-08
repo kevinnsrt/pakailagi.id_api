@@ -38,4 +38,5 @@ Route::middleware('firebase.auth')->group(function () {
 // testing tanpa tokenn
 Route::post('/carts', [CartController::class, 'store']);
 Route::post('/wishlist/user', [WishlistController::class, 'show']);
+Route::post('/carts/proses', [CartController::class, 'proses']);
 

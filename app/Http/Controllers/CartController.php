@@ -16,12 +16,31 @@ class CartController extends Controller
         //
     }
 
+    public function proses(Request $request){
+
+        $request->validate([
+            'id' => 'required|array'
+        ]);
+
+        $selectedId = [$request->id];
+        $data = Cart::whereIn('id',$selectedId)->get();
+
+        $data->update([
+            'status'=> 'Diproses'
+        ]);
+
+        return response()->json([
+            'message'=> 'Barang berhasil di checkout'
+        ]);
+
+
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'uid' => 'required|string',
             'product_id'=>'required|string',
@@ -49,9 +68,6 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $request)
     {
         $data = Cart::with('product')
