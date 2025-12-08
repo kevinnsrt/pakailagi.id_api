@@ -19,13 +19,13 @@ class CartController extends Controller
     public function proses(Request $request){
 
         $request->validate([
-            'id' => 'required|array'
+            'id' => 'required|array',
+            'id*' => 'integer'
         ]);
 
         $selectedId = $request->id;
-        $data = Cart::whereIn('id',$selectedId)->get();
 
-        $data->update([
+        $data = Cart::whereIn('id',$selectedId)->update([
             'status'=> 'Diproses'
         ]);
 
