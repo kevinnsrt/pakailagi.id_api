@@ -22,7 +22,7 @@ class CartController extends Controller
             'id' => 'required|array'
         ]);
 
-        $selectedId = [$request->id];
+        $selectedId = $request->id;
         $data = Cart::whereIn('id',$selectedId)->get();
 
         $data->update([
