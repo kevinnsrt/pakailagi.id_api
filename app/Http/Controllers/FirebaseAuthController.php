@@ -62,7 +62,7 @@ public function updateLocation(Request $request)
         'longitude'=> 'required|numeric|between:-180,180',
     ]);
 
-    $user = User::where('uid', $validated['uid'])->first();
+    $user = User::where('id', $validated['uid'])->first();
 
     if (!$user) {
         return response()->json([
