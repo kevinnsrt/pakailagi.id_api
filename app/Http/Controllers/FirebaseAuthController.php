@@ -55,7 +55,7 @@ public function registerGoogle(Request $request)
 }
 
 public function updateLocation(Request $request){
-    $request->valdate([
+    $request->validate([
         'uid'=> 'required',
         'latitude'=> 'required|double',
         'longitude'=> 'required|double',
