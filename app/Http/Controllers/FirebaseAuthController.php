@@ -52,7 +52,24 @@ public function registerGoogle(Request $request)
             'status' => 'success',
             'user' => $user
         ]);
-        }
+}
+
+public function updateLocation(Request $request){
+    $request->valdate([
+        'uid'=> 'required',
+        'latitude'=> 'required|double',
+        'longitude'=> 'required|double',
+    ]);
+
+    $data = User::where('uid',$request->uid)->update([
+        'latitude'=> $request->latitude,
+        'longitude'=> $request->longitude
+    ]);
+
+    return response()->json([
+        'message'=> 'lokasi berhasil di-update'
+    ]);
+}
 
 
 }

@@ -34,15 +34,13 @@ Route::post('/carts/proses', [CartController::class, 'proses']);
 // wishlist
     Route::post('/wishlist', [WishlistController::class, 'store']);
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
-
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 
 });
 
 // testing tanpa tokenn
 
-
-
+Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
 Route::post('/wishlist/user', [WishlistController::class, 'show']);
 
 
