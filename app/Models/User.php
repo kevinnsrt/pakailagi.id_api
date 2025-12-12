@@ -32,7 +32,8 @@ class User extends Authenticatable
         'id',
         'name',
         'number',
-        'location',
+        'latitude',
+        'longitude',
         'role',
         'email',
         'password'
