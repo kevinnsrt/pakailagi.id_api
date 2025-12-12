@@ -54,22 +54,33 @@ public function registerGoogle(Request $request)
         ]);
 }
 
-public function updateLocation(Request $request){
-    $request->validate([
+public function updateLocation(Request $request)
+{
+    $validated = $request->validate([
         'uid'=> 'required',
-        'latitude'=> 'required|double',
-        'longitude'=> 'required|double',
+        'latitude'=> 'required|numeric|between:-90,90',
+        'longitude'=> 'required|numeric|between:-180,180',
     ]);
 
-    $data = User::where('uid',$request->uid)->update([
-        'latitude'=> $request->latitude,
-        'longitude'=> $request->longitude
+    $user = User::where('uid', $validated['uid'])->first();
+
+    if (!$user) {
+        return response()->json([
+            'message' => 'User tidak ditemukan'
+        ], 404);
+    }
+
+    $user->update([
+        'latitude' => $validated['latitude'],
+        'longitude' => $validated['longitude'],
     ]);
 
     return response()->json([
-        'message'=> 'lokasi berhasil di-update'
+        'message'=> 'Lokasi berhasil di-update',
+        'user' => $user,
     ]);
 }
+
 
 
 }
