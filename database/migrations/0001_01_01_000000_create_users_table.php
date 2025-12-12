@@ -18,7 +18,9 @@ return new class extends Migration
         $table->string('password')->nullable();
         $table->string('role')->default('user');
         $table->string('number')->nullable();
-        $table->string('location')->nullable();
+        // $table->string('location')->nullable();
+        $table->double('latitude')->nullable();
+        $table->double('longitude')->nullable();
         $table->timestamp('email_verified_at')->nullable();
         $table->rememberToken();
         $table->timestamps();

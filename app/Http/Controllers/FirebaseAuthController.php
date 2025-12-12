@@ -18,7 +18,9 @@ public function register(Request $request)
             'name' => $request->username,
             'role' => 'client',
             'number' => $request->number,
-            'location' => $request->location,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            
         ]); 
 
         return response()->json([
@@ -42,7 +44,8 @@ public function registerGoogle(Request $request)
             'name' => $request->username,
             'role' => 'client',
             'number' => $request->number,
-            'location' => $request->location,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             ]);
 
         return response()->json([
