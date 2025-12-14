@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductsController;
 
@@ -14,6 +15,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/tambah-barang', [ProductsController::class, 'tambah_barang'])->name('tambah-barang');
+     Route::get('/history', [CartController::class, 'historyAdmin'])->name('history.admin');
     Route::post('/tambah-barang', [ProductsController::class, 'store'])->name('tambah-barang-post');
     Route::get('/barang', [ProductsController::class, 'show'])->name('barang');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

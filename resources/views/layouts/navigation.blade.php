@@ -17,7 +17,7 @@
                     </x-nav-link>
                 </div>
 
-                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('tambah-barang')" :active="request()->routeIs('tambah-barang')">
                         {{ __('Tambah Barang') }}
                     </x-nav-link>
@@ -27,6 +27,12 @@
                  <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('barang')" :active="request()->routeIs('barang')">
                         {{ __('Barang') }}
+                    </x-nav-link>
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('history.admin')" :active="request()->routeIs('history.admin')">
+                        {{ __('History Pesanan') }}
                     </x-nav-link>
                 </div>
             </div>

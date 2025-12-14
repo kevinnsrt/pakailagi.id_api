@@ -82,6 +82,5 @@ public function updateLocation(Request $request)
 }
 
 
-
 }
 

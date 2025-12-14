@@ -16,6 +16,7 @@ class CartController extends Controller
         //
     }
 
+
     public function proses(Request $request){
 
         $request->validate([
@@ -99,6 +100,14 @@ class CartController extends Controller
 
         return response()->json($data);
     }
+
+public function historyAdmin()
+{
+    $data = Cart::with(['user', 'product'])->get();
+
+    return view('history', compact('data'));
+}
+
 
 
     /**
