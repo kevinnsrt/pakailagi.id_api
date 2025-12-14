@@ -35,7 +35,6 @@ Route::post('/carts/proses', [CartController::class, 'proses']);
     Route::post('/wishlist', [WishlistController::class, 'store']);
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
-
 });
 
 // testing tanpa tokenn

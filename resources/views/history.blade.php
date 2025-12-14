@@ -26,7 +26,13 @@
                             <td>{{ $item->product->name ?? '-' }}</td>
                             <td>{{ $item->status }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-primary">Detail</a>
+                                @if ($item->status == 'Dikeranjang')
+                                    <a href="#" class="btn btn-sm btn-primary">Proses</a>
+                                    <a href="#" class="btn btn-sm btn-primary">Batal</a>
+                                @elseif ($item->status == 'Diproses')
+
+                                @endif
+                                
                             </td>
                         </tr>
                     @empty
