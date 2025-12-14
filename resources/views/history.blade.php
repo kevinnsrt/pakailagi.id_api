@@ -31,10 +31,10 @@
                             <td>{{ $item->status }}</td>
                             <td>
                                 @if ($item->status == 'Dikeranjang')
+                                    
+                                @elseif ($item->status == 'Diproses')
                                     <a href="#" class="btn btn-sm btn-primary">Proses</a>
                                     <a href="#" class="btn btn-sm btn-error">Batal</a>
-                                @elseif ($item->status == 'Diproses')
-
                                 @endif
                                 
                             </td>
