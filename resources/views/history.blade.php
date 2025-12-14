@@ -13,7 +13,9 @@
                         <th>No</th>
                         <th>User</th>
                         <th>Pesanan</th>
+                        <th>Lokasi</th>
                         <th>Status</th>
+                        <th></th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -24,6 +26,8 @@
                             <th>{{ $item->id }}</th>
                             <td>{{ $item->user->name ?? '-' }}</td>
                             <td>{{ $item->product->name ?? '-' }}</td>
+                            <td>{{ $item->user->latitude ?? '-' }}</td>
+                            <td>{{ $item->user->longitude ?? '-' }}</td>
                             <td>{{ $item->status }}</td>
                             <td>
                                 @if ($item->status == 'Dikeranjang')
