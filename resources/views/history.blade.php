@@ -14,8 +14,8 @@
                         <th>User</th>
                         <th>Pesanan</th>
                         <th>Lokasi</th>
-                        <th>Status</th>
                         <th></th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
