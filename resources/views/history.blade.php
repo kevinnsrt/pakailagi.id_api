@@ -28,7 +28,7 @@
                             <td>
                                 @if ($item->status == 'Dikeranjang')
                                     <a href="#" class="btn btn-sm btn-primary">Proses</a>
-                                    <a href="#" class="btn btn-sm btn-primary">Batal</a>
+                                    <a href="#" class="btn btn-sm btn-error">Batal</a>
                                 @elseif ($item->status == 'Diproses')
 
                                 @endif
