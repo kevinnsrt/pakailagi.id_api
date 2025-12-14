@@ -21,7 +21,7 @@
                 <tbody>
                     @forelse ($data as $item)
                         <tr>
-                            <th>{{ $loop->id }}</th>
+                            <th>{{ $item->id }}</th>
                             <td>{{ $item->user->name ?? '-' }}</td>
                             <td>{{ $item->product->name ?? '-' }}</td>
                             <td>{{ $item->status }}</td>
