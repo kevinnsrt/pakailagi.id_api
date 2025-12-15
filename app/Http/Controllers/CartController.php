@@ -124,6 +124,10 @@ class CartController extends Controller
             'status' => 'Selesai'
         ]);
 
+        $status = Product::find($request->product_id)->update([
+            'status' => 'Sold Out'
+        ]);
+
         return response()->json([
             'message'=> 'Terimakasih telah berbelanja'
         ]);

@@ -45,7 +45,8 @@ class ProductsController extends Controller
         'kondisi'=> $request->kondisi,
         'kategori'=> $request->kategori,
         'ukuran'=> $request->ukuran,
-        'image_path'=> $path // sudah benar
+        'image_path'=> $path, 
+        'status' => 'Ready'
     ]);
 
     return view('dashboard');
