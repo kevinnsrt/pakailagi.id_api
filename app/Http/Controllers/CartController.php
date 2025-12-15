@@ -63,7 +63,7 @@ class CartController extends Controller
     {
         $data = Cart::with('product')
             ->where('uid', $request->uid)
-            ->where('status','Dikeranjang')
+            // ->where('status','Dikeranjang')
             ->get()
             ->map(function($cart) {
                 if ($cart->product && $cart->product->image_path) {
