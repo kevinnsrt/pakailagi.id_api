@@ -115,6 +115,14 @@ class CartController extends Controller
 
         return redirect(route('history.admin'));
     }
+
+        public function batalPesanan(Request $request){
+        $data = Cart::find($request->id)->update([
+            'status' => 'Dibatalkan'
+        ]);
+
+        return redirect(route('history.admin'));
+    }
  
     /**
      * Update the specified resource in storage.

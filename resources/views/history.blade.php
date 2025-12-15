@@ -34,6 +34,7 @@
                                     
                                 @elseif ($item->status == 'Diproses')
                                 {{-- form proses pesanan --}}
+                                {{-- buat push notification --}}
                                     <form method="POST" action="{{ route('proses.pesanan') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $item->id }}">
@@ -41,7 +42,11 @@
                                     </form>
 
                                     {{-- form batal pesanan --}}
-                                    <a href="#" class="btn btn-sm btn-error">Batal</a>
+                                    <form method="POST" action="{{ route('batal.pesanan') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $item->id }}">
+                                        <button type="submit" class="btn btn-sm btn-error">Batal</button>
+                                    </form>
                                 @endif
                                 
                             </td>
