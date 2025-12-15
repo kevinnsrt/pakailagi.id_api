@@ -26,9 +26,10 @@ Route::middleware('firebase.auth')->group(function () {
 
     // carts
     Route::post('/carts/user', [CartController::class, 'show']);
-    Route::post('/carts/user/proses', [CartController::class, 'showProses']);
+    // Route::post('/carts/user/proses', [CartController::class, 'showProses']);
     Route::post('/carts', [CartController::class, 'store']);
     Route::post('/carts/proses', [CartController::class, 'proses']);
+    Route::post('/carts/selesai', [CartController::class, 'selesai']);
 
 
     // wishlist

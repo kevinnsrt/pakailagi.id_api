@@ -75,22 +75,6 @@ class CartController extends Controller
         return response()->json($data);
     }
 
-    // menampilkan barang yang diproses
-    public function showProses(Request $request)
-    {
-        $data = Cart::with('product')
-            ->where('uid', $request->uid)
-            ->where('status','Diproses')
-            ->get()
-            ->map(function($cart) {
-                if ($cart->product && $cart->product->image_path) {
-                    $cart->product->image_path = URL::to('/storage/' . $cart->product->image_path);
-                }
-                return $cart;
-            });
-
-        return response()->json($data);
-    }
 
     // dashboard history admin web
     public function historyAdmin()
@@ -119,13 +103,17 @@ class CartController extends Controller
     }
 
     // status pesanan -> Selesai
-    public function selesaiPesanan(Request $request){
-        $data = Cart::find($request->id)->update([
-            'status' => 'Selesai'
+    public function selesai(Request $request){
+
+        $request->validate([
+            'id' => 'required|array',
+            'id*' => 'integer'
         ]);
 
-        $status = Product::find($request->product_id)->update([
-            'status' => 'Sold Out'
+        $selectedId = $request->id;
+
+        $data = Cart::whereIn('id',$selectedId)->update([
+            'status'=> 'Selesai'
         ]);
 
         return response()->json([
