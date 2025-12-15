@@ -8,33 +8,33 @@ use App\Models\User;
 
 class FirebaseAuthController extends Controller
 {
-    //  
-
+ 
+// register native
 public function register(Request $request)
 {
         // buat user
-        $user = User::create([
-            'id' => $request->uid,
-            'name' => $request->username,
-            'role' => 'client',
-            'number' => $request->number,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            
-        ]); 
+    $user = User::create([
+    'id' => $request->uid,
+    'name' => $request->username,
+    'role' => 'client',
+    'number' => $request->number,
+    'latitude' => $request->latitude,
+    'longitude' => $request->longitude,
+    ]); 
 
-        return response()->json([
-            'status' => 'success',
-            'user' => $user
-        ]);
-
+    return response()->json([
+    'status' => 'success',
+    'user' => $user
+    ]);
 }
 
+// mengambil data user
 public function getUserdata(Request $request){
     $data = User::where('id',$request->uid)->get();
     return response()->json($data);
 }
 
+// register google
 public function registerGoogle(Request $request)
 {
         
@@ -54,6 +54,7 @@ public function registerGoogle(Request $request)
         ]);
 }
 
+// update lokasi user
 public function updateLocation(Request $request)
 {
     $validated = $request->validate([

@@ -12,33 +12,33 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::middleware('firebase.auth')->group(function () {
-// products
+    // products
     Route::get('/products', [ProductsController::class, 'index']);
     Route::post('/products/kategori', [ProductsController::class, 'filter']);
     Route::post('/products/details', [ProductsController::class, 'details']);
 
-// firebase auth
+    // firebase auth
     Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
     Route::post('/register-google', [FirebaseAuthController::class, 'registerGoogle']);
     
     Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
     // Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
 
-// carts
-Route::post('/carts/user', [CartController::class, 'show']);
-Route::post('/carts/user/proses', [CartController::class, 'showProses']);
-Route::post('/carts', [CartController::class, 'store']);
-Route::post('/carts/proses', [CartController::class, 'proses']);
+    // carts
+    Route::post('/carts/user', [CartController::class, 'show']);
+    Route::post('/carts/user/proses', [CartController::class, 'showProses']);
+    Route::post('/carts', [CartController::class, 'store']);
+    Route::post('/carts/proses', [CartController::class, 'proses']);
 
 
-// wishlist
+    // wishlist
     Route::post('/wishlist', [WishlistController::class, 'store']);
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 });
 
-// testing tanpa tokenn
 
+// testing tanpa tokenn
 Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
 Route::post('/wishlist/user', [WishlistController::class, 'show']);
 

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('status',[
                 'Dikeranjang',
                 'Diproses',
+                'Dalam Pengiriman',
                 'Selesai',
                 'Dibatalkan'
             ]);

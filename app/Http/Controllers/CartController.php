@@ -8,15 +8,8 @@ use Illuminate\Support\Facades\URL;
 
 class CartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-
+    // status pesanan -> proses
     public function proses(Request $request){
 
         $request->validate([
@@ -33,13 +26,9 @@ class CartController extends Controller
         return response()->json([
             'message'=> 'Barang berhasil di checkout'
         ]);
-
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // tambah barang ke keranjang
     public function store(Request $request)
     {
         $request->validate([
@@ -69,6 +58,7 @@ class CartController extends Controller
         ]);
     }
 
+    // menampilkan barang yang dikeranjang
     public function show(Request $request)
     {
         $data = Cart::with('product')
@@ -85,7 +75,8 @@ class CartController extends Controller
         return response()->json($data);
     }
 
-     public function showProses(Request $request)
+    // menampilkan barang yang diproses
+    public function showProses(Request $request)
     {
         $data = Cart::with('product')
             ->where('uid', $request->uid)
@@ -101,6 +92,7 @@ class CartController extends Controller
         return response()->json($data);
     }
 
+    // dashboard history admin web
     public function historyAdmin()
     {
         $data = Cart::with(['user', 'product'])->get();
@@ -108,35 +100,41 @@ class CartController extends Controller
         return view('history', compact('data'));
     }
 
+    // status pesanan ->  Dalam Pengiriman
     public function prosesPesanan($id){
         $data = Cart::find($id)->update([
-            'status' => 'Diproses'
+            'status' => 'Dalam Pengiriman'
         ]);
 
         return redirect(route('history.admin'));
     }
 
-        public function batalPesanan($id){
+    // status pesanan -> Dibatalkan
+    public function batalPesanan($id){
         $data = Cart::find($id)->update([
             'status' => 'Dibatalkan'
         ]);
 
         return redirect(route('history.admin'));
     }
- 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Cart $cart)
-    {
-        //
+
+    // status pesanan -> Selesai
+    public function selesaiPesanan(Request $request){
+        $data = Cart::find($request->id)->update([
+            'status' => 'Selesai'
+        ]);
+
+        return response()->json([
+            'message'=> 'Terimakasih telah berbelanja'
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Cart $cart)
+    // menghapus barang dari keranjang
+    public function destroy(Request $request)
     {
-        //
+        $data = Cart::where('id', $request->id)->delete();
+        return response()->json([
+            'message' => 'Barang berhasil dihapus dari keranjang'
+        ]);
     }
 }

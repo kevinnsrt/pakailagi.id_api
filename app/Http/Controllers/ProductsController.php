@@ -8,25 +8,10 @@ use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
 
-
+    // menampilkan semua barang pada produk
     public function index(Request $request)
     {
-
-        // $token = $request->bearerToken();
-
-        // if (!$token) {
-        //     return response()->json(['error' => 'No token provided'], 401);
-        // }
-
-        // $auth = app('firebase.auth');
-        // $verified = $auth->verifyIdToken($token);
-
-        // $userData = $verified->claims();
-
         $data = Product::all()->map(function($product) {
             // Mengubah image_path menjadi full URL
             $product->image_path = URL::to('/storage/' . $product->image_path);
@@ -37,9 +22,7 @@ class ProductsController extends Controller
     }
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // menambahkan barang dari web admin 
     public function store(Request $request)
 {
 
@@ -68,6 +51,7 @@ class ProductsController extends Controller
     return view('dashboard');
 }
 
+    // menampilkan detail produk 
     public function details(Request $request){
 
         $product = Product::findOrFail($request->id);
@@ -89,9 +73,7 @@ class ProductsController extends Controller
         return view ('tambah-barang');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // menampilkan list produk pada web admin
     public function show()
     {
         //
@@ -99,18 +81,16 @@ class ProductsController extends Controller
          return view('content', compact('data'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // update barang dari admin
     public function update(Request $request, Product $product)
     {
         //
     }
 
+    // menampilkan barang berdasarkan kategori
     public function filter(Request $request)
 {
      
-
     $data = Product::where('kategori', $request->kategori)
         ->get() 
         ->map(function ($product) {
@@ -123,9 +103,7 @@ class ProductsController extends Controller
 }
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // menghapus barang dari web admin
     public function destroy(Product $product)
     {
         //
