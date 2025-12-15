@@ -20,6 +20,10 @@ return new class extends Migration
             $table->string('deskripsi');
             $table->string('image_path');
             $table->integer('price');
+            $table->enum('status',[
+                'Ready',
+                'Sold Out'
+            ]);
             $table->timestamps();
         });
     }
