@@ -33,7 +33,14 @@
                                 @if ($item->status == 'Dikeranjang')
                                     
                                 @elseif ($item->status == 'Diproses')
-                                    <a href="#" class="btn btn-sm btn-primary">Proses</a>
+                                {{-- form proses pesanan --}}
+                                    <form method="POST" action="{{ route('proses.pesanan') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $item->id }}">
+                                        <button type="submit" class="btn btn-sm btn-primary">Proses</button>
+                                    </form>
+
+                                    {{-- form batal pesanan --}}
                                     <a href="#" class="btn btn-sm btn-error">Batal</a>
                                 @endif
                                 

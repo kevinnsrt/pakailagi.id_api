@@ -101,15 +101,21 @@ class CartController extends Controller
         return response()->json($data);
     }
 
-public function historyAdmin()
-{
-    $data = Cart::with(['user', 'product'])->get();
+    public function historyAdmin()
+    {
+        $data = Cart::with(['user', 'product'])->get();
 
-    return view('history', compact('data'));
-}
+        return view('history', compact('data'));
+    }
 
+    public function prosesPesanan(Request $request){
+        $data = Cart::find($request->id)->update([
+            'status' => 'Diproses'
+        ]);
 
-
+        return redirect(route('history.admin'));
+    }
+ 
     /**
      * Update the specified resource in storage.
      */
