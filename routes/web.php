@@ -16,8 +16,8 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/tambah-barang', [ProductsController::class, 'tambah_barang'])->name('tambah-barang');
     Route::get('/history', [CartController::class, 'historyAdmin'])->name('history.admin');
-    Route::post('/proses/pesanan/{$id}', [CartController::class, 'prosesPesanan'])->name('proses.pesanan');
-    Route::post('/batal/pesanan/{$id}', [CartController::class, 'batalPesanan'])->name('batal.pesanan');
+    Route::post('/proses/pesanan/{id}', [CartController::class, 'prosesPesanan'])->name('proses.pesanan');
+    Route::post('/batal/pesanan/{id}', [CartController::class, 'batalPesanan'])->name('batal.pesanan');
     Route::post('/tambah-barang', [ProductsController::class, 'store'])->name('tambah-barang-post');
     Route::get('/barang', [ProductsController::class, 'show'])->name('barang');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
