@@ -108,16 +108,16 @@ class CartController extends Controller
         return view('history', compact('data'));
     }
 
-    public function prosesPesanan(Request $request){
-        $data = Cart::find($request->id)->update([
+    public function prosesPesanan($id){
+        $data = Cart::find($id)->update([
             'status' => 'Diproses'
         ]);
 
         return redirect(route('history.admin'));
     }
 
-        public function batalPesanan(Request $request){
-        $data = Cart::find($request->id)->update([
+        public function batalPesanan($id){
+        $data = Cart::find($id)->update([
             'status' => 'Dibatalkan'
         ]);
 
