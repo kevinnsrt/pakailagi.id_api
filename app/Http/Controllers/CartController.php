@@ -103,23 +103,36 @@ class CartController extends Controller
     }
 
     // status pesanan -> Selesai
-    public function selesai(Request $request){
+public function selesai(Request $request)
+{
+    $request->validate([
+        'id' => 'required|array',
+        'id.*' => 'integer'
+    ]);
 
-        $request->validate([
-            'id' => 'required|array',
-            'id*' => 'integer'
-        ]);
+    $selectedId = $request->id;
 
-        $selectedId = $request->id;
+    // Ambil cart yang dipilih
+    $carts = Cart::whereIn('id', $selectedId)->get();
 
-        $data = Cart::whereIn('id',$selectedId)->update([
-            'status'=> 'Selesai'
-        ]);
+    // Update status cart
+    Cart::whereIn('id', $selectedId)->update([
+        'status' => 'Selesai'
+    ]);
 
-        return response()->json([
-            'message'=> 'Terimakasih telah berbelanja'
-        ]);
-    }
+    // Ambil product_id dari cart
+    $productIds = $carts->pluck('product_id')->unique();
+
+    // Update status product jadi Sold Out
+    Product::whereIn('id', $productIds)->update([
+        'status' => 'Sold Out'
+    ]);
+
+    return response()->json([
+        'message' => 'Terimakasih telah berbelanja'
+    ]);
+}
+
 
     // menghapus barang dari keranjang
     public function destroy(Request $request)
