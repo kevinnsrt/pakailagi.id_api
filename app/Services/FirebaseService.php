@@ -18,33 +18,21 @@ class FirebaseService
     {
         $credentials = new ServiceAccountCredentials(
             'https://www.googleapis.com/auth/firebase.messaging',
-            json_decode(file_get_contents(storage_path('app/cred.json')), true),
-            // dd(json_decode(file_get_contents(storage_path('app/cred.json')), true))
-
+            json_decode(
+                file_get_contents(storage_path('app/cred.json')),
+                true
+            )
         );
 
         $token = $credentials->fetchAuthToken();
+
         return $token['access_token'];
     }
 
-    public function sendToTopic(
-        string $topic,
-        string $title,
-        string $body,
-        ?string $image = null
-    ) {
+    /** 🔔 SEND GENERIC */
+    protected function send(array $payload)
+    {
         $accessToken = $this->getAccessToken();
-
-        $payload = [
-            'message' => [
-                'topic' => $topic,
-                'notification' => [
-                    'title' => $title,
-                    'body' => $body,
-                    'image' => $image,
-                ],
-            ]
-        ];
 
         return Http::withToken($accessToken)
             ->post(
@@ -54,37 +42,41 @@ class FirebaseService
             ->json();
     }
 
-        protected function send(array $payload)
-    {
-        $accessToken = $this->getAccessToken();
-
-        return $this->client->post(
-            "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send",
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken,
-                    'Content-Type'  => 'application/json',
+    /** 📢 SEND TO TOPIC */
+    public function sendToTopic(
+        string $topic,
+        string $title,
+        string $body,
+        ?string $image = null
+    ) {
+        return $this->send([
+            'message' => [
+                'topic' => $topic,
+                'notification' => [
+                    'title' => $title,
+                    'body'  => $body,
+                    'image' => $image,
                 ],
-                'json' => $payload,
             ]
-        );
+        ]);
     }
 
-    // kirim ke 1 user 
-    public function sendToToken($token, $title, $body, $image = null)
-{
-    $payload = [
-        'message' => [
-            'token' => $token,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-                'image' => $image
-            ],
-        ]
-    ];
-
-    return $this->send($payload);
-}
-
+    /** 👤 SEND TO SINGLE USER */
+    public function sendToToken(
+        string $token,
+        string $title,
+        string $body,
+        ?string $image = null
+    ) {
+        return $this->send([
+            'message' => [
+                'token' => $token,
+                'notification' => [
+                    'title' => $title,
+                    'body'  => $body,
+                    'image' => $image,
+                ],
+            ]
+        ]);
+    }
 }
