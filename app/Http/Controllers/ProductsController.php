@@ -23,9 +23,11 @@ class ProductsController extends Controller
 
 
     // menambahkan barang dari web admin 
-    public function store(Request $request)
-{
+use App\Services\FirebaseService;
+use Illuminate\Support\Facades\Storage;
 
+public function store(Request $request, FirebaseService $firebase)
+{
     $request->validate([
         'name'=> 'required|string',
         'deskripsi'=>'required|string',
@@ -36,21 +38,32 @@ class ProductsController extends Controller
         'image' => 'required|image|mimes:jpg,jpeg,png,svg'
     ]);
 
+    // simpan gambar
     $path = $request->file('image')->store('products', 'public');
 
-    $data = Product::create([
-        'name' => $request->name,   
+    // simpan produk
+    $product = Product::create([
+        'name' => $request->name,
         'price'=> $request->price,
         'deskripsi'=> $request->deskripsi,
         'kondisi'=> $request->kondisi,
         'kategori'=> $request->kategori,
         'ukuran'=> $request->ukuran,
-        'image_path'=> $path, 
+        'image_path'=> $path,
         'status' => 'Ready'
     ]);
 
+    // 🔔 KIRIM NOTIFIKASI KE FIREBASE
+    $firebase->sendToTopic(
+        'all_users',
+        'Produk Baru Tersedia 🔥',
+        $product->name . ' - Rp ' . number_format($product->price, 0, ',', '.'),
+        asset('storage/' . $path) 
+    );
+
     return view('dashboard');
 }
+
 
     // menampilkan detail produk 
     public function details(Request $request){
@@ -79,6 +92,7 @@ class ProductsController extends Controller
     {
         //
         $data = Product::all();
+
          return view('content', compact('data'));
     }
 
