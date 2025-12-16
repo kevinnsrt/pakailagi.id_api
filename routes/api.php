@@ -38,6 +38,14 @@ Route::middleware('firebase.auth')->group(function () {
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 });
 
+Route::middleware('firebase.auth')->post('/save-fcm-token', function (Request $request) {
+    $request->user()->update([
+        'fcm_token' => $request->fcm_token
+    ]);
+
+    return response()->json(['success' => true]);
+});
+
 
 // testing tanpa tokenn
 Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);

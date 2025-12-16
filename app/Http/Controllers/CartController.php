@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Services\FirebaseService;
 use Illuminate\Support\Facades\URL;
 
 class CartController extends Controller
@@ -86,13 +87,31 @@ class CartController extends Controller
     }
 
     // status pesanan ->  Dalam Pengiriman
-    public function prosesPesanan($id){
-        $data = Cart::find($id)->update([
-            'status' => 'Dalam Pengiriman'
-        ]);
+public function prosesPesanan($id, FirebaseService $firebase)
+{
+    // Ambil cart + relasi product
+    $cart = Cart::with('product')->findOrFail($id);
 
-        return redirect(route('history.admin'));
+    // Update status
+    $cart->update([
+        'status' => 'Dalam Pengiriman'
+    ]);
+
+    // Ambil user
+    $user = User::find($cart->uid);
+
+    // Kirim notif jika ada token
+    if ($user && $user->fcm_token) {
+        $firebase->sendToToken(
+            $user->fcm_token,
+            'Pesanan Diproses 🚚',
+            $cart->product->name . ' sedang dikirim',
+            null
+        );
     }
+
+    return redirect()->route('history.admin');
+}
 
     // status pesanan -> Dibatalkan
     public function batalPesanan($id){

@@ -53,4 +53,22 @@ class FirebaseService
             )
             ->json();
     }
+
+    // kirim ke 1 user 
+    public function sendToToken($token, $title, $body, $image = null)
+{
+    $payload = [
+        'message' => [
+            'token' => $token,
+            'notification' => [
+                'title' => $title,
+                'body' => $body,
+                'image' => $image
+            ],
+        ]
+    ];
+
+    return $this->send($payload);
+}
+
 }
