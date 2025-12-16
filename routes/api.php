@@ -39,27 +39,34 @@ Route::middleware('firebase.auth')->group(function () {
 
     // fcm token
 
+    // Route::post('/save-fcm-token', function (Request $request) {
+    //     $request->validate([
+    //         'fcm_token' => 'required|string'
+    //     ]);
+
+    //     $user = User::where('id', $request->uid)->first();
+
+    //     if (!$user) {
+    //         return response()->json(['error' => 'User not found'], 404);
+    //     }
+
+    //     $user->update([
+    //         'fcm_token' => $request->fcm_token
+    //     ]);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'uid' => $request->uid
+    //     ]);
+    // });
+
     Route::post('/save-fcm-token', function (Request $request) {
-        $request->validate([
-            'fcm_token' => 'required|string'
-        ]);
-
-        $user = User::where('id', $request->uid)->first();
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        $user->update([
-            'fcm_token' => $request->fcm_token
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'uid' => $request->uid
-        ]);
-    });
-
+    return response()->json([
+        'auth' => auth()->user(),
+        'uid' => auth()->id(),
+        'body' => $request->all()
+    ]);
+});
 
 
 });
