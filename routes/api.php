@@ -38,12 +38,19 @@ Route::middleware('firebase.auth')->group(function () {
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 
     // fcm token
-    Route::post('/save-fcm-token', function (Request $request) {
-    $data = User::where('id',$request->uid)->update([
-        'fcm_token'=> $request->fcm_token
+Route::post('/save-fcm-token', function (Request $request) {
+    $request->validate([
+        'fcm_token' => 'required|string'
     ]);
+
+    $request->user()->update([
+        'fcm_token' => $request->fcm_token
+    ]);
+    dd($request->user(), $request->fcm_token);
+
     return response()->json(['success' => true]);
 });
+
 
 });
 
