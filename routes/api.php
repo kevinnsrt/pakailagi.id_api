@@ -38,38 +38,23 @@ Route::middleware('firebase.auth')->group(function () {
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 
     // fcm token
-
-    // Route::post('/save-fcm-token', function (Request $request) {
-    //     $request->validate([
-    //         'fcm_token' => 'required|string'
-    //     ]);
-
-    //     $user = User::where('id', $request->uid)->first();
-
-    //     if (!$user) {
-    //         return response()->json(['error' => 'User not found'], 404);
-    //     }
-
-    //     $user->update([
-    //         'fcm_token' => $request->fcm_token
-    //     ]);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'uid' => $request->uid
-    //     ]);
-    // });
-
-    Route::post('/save-fcm-token', function (Request $request) {
-    return response()->json([
-        'auth' => auth()->user(),
-        'uid' => auth()->id(),
-        'body' => $request->all()
+Route::post('/save-fcm-token', function (Request $request) {
+    $request->validate([
+        'fcm_token' => 'required|string'
     ]);
+
+    $request->user()->update([
+        'fcm_token' => $request->fcm_token
+    ]);
+    // dd($request->user(), $request->fcm_token);
+
+    return response()->json(['success' => true]);
 });
 
 
 });
+
+
 
 // testing tanpa tokenn
 Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
