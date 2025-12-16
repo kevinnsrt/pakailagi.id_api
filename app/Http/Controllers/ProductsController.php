@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\URL;
+use App\Services\FirebaseService;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class ProductsController extends Controller
 {
@@ -23,8 +25,7 @@ class ProductsController extends Controller
 
 
     // menambahkan barang dari web admin 
-use App\Services\FirebaseService;
-use Illuminate\Support\Facades\Storage;
+
 
 public function store(Request $request, FirebaseService $firebase)
 {
