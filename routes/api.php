@@ -47,6 +47,8 @@ Route::post('/save-fcm-token', function (Request $request) {
         'fcm_token' => $request->fcm_token
     ]);
     // dd($request->user(), $request->fcm_token);
+    dd(auth()->user(), auth()->user()->id);
+
 
     return response()->json(['success' => true]);
 });
