@@ -56,11 +56,12 @@ public function store(Request $request, FirebaseService $firebase)
 
     // 🔔 KIRIM NOTIFIKASI KE FIREBASE
     $firebase->sendToTopic(
-        'all_users',
-        'Produk Baru Tersedia 🔥',
-        $product->name . ' - Rp ' . number_format($product->price, 0, ',', '.'),
-        asset('storage/' . $path) 
-    );
+    'all_users',
+    'Produk Baru Tersedia 🔥',
+    $product->name . ' - Rp ' . number_format($product->price, 0, ',', '.'),
+    url('storage/' . $path) // HTTPS
+);
+
 
     return view('dashboard');
 }
