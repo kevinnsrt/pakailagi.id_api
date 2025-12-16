@@ -18,7 +18,9 @@ class FirebaseService
     {
         $credentials = new ServiceAccountCredentials(
             'https://www.googleapis.com/auth/firebase.messaging',
-            json_decode(file_get_contents(storage_path('app/cred.json')), true)
+            json_decode(file_get_contents(storage_path('app/cred.json')), true),
+            dd(json_decode(file_get_contents(storage_path('app/firebase.json')), true))
+
         );
 
         $token = $credentials->fetchAuthToken();
