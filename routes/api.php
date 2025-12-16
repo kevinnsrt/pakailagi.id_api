@@ -31,20 +31,21 @@ Route::middleware('firebase.auth')->group(function () {
     Route::post('/carts/proses', [CartController::class, 'proses']);
     Route::post('/carts/selesai', [CartController::class, 'selesai']);
 
-
     // wishlist
     Route::post('/wishlist', [WishlistController::class, 'store']);
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
-});
 
-Route::middleware('firebase.auth')->post('/save-fcm-token', function (Request $request) {
+    // fcm token
+    Route::post('/save-fcm-token', function (Request $request) {
     $request->user()->update([
         'fcm_token' => $request->fcm_token
     ]);
-
     return response()->json(['success' => true]);
 });
+
+});
+
 
 
 // testing tanpa tokenn
