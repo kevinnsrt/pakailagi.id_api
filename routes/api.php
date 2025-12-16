@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\FirebaseAuthController;
-use App\Http\Controllers\ProductsController;
-use App\Http\Controllers\WishlistController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\FirebaseAuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
