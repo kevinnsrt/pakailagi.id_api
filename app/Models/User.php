@@ -36,7 +36,8 @@ class User extends Authenticatable
         'longitude',
         'role',
         'email',
-        'password'
+        'password',
+        'fcm_token'
     ];
 
     protected $primaryKey = 'id';
