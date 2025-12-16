@@ -54,6 +54,22 @@ class FirebaseService
             ->json();
     }
 
+        protected function send(array $payload)
+    {
+        $accessToken = $this->getAccessToken();
+
+        return $this->client->post(
+            "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send",
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type'  => 'application/json',
+                ],
+                'json' => $payload,
+            ]
+        );
+    }
+
     // kirim ke 1 user 
     public function sendToToken($token, $title, $body, $image = null)
 {
