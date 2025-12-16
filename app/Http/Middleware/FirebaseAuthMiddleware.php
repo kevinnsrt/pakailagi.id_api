@@ -19,34 +19,32 @@ class FirebaseAuthMiddleware
     }
 
 
-    public function handle(Request $request, Closure $next): Response
-    {
-        $token = $request->bearerToken();
+   public function handle(Request $request, Closure $next): Response
+{
+    $token = $request->bearerToken();
 
-        if (!$token) {
-            return response()->json(['error' => 'No token'], 401);
-        }
-
-        try {
-            $verified = $this->firebaseAuth->verifyIdToken($token);
-            $uid = $verified->claims()->get('sub'); // firebase UID
-
-            $user = User::find($uid);
-
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 401);
-            }
-
-            auth()->setUser($user);
-
-        } catch (\Throwable $e) {
-            return response()->json([
-                'error' => 'Invalid token',
-                'message' => $e->getMessage()
-            ], 401);
-        }
-
-        return $next($request);
+    if (!$token) {
+        return response()->json(['error' => 'No token'], 401);
     }
+
+    try {
+        $verified = $this->firebaseAuth->verifyIdToken($token);
+        $uid = $verified->claims()->get('sub');
+
+        // inject uid ke request
+        $request->merge([
+            'uid' => $uid
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'error' => 'Invalid token',
+            'message' => $e->getMessage()
+        ], 401);
+    }
+
+    return $next($request);
+}
+
 
 }
