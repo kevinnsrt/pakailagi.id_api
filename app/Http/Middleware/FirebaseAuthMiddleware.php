@@ -18,6 +18,7 @@ class FirebaseAuthMiddleware
         $this->firebaseAuth = $firebaseAuth;
     }
 
+
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->bearerToken();
@@ -27,19 +28,16 @@ class FirebaseAuthMiddleware
         }
 
         try {
-            // Verify Firebase ID Token
             $verified = $this->firebaseAuth->verifyIdToken($token);
             $uid = $verified->claims()->get('sub'); // firebase UID
 
-            // 🔥 Karena UID = users.id
             $user = User::find($uid);
 
             if (!$user) {
                 return response()->json(['error' => 'User not found'], 401);
             }
 
-            // Login ke Laravel
-            Auth::login($user);
+            auth()->setUser($user);
 
         } catch (\Throwable $e) {
             return response()->json([
@@ -50,4 +48,5 @@ class FirebaseAuthMiddleware
 
         return $next($request);
     }
+
 }
