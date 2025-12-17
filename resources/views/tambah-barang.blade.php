@@ -90,13 +90,16 @@
                                     <span class="label-text text-gray-700 font-semibold">Foto Barang</span>
                                 </label>
                                 
-                                <input name="image" type="file" id="image-input" accept="image/*" onchange="handleFileSelect(event)"
-                                    class="file-input file-input-bordered w-full file-input-ghost focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
-                                    file:mr-4 file:py-2 file:px-4
-                                    file:rounded-full file:border-0
-                                    file:text-sm file:font-semibold
-                                    file:bg-teal-50 file:text-teal-700
-                                    hover:file:bg-teal-100" />
+                                <input name="image" type="file" id="image-input" 
+                                accept="image/*" 
+                                capture="environment" 
+                                onchange="handleFileSelect(event)"
+                                class="file-input file-input-bordered w-full file-input-ghost focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-full file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-teal-50 file:text-teal-700
+                                hover:file:bg-teal-100" />
                                 
                                 <div id="file-info" class="hidden mt-2 flex items-center text-sm text-teal-600 bg-teal-50 px-3 py-2 rounded-lg border border-teal-100">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
