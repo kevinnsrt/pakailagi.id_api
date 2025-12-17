@@ -1,5 +1,5 @@
 <nav x-data="{ 
-        // Logic Desktop Slide
+        // Logic Desktop Slide (Hanya untuk Desktop)
         activeIndex: {{ 
             request()->routeIs('dashboard') ? 0 : 
             (request()->routeIs('tambah-barang') ? 1 : 
@@ -8,9 +8,6 @@
             (request()->routeIs('promosi.index') ? 4 : -1)))) 
         }},
         hoverIndex: null,
-
-        // Logic Mobile Bottom Sheet
-        mobileMenuOpen: false 
     }" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
 
@@ -95,75 +92,13 @@
                 <span class="text-[10px] font-medium">Order</span>
             </a>
 
-            <button @click="mobileMenuOpen = true" 
-                    class="flex flex-col items-center justify-center w-full h-full space-y-1 focus:outline-none {{ request()->routeIs('profile.edit') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
-                <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-300 {{ request()->routeIs('profile.edit') || 'mobileMenuOpen' ? 'border-teal-500 ring-1 ring-teal-500' : '' }}">
+            <a href="{{ route('profile.edit') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('profile.edit') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-300 {{ request()->routeIs('profile.edit') ? 'border-teal-500 ring-1 ring-teal-500' : '' }}">
                     <span class="text-xs font-bold">{{ substr(Auth::user()->name, 0, 1) }}</span>
                 </div>
                 <span class="text-[10px] font-medium">Akun</span>
-            </button>
+            </a>
 
         </div>
     </div>
-
-    <div class="relative z-[60] md:hidden" 
-         aria-labelledby="modal-title" role="dialog" aria-modal="true" 
-         x-show="mobileMenuOpen" 
-         style="display: none;">
-        
-        <div x-show="mobileMenuOpen"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
-             @click="mobileMenuOpen = false"></div>
-
-        <div class="fixed inset-x-0 bottom-0 z-10 w-full overflow-hidden bg-white rounded-t-2xl shadow-2xl pb-safe"
-             x-show="mobileMenuOpen"
-             x-transition:enter="transform transition ease-in-out duration-300"
-             x-transition:enter-start="translate-y-full"
-             x-transition:enter-end="translate-y-0"
-             x-transition:leave="transform transition ease-in-out duration-300"
-             x-transition:leave-start="translate-y-0"
-             x-transition:leave-end="translate-y-full">
-            
-            <div class="p-4 sm:p-6">
-                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
-
-                <div class="flex items-center space-x-4 mb-6">
-                    <div class="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xl border border-teal-200">
-                        {{ substr(Auth::user()->name, 0, 1) }}
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 leading-tight">{{ Auth::user()->name }}</h3>
-                        <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <a href="{{ route('profile.edit') }}" 
-                       class="flex items-center w-full px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-colors">
-                        <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        Edit Profile
-                    </a>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="flex items-center w-full px-4 py-3 text-left text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                            Log Out
-                        </button>
-                    </form>
-                </div>
-
-                <button @click="mobileMenuOpen = false" class="mt-6 w-full py-3 text-sm font-semibold text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-50">
-                    Tutup
-                </button>
-            </div>
-        </div>
-    </div>
-
 </nav>
