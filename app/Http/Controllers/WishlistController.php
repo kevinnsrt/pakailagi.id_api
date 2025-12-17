@@ -18,35 +18,41 @@ class WishlistController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'uid'        => 'required|string',
-            'product_id' => 'required|string',
-        ]);
+public function store(Request $request)
+{
+    // UID dari Firebase Middleware
+    $uid = $request->attributes->get('firebase_uid');
 
-        // Cegah duplicate wishlist item
-        $exists = Wishlist::where('uid', $request->uid)
-            ->where('product_id', $request->product_id)
-            ->first();
-
-        if ($exists) {
-            return response()->json([
-                'status'  => 'gagal',
-                'message' => 'Produk sudah ada di wishlist',
-            ], 409);
-        }
-
-        Wishlist::create([
-            'uid'        => (string) $request->uid,
-            'product_id' => $request->product_id,
-        ]);
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Produk berhasil ditambahkan ke wishlist',
-        ]);
+    if (!$uid) {
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
+
+    $request->validate([
+        'product_id' => 'required|string',
+    ]);
+
+    $exists = Wishlist::where('uid', $uid)
+        ->where('product_id', $request->product_id)
+        ->exists();
+
+    if ($exists) {
+        return response()->json([
+            'status'  => 'gagal',
+            'message' => 'Produk sudah ada di wishlist',
+        ], 409);
+    }
+
+    Wishlist::create([
+        'uid'        => $uid,
+        'product_id' => $request->product_id,
+    ]);
+
+    return response()->json([
+        'status'  => 'success',
+        'message' => 'Produk berhasil ditambahkan ke wishlist',
+    ]);
+}
+
 
     /**
      * Show wishlist daftar produk milik user.

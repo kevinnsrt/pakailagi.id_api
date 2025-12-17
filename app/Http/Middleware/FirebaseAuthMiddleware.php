@@ -18,49 +18,42 @@ class FirebaseAuthMiddleware
         $this->firebaseAuth = $firebaseAuth;
     }
 
-    public function handle(Request $request, Closure $next): Response
-    {
-        $token = $request->bearerToken();
+   public function handle(Request $request, Closure $next): Response
+{
+    $token = $request->bearerToken();
 
-        if (!$token) {
-            return response()->json(['error' => 'No token'], 401);
-        }
-
-        try {
-            // Verify Firebase ID Token
-            $verified = $this->firebaseAuth->verifyIdToken($token);
-            $uid = $verified->claims()->get('sub'); // firebase UID
-
-            // 🔥 Karena UID = users.id
-            $user = User::find($uid);
-
-            if (!$user) {
-            $user = User::firstOrCreate([
-            'id' => $request->uid],
-            [
-            'name' => $request->username,
-            'role' => 'client',
-            'number' => $request->number,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            ]);
-
-            return response()->json([
-                'status' => 'success',
-                'user' => $user
-            ]);
-            }
-
-            // Login ke Laravel
-            Auth::login($user);
-
-        } catch (\Throwable $e) {
-            return response()->json([
-                'error' => 'Invalid token',
-                'message' => $e->getMessage()
-            ], 401);
-        }
-
-        return $next($request);
+    if (!$token) {
+        return response()->json(['error' => 'No token'], 401);
     }
+
+    try {
+        $verified = $this->firebaseAuth->verifyIdToken($token);
+        $uid = $verified->claims()->get('sub'); // Firebase UID
+
+        // PK = UID
+        $user = User::firstOrCreate(
+            ['id' => $uid],
+            [
+                'name' => $request->username,
+                'role' => 'client',
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'number' => $request->number
+            ]
+        );
+
+        // 🔥 Inject user ke request
+        $request->attributes->set('auth_user', $user);
+        $request->attributes->set('firebase_uid', $uid);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'error' => 'Invalid token',
+            'message' => $e->getMessage()
+        ], 401);
+    }
+
+    return $next($request);
+}
+
 }
