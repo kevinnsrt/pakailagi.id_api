@@ -30,9 +30,24 @@ public function register(Request $request)
 
 // mengambil data user
 public function getUserdata(Request $request){
-    $data = User::find($request->uid)->get;
-    return response()->json($data);
+    $data = User::find($request->uid);
+
+    if (!$data) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    $data->profile_picture = $data->profile_picture 
+        ? url('/storage/' . $data->profile_picture)
+        : null;
+
+    return response()->json([
+        'id' => $data->id,
+        'name' => $data->name,
+        'number' => $data->number,
+        'profile_picture' => $data->profile_picture,
+    ]);
 }
+
 
 // register google
 public function registerGoogle(Request $request)
