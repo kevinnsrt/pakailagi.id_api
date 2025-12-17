@@ -95,7 +95,7 @@
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
                                     <input name="price" type="number" value="{{ old('price') }}"
-                                        class="input input-bordered h-12 w-full pl-10 text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                        class="input input-bordered h-12 w-full text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
                             </div>

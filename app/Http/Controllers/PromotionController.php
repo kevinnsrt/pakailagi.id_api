@@ -111,6 +111,6 @@ class PromotionController extends Controller
             return back()->with('error', 'Promosi tersimpan tapi gagal kirim notifikasi: ' . $e->getMessage());
         }
 
-        return back()->with('success', 'Promosi berhasil diduplikasi dan dikirim ulang sebagai postingan baru! 🚀');
+        return back()->with('success', 'Promosi berhasil dikirim ulang sebagai postingan baru! 🚀');
     }
 }
