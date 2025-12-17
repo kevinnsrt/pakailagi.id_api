@@ -60,10 +60,6 @@ public function store(Request $request)
     public function show(Request $request)
     {
         $uid = $request->attributes->get('firebase_uid');
-
-        $request->validate([
-            'uid' => 'required|string',
-        ]);
         $data = Wishlist::with('product')
             ->where('uid', $uid)
             ->get()
