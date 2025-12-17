@@ -10,15 +10,29 @@
         </div>
     </x-slot>
 
+    @if(session('success'))
+        <div id="toast-success" class="fixed top-5 right-5 z-[100] transform transition-all duration-500 ease-in-out translate-x-full opacity-0">
+            <div class="flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow-xl border-l-4 border-teal-500" role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-teal-500 bg-teal-100 rounded-lg">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                    </svg>
+                    <span class="sr-only">Check icon</span>
+                </div>
+                <div class="ml-3 text-sm font-normal text-gray-800">{{ session('success') }}</div>
+                <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 transition">
+                    <span class="sr-only">Close</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    @endif
+
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r shadow-sm">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
                 @forelse ($data as $item)
@@ -89,7 +103,7 @@
         </div>
     </div>
 
-<div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
 
@@ -105,7 +119,9 @@
 
                 <form id="edit-form" method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT') <div class="px-4 py-5 sm:p-6 space-y-4">
+                    @method('PUT') 
+
+                    <div class="px-4 py-5 sm:p-6 space-y-4">
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Nama Barang</label>
                             <input type="text" name="name" id="edit-name" class="input input-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 h-10" required>
@@ -170,15 +186,41 @@
     </div>
 
     <script>
+        // LOGIKA TOAST NOTIFIKASI
+        const toastSuccess = document.getElementById('toast-success');
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            if (toastSuccess) {
+                // 1. Munculkan Toast (Slide in)
+                setTimeout(() => {
+                    toastSuccess.classList.remove('translate-x-full', 'opacity-0');
+                }, 100);
+
+                // 2. Hilangkan otomatis setelah 5 detik
+                setTimeout(() => {
+                    closeToast();
+                }, 5000);
+            }
+        });
+
+        function closeToast() {
+            if(toastSuccess) {
+                // Animasi Slide Out
+                toastSuccess.classList.add('translate-x-full', 'opacity-0');
+                // Hapus dari DOM setelah animasi selesai (opsional, biar tidak menutupi klik)
+                setTimeout(() => {
+                    toastSuccess.style.display = 'none';
+                }, 500); // 500ms sesuai duration-500 tailwind
+            }
+        }
+
+        // LOGIKA MODAL EDIT
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-form');
 
         function openEditModal(product) {
-            // 1. Set Action URL Form
-            // Ini akan menghasilkan URL seperti: /barang/15
             editForm.action = `/barang/${product.id}`;
 
-            // 2. Isi Input Form dengan Data Produk
             document.getElementById('edit-name').value = product.name;
             document.getElementById('edit-price').value = product.price;
             document.getElementById('edit-kategori').value = product.kategori;
@@ -186,7 +228,6 @@
             document.getElementById('edit-ukuran').value = product.ukuran;
             document.getElementById('edit-deskripsi').value = product.deskripsi;
 
-            // 3. Tampilkan Modal
             editModal.classList.remove('hidden');
         }
 
