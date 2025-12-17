@@ -37,8 +37,8 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
-                                            @if (!empty($item->profile_picture))
-                                                <img src="{{ asset('storage/' . $item->profile_picture) }}" 
+                                            @if ($item->user && $item->user->profile_picture)
+                                                <img src="{{ asset('storage/' . $item->user->profile_picture) }}" 
                                                      alt="{{ $item->user->name }}" 
                                                      class="w-8 h-8 rounded-full object-cover border border-gray-200">
                                             @else
@@ -137,7 +137,7 @@
                             
                             <div class="text-sm text-gray-600 mb-4 space-y-2">
                                 <div class="flex items-center gap-2">
-                                    @if (!empty($item->user->profile_picture))
+                                    @if ($item->user && $item->user->profile_picture)
                                         <img src="{{ asset('storage/' . $item->user->profile_picture) }}" 
                                              class="w-5 h-5 rounded-full object-cover border border-gray-200">
                                     @else
