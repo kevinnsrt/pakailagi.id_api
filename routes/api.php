@@ -38,7 +38,7 @@ Route::middleware('firebase.auth')->group(function () {
     Route::post('/wishlist', [WishlistController::class, 'store']);
     Route::post('/wishlist/user', [WishlistController::class, 'show']);
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
-    Route::delete('/delete', [WishlistController::class, 'destroy']);
+    Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 
     // update profile
     Route::post('/user/profile', [ProfileController::class, 'update']);
