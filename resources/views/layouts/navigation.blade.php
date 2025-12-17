@@ -6,6 +6,10 @@
                     <a href="{{ route('dashboard') }}">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo Aplikasi" class="block h-9 w-auto" />
                     </a>
+                    {{-- Bagian Teks Pakailagi.id --}}
+                    <p class="ml-3 font-['Comfortaa'] text-[#3E8A8E] text-xl font-bold">
+                        pakailagi.id
+                    </p>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
