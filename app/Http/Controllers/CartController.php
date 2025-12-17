@@ -120,26 +120,34 @@ public function prosesPesanan($id, FirebaseService $firebase)
 }
 
     // status pesanan -> Dibatalkan
-    public function batalPesanan($id){
-        $data = Cart::find($id)->update([
-            'status' => 'Dibatalkan'
-        ]);
+public function batalPesanan($id){
+    // 1. Ambil datanya dulu
+    $cart = Cart::find($id);
 
-            // Ambil user
-        $user = User::find($data->uid);
+    if (!$cart) {
+        return redirect()->back()->with('error', 'Data tidak ditemukan');
+    }
 
-    // Kirim notif jika ada token
+    $cart->update([
+        'status' => 'Dibatalkan'
+    ]);
+
+    $user = User::find($cart->uid);
+
     if ($user && $user->fcm_token) {
+
+        $productName = $cart->product ? $cart->product->name : 'Item';
+
         $firebase->sendToToken(
             $user->fcm_token,
             'Pesanan Anda Dibatalkan 😔',
-            $cart->product->name . ' dibatalkan',
+            $productName . ' dibatalkan',
             null
         );
     }
 
-        return redirect(route('history.admin'));
-    }
+    return redirect(route('history.admin'));
+}
 
     // status pesanan -> Selesai
 public function selesai(Request $request)
