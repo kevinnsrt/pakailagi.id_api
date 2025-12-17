@@ -23,7 +23,17 @@ class ProfileController extends Controller
 
 public function update(Request $request)
 {
-    $user = $request->user(); 
+    // 🔥 Ambil UID dari middleware Firebase
+    $uid = $request->attributes->get('firebase_uid');
+
+    if (!$uid) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized (firebase uid missing)'
+        ], 401);
+    }
+
+    $user = User::find($uid);
 
     if (!$user) {
         return response()->json([
