@@ -35,7 +35,20 @@ class FirebaseAuthMiddleware
             $user = User::find($uid);
 
             if (!$user) {
-                return response()->json(['error' => 'User not found'], 401);
+                 $user = User::firstOrCreate([
+            'id' => $request->uid],
+            [
+            'name' => $request->username,
+            'role' => 'client',
+            'number' => $request->number,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'user' => $user
+            ]);
             }
 
             // Login ke Laravel
