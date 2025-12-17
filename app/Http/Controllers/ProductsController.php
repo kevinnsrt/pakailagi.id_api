@@ -120,7 +120,6 @@ class ProductsController extends Controller
         ]);
 
         $data = Product::where('name', 'LIKE', '%' . $request->keyword . '%')
-            ->orWhere('description', 'LIKE', '%' . $request->keyword . '%')
             ->get()
             ->map(function ($product) {
                 $product->image_path = URL::to('/storage/' . $product->image_path);
