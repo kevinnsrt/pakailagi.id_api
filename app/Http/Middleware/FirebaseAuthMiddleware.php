@@ -30,6 +30,10 @@ class FirebaseAuthMiddleware
         $verified = $this->firebaseAuth->verifyIdToken($token);
         $uid = $verified->claims()->get('sub'); // Firebase UID
 
+        // fcm_token
+         $fcmToken = $request->header('X-FCM-TOKEN')
+            ?? $request->input('fcm_token');
+
         // PK = UID
         $user = User::firstOrCreate(
             ['id' => $uid],
@@ -38,7 +42,8 @@ class FirebaseAuthMiddleware
                 'role' => 'client',
                 'latitude' => $request->latitude,
                 'longitude' => $request->longitude,
-                'number' => $request->number
+                'number' => $request->number,
+                'fcm_token' => $fcmToken,   
             ]
         );
 
