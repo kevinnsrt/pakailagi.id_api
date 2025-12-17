@@ -58,10 +58,13 @@
                             </div>
                             <p class="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-3 flex-grow">{{ $item->deskripsi }}</p>
                             <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
-                                <button onclick="openEditModal({{ json_encode($item) }})" class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                
+                                <button onclick="openEditModal({{ htmlspecialchars(json_encode($item)) }})" 
+                                    class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                     <span class="block sm:hidden">EDIT</span>
                                     <span class="hidden sm:block">EDIT BARANG</span>
                                 </button>
+
                             </div>
                         </div>
                     </div>
@@ -163,7 +166,7 @@
         <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full items-center justify-center p-4 text-center">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                 
                 <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all duration-300 ease-out translate-y-full opacity-0 w-full max-w-lg border border-gray-200">
                     
@@ -208,7 +211,7 @@
     </form>
 
     <script>
-        // --- LOGIC TOAST NOTIFIKASI (SLIDE DOWN FROM TOP) ---
+        // LOGIKA TOAST
         const toastSuccess = document.getElementById('toast-success');
         document.addEventListener("DOMContentLoaded", function() {
             if (toastSuccess) {
@@ -223,7 +226,7 @@
             }
         }
 
-        // --- LOGIC EDIT MODAL (SLIDE FROM BOTTOM) ---
+        // LOGIKA EDIT MODAL
         const editModal = document.getElementById('edit-modal');
         const editOverlay = document.getElementById('edit-overlay');
         const editPanel = document.getElementById('edit-panel');
@@ -242,7 +245,6 @@
             if(deleteForm) deleteForm.action = `/barang/${product.id}`;
 
             editModal.classList.remove('hidden');
-            // Timeout agar browser merender state hidden dulu sebelum animasi
             setTimeout(() => {
                 editOverlay.classList.remove('opacity-0');
                 editPanel.classList.remove('translate-y-full', 'sm:translate-y-full', 'sm:scale-95');
@@ -255,7 +257,7 @@
             setTimeout(() => editModal.classList.add('hidden'), 300);
         }
 
-        // --- LOGIC DELETE MODAL (SLIDE UP TO CENTER) ---
+        // LOGIKA DELETE MODAL
         const deleteModal = document.getElementById('delete-modal');
         const deleteOverlay = document.getElementById('delete-overlay');
         const deletePanel = document.getElementById('delete-panel');
@@ -265,14 +267,12 @@
             deleteModal.classList.remove('hidden');
             setTimeout(() => {
                 deleteOverlay.classList.remove('opacity-0');
-                // Hapus class posisi bawah agar naik ke tengah
                 deletePanel.classList.remove('translate-y-full', 'opacity-0');
             }, 10);
         }
 
         function closeDeleteModal() {
             deleteOverlay.classList.add('opacity-0');
-            // Kembalikan ke bawah dan invisible
             deletePanel.classList.add('translate-y-full', 'opacity-0');
             setTimeout(() => deleteModal.classList.add('hidden'), 300);
         }

@@ -173,8 +173,7 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                <div class="bg-gray-50 px-4 py-4 flex flex-col sm:flex-row-reverse gap-3 sm:px-6">
                     <button type="button" onclick="closeModal()" 
                         class="inline-flex w-full justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all sm:w-auto">
                         Konfirmasi
