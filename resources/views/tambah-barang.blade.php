@@ -10,7 +10,7 @@
     <div id="loading-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
         <div class="bg-white p-5 rounded-2xl shadow-2xl flex flex-col items-center animate-bounce-gentle">
             <div class="animate-spin rounded-full h-10 w-10 border-4 border-teal-100 border-t-teal-600 mb-3"></div>
-            <p class="text-gray-700 font-semibold text-sm">Sedang Mengupload...</p>
+            <p id="loading-text" class="text-gray-700 font-semibold text-sm">Sedang Memproses...</p>
             <p class="text-gray-400 text-xs">Mohon tunggu sebentar.</p>
         </div>
     </div>
@@ -154,7 +154,10 @@
                                 <div id="file-info" class="hidden md:hidden mt-3 flex items-center justify-between text-sm text-teal-600 bg-teal-50 px-3 py-3 rounded-lg border border-teal-100">
                                     <div class="flex items-center truncate">
                                         <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span id="filename-display" class="font-medium truncate max-w-[200px]"></span>
+                                        <div>
+                                            <span id="filename-display" class="font-medium truncate max-w-[150px] block"></span>
+                                            <span id="filesize-display" class="text-xs text-teal-500 block"></span>
+                                        </div>
                                     </div>
                                     <button type="button" onclick="cancelUpload()" class="text-gray-400 hover:text-red-500 ml-2 p-1">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -162,7 +165,7 @@
                                 </div>
                                 
                                 <label class="label md:hidden">
-                                    <span class="label-text-alt text-gray-400 text-xs mt-1">Format: JPG, PNG (Max 2MB)</span>
+                                    <span class="label-text-alt text-gray-400 text-xs mt-1">Otomatis kompres jika > 1MB</span>
                                 </label>
 
                                 @error('image')
@@ -202,7 +205,6 @@
         <div id="preview-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeModal()"></div>
 
         <div class="flex min-h-screen items-center justify-center p-4 text-center">
-            
             <div id="preview-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
                 
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -213,6 +215,7 @@
                                 <img id="modal-image-preview" src="#" alt="Preview Upload" class="max-h-[300px] w-auto object-contain rounded-md shadow-sm" />
                             </div>
                             <p id="modal-filename" class="text-sm text-gray-500 mt-2 text-center break-all"></p>
+                            <p id="modal-filesize" class="text-xs text-teal-600 mt-1 text-center font-semibold"></p>
                         </div>
                     </div>
                 </div>
@@ -222,7 +225,6 @@
                         class="inline-flex w-full justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all sm:w-auto">
                         Konfirmasi
                     </button>
-                    
                     <button type="button" onclick="cancelUpload()" 
                         class="mt-3 sm:mt-0 inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
                         Ganti Foto
@@ -233,14 +235,19 @@
     </div>
 
     <script>
-        // LOGIKA TOAST
+        // --- TOAST & UI LOGIC ---
         const toastSuccess = document.getElementById('toast-success');
+        const uploadForm = document.getElementById('upload-form');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+
         document.addEventListener("DOMContentLoaded", function() {
             if (toastSuccess) {
                 setTimeout(() => toastSuccess.classList.remove('-translate-y-full', 'opacity-0'), 100);
                 setTimeout(() => closeToast(), 5000);
             }
         });
+
         function closeToast() {
             if(toastSuccess) {
                 toastSuccess.classList.add('-translate-y-full', 'opacity-0');
@@ -248,26 +255,57 @@
             }
         }
 
-        // LOGIKA LOADING SAAT SUBMIT
-        const uploadForm = document.getElementById('upload-form');
-        const loadingOverlay = document.getElementById('loading-overlay');
-
         uploadForm.addEventListener('submit', function() {
-            // Tampilkan loading overlay saat form disubmit
+            loadingText.innerText = "Mengupload Barang...";
             loadingOverlay.classList.remove('hidden');
         });
 
-        // LOGIKA UPLOAD & MODAL PREVIEW
+        // --- COMPRESSION LOGIC ---
+        // Fungsi Kompresi Gambar
+        async function compressImage(file, { quality = 0.7, maxWidth = 1280, type = 'image/jpeg' }) {
+            return new Promise((resolve, reject) => {
+                const image = new Image();
+                image.src = URL.createObjectURL(file);
+                image.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = image.width;
+                    let height = image.height;
+
+                    // Resize jika melebihi maxWidth
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(image, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            reject(new Error('Canvas is empty'));
+                            return;
+                        }
+                        resolve(blob);
+                    }, type, quality);
+                };
+                image.onerror = (error) => reject(error);
+            });
+        }
+
+        // --- FILE HANDLING ---
         const imageInput = document.getElementById("image-input");
         const modal = document.getElementById("preview-modal");
         const modalOverlay = document.getElementById("preview-overlay");
         const modalPanel = document.getElementById("preview-panel");
-        
         const modalImage = document.getElementById("modal-image-preview");
         const modalFilename = document.getElementById("modal-filename");
+        const modalFilesize = document.getElementById("modal-filesize");
         
         const fileInfoContainer = document.getElementById("file-info");
         const filenameDisplay = document.getElementById("filename-display");
+        const filesizeDisplay = document.getElementById("filesize-display");
 
         function openCamera() {
             imageInput.setAttribute('capture', 'environment'); 
@@ -279,41 +317,80 @@
             imageInput.click();
         }
 
-        function handleFileSelect(event) {
+        function formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+        }
+
+        async function handleFileSelect(event) {
             const file = event.target.files[0];
 
             if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    alert("Ukuran file terlalu besar (Max 2MB). Silakan kompres atau pilih foto lain.");
-                    imageInput.value = ""; 
-                    return;
-                }
+                // Tampilkan loading saat kompresi
+                loadingText.innerText = "Mengompres Foto...";
+                loadingOverlay.classList.remove('hidden');
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    modalImage.src = e.target.result;
-                    modalFilename.innerText = file.name;
-                    filenameDisplay.innerText = file.name;
-                    
-                    // Tampilkan Modal & Jalankan Animasi
-                    modal.classList.remove("hidden");
-                    animateOpen(modalPanel, modalOverlay);
+                try {
+                    let processedFile = file;
+                    let infoText = "";
+
+                    // Cek jika file > 1MB (1024 * 1024 bytes)
+                    if (file.size > 1024 * 1024) {
+                        console.log("File original: " + formatBytes(file.size) + ". Starting compression...");
+                        const compressedBlob = await compressImage(file, { quality: 0.7, maxWidth: 1280 });
+                        
+                        // Buat file baru dari blob
+                        processedFile = new File([compressedBlob], file.name, {
+                            type: compressedBlob.type,
+                            lastModified: Date.now(),
+                        });
+
+                        // Ganti file di input element menggunakan DataTransfer
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(processedFile);
+                        imageInput.files = dataTransfer.files;
+
+                        infoText = `(Dikompres: ${formatBytes(file.size)} -> ${formatBytes(processedFile.size)})`;
+                        console.log("Compressed to: " + formatBytes(processedFile.size));
+                    } else {
+                        infoText = `(${formatBytes(file.size)})`;
+                    }
+
+                    // Tampilkan Preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        modalImage.src = e.target.result;
+                        modalFilename.innerText = processedFile.name;
+                        modalFilesize.innerText = `Ukuran: ${formatBytes(processedFile.size)}`;
+                        
+                        filenameDisplay.innerText = processedFile.name;
+                        filesizeDisplay.innerText = formatBytes(processedFile.size);
+                        
+                        // Sembunyikan loading, tampilkan modal
+                        loadingOverlay.classList.add('hidden');
+                        modal.classList.remove("hidden");
+                        animateOpen(modalPanel, modalOverlay);
+                    }
+                    reader.readAsDataURL(processedFile);
+
+                } catch (error) {
+                    console.error("Compression failed:", error);
+                    loadingOverlay.classList.add('hidden');
+                    alert("Gagal memproses gambar. Silakan coba lagi.");
                 }
-                reader.readAsDataURL(file);
             }
         }
 
-        // --- FUNGSI ANIMASI (SAMA DENGAN PAGE BARANG) ---
+        // --- ANIMASI MODAL ---
         function animateOpen(panel, overlay) {
-            // Reset
             panel.style.transition = 'none';
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.95)';
-            
-            // Force Reflow
             void panel.offsetWidth;
-
-            // Animate (Gentle Bounce)
             panel.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
             requestAnimationFrame(() => {
                 overlay.classList.remove('opacity-0');
