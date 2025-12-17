@@ -8,23 +8,6 @@
             (request()->routeIs('promosi.index') ? 4 : -1)))) 
         }},
         hoverIndex: null,
-        
-        // Fungsi untuk mengatur posisi indikator slide
-        indicatorStyle() {
-            // Jika sedang hover, pakai index hover. Jika tidak, pakai index aktif.
-            const index = this.hoverIndex !== null ? this.hoverIndex : this.activeIndex;
-            
-            // Jika tidak ada yang aktif (misal halaman lain), sembunyikan
-            if (index === -1) return 'opacity: 0;';
-
-            // Lebar dan posisi (asumsi tiap menu lebar & gap-nya konsisten, atau hitung manual)
-            // Cara paling presisi adalah menggunakan $refs, tapi ini cara simpel via CSS grid/flex logic
-            // Kita asumsikan setiap menu punya width yang flexible tapi container punya padding
-            
-            // NOTE: Agar animasi 'sliding pill' akurat, kita perlu binding ke elemen asli.
-            // Di bawah ini kita gunakan pendekatan 'relative container' pada setiap link.
-            return '';
-        }
     }" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
 
@@ -41,55 +24,58 @@
                     </p>
                 </div>
 
-                <div class="hidden sm:ml-10 sm:flex sm:items-center relative" x-ref="navContainer">
+                <div class="hidden sm:ml-10 sm:flex sm:items-center relative h-full" x-ref="navContainer">
                     
-                    <div class="absolute h-9 bg-teal-50 rounded-lg border border-teal-100 transition-all duration-300 ease-out z-0"
+                    <div class="absolute bottom-0 h-1 bg-teal-600 rounded-full transition-all duration-300 ease-out z-0 pointer-events-none"
                          x-show="hoverIndex !== null || activeIndex !== -1"
                          x-cloak
                          :style="(() => {
+                             // Logika perhitungan posisi tetap sama
                              let targetIndex = hoverIndex !== null ? hoverIndex : activeIndex;
                              let refs = [$refs.link0, $refs.link1, $refs.link2, $refs.link3, $refs.link4];
                              let target = refs[targetIndex];
                              
                              if(!target) return 'opacity: 0';
                              
-                             return `left: ${target.offsetLeft}px; width: ${target.offsetWidth}px; opacity: 1;`;
+                             // Kita kurangi sedikit lebarnya dan tambah margin kiri agar lebih manis (opsional)
+                             // Jika ingin selebar teks persis, hapus +4 dan -8 nya.
+                             return `left: ${target.offsetLeft + 4}px; width: ${target.offsetWidth - 8}px; opacity: 1;`;
                          })()">
                     </div>
 
-                    <div class="flex space-x-1 z-10">
+                    <div class="flex space-x-1 h-full items-center">
                         <a href="{{ route('dashboard') }}" x-ref="link0"
                            @mouseenter="hoverIndex = 0" @mouseleave="hoverIndex = null"
-                           class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                           :class="activeIndex === 0 ? 'text-teal-700' : (hoverIndex === 0 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent"
+                           :class="activeIndex === 0 ? 'text-teal-700 font-bold' : (hoverIndex === 0 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                             {{ __('Dashboard') }}
                         </a>
 
                         <a href="{{ route('tambah-barang') }}" x-ref="link1"
                            @mouseenter="hoverIndex = 1" @mouseleave="hoverIndex = null"
-                           class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                           :class="activeIndex === 1 ? 'text-teal-700' : (hoverIndex === 1 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent"
+                           :class="activeIndex === 1 ? 'text-teal-700 font-bold' : (hoverIndex === 1 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                             {{ __('Tambah Barang') }}
                         </a>
 
                         <a href="{{ route('barang') }}" x-ref="link2"
                            @mouseenter="hoverIndex = 2" @mouseleave="hoverIndex = null"
-                           class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                           :class="activeIndex === 2 ? 'text-teal-700' : (hoverIndex === 2 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent"
+                           :class="activeIndex === 2 ? 'text-teal-700 font-bold' : (hoverIndex === 2 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                             {{ __('Barang') }}
                         </a>
 
                         <a href="{{ route('history.admin') }}" x-ref="link3"
                            @mouseenter="hoverIndex = 3" @mouseleave="hoverIndex = null"
-                           class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                           :class="activeIndex === 3 ? 'text-teal-700' : (hoverIndex === 3 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent"
+                           :class="activeIndex === 3 ? 'text-teal-700 font-bold' : (hoverIndex === 3 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                             {{ __('History') }}
                         </a>
 
                         <a href="{{ route('promosi.index') }}" x-ref="link4"
                            @mouseenter="hoverIndex = 4" @mouseleave="hoverIndex = null"
-                           class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                           :class="activeIndex === 4 ? 'text-teal-700' : (hoverIndex === 4 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent"
+                           :class="activeIndex === 4 ? 'text-teal-700 font-bold' : (hoverIndex === 4 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                             {{ __('Promosi') }}
                         </a>
                     </div>
