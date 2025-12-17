@@ -33,7 +33,7 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                 @forelse ($data as $item)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transform transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-                        <div class="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden">
+                        <div class="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden group">
                             <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-full h-full object-cover" />
                             <div class="absolute top-2 left-2 sm:top-3 sm:left-3">
                                 <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">{{ $item->kategori }}</span>
@@ -84,8 +84,7 @@
         <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center">
-            
-            <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all duration-300 ease-out scale-0 opacity-0 w-full max-w-lg border border-gray-200">
+            <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 opacity-0 scale-90">
                 
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
                     <h3 class="text-lg font-bold text-gray-900">Edit Barang</h3>
@@ -165,9 +164,7 @@
         <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center">
-            
-            <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all duration-300 ease-out scale-0 opacity-0 w-full max-w-lg border border-gray-200">
-                
+            <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 opacity-0 scale-90">
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div>
                         <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
@@ -175,7 +172,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                             </svg>
                         </div>
-
                         <div class="mt-3 text-center">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">Hapus Barang?</h3>
                             <div class="mt-2">
@@ -187,7 +183,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-gray-50 px-4 py-3 flex flex-col sm:flex-row-reverse sm:px-6 gap-3">
                     <button type="button" onclick="submitDelete()" 
                         class="inline-flex w-full justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto transition-all">
@@ -207,57 +202,59 @@
     </form>
 
     <script>
-        // LOGIKA TOAST
-        const toastSuccess = document.getElementById('toast-success');
-        document.addEventListener("DOMContentLoaded", function() {
-            if (toastSuccess) {
-                setTimeout(() => toastSuccess.classList.remove('-translate-y-full', 'opacity-0'), 100);
-                setTimeout(() => closeToast(), 5000);
-            }
-        });
-        function closeToast() {
-            if(toastSuccess) {
-                toastSuccess.classList.add('-translate-y-full', 'opacity-0');
-                setTimeout(() => toastSuccess.style.display = 'none', 500);
-            }
-        }
-
-        // --- ANIMASI SCALE DARI TOMBOL (LOGIKA FIX) ---
-        // Fungsi ini menghitung koordinat tombol dan mengatur transform-origin
+        // --- ANIMASI ROBUST (BULLETPROOF) ---
         function animateFromButton(panel, buttonElement, overlay) {
-            // 1. Tampilkan wrapper dulu agar bisa diukur
-            // Pastikan panel dalam keadaan reset (tanpa transisi) dulu
-            panel.style.transition = 'none'; 
-            panel.classList.remove('scale-0', 'opacity-0'); 
-            
-            // 2. Hitung posisi
-            const rect = buttonElement.getBoundingClientRect();
-            const panelRect = panel.getBoundingClientRect();
-            
-            const btnX = rect.left + rect.width / 2;
-            const btnY = rect.top + rect.height / 2;
-            
-            const originX = btnX - panelRect.left;
-            const originY = btnY - panelRect.top;
+            // 1. Reset State (Matikan transisi, sembunyikan)
+            panel.style.transition = 'none';
+            panel.style.opacity = '0';
+            panel.style.transform = 'scale(0.9)'; 
+            panel.classList.remove('scale-100', 'opacity-100'); // Hapus class tailwind active
 
-            // 3. Set Origin & Initial State
-            panel.style.transformOrigin = `${originX}px ${originY}px`;
-            panel.classList.add('scale-0', 'opacity-0'); // Sembunyikan lagi di titik asal
+            // 2. Hitung Posisi (Hanya jika button ada)
+            if (buttonElement) {
+                const btnRect = buttonElement.getBoundingClientRect();
+                const panelRect = panel.getBoundingClientRect();
+                
+                // Hitung koordinat tengah
+                const btnX = btnRect.left + btnRect.width / 2;
+                const btnY = btnRect.top + btnRect.height / 2;
+                const panelX = panelRect.left + panelRect.width / 2;
+                const panelY = panelRect.top + panelRect.height / 2;
 
-            // 4. Force Reflow (Penting agar browser sadar perubahan posisi)
-            void panel.offsetWidth; 
+                // Hitung offset origin relatif terhadap panel
+                // (Kita set origin ke titik tombol)
+                const originX = btnX - panelRect.left;
+                const originY = btnY - panelRect.top;
 
-            // 5. Aktifkan Transisi & Mainkan Animasi
-            panel.style.transition = ''; // Hapus override inline style
-            // Tambahkan class transition tailwind jika sempat terhapus (opsional)
+                panel.style.transformOrigin = `${originX}px ${originY}px`;
+            } else {
+                panel.style.transformOrigin = 'center center';
+            }
+
+            // 3. Paksa Reflow (Browser membaca ulang posisi)
+            void panel.offsetWidth;
+
+            // 4. Aktifkan Transisi & Jalankan Animasi
+            panel.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'; // Efek Bounce Halus
             
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 overlay.classList.remove('opacity-0');
-                panel.classList.remove('scale-0', 'opacity-0');
-                panel.classList.add('scale-100', 'opacity-100');
-            }, 10);
+                
+                // Override inline style dengan class tailwind atau set manual
+                panel.style.opacity = '1';
+                panel.style.transform = 'scale(1)';
+            });
         }
 
+        function animateClose(panel, overlay, callbackWrapper) {
+            panel.style.opacity = '0';
+            panel.style.transform = 'scale(0.9)';
+            overlay.classList.add('opacity-0');
+            
+            setTimeout(callbackWrapper, 300);
+        }
+
+        // --- GLOBAL VARS ---
         const editModal = document.getElementById('edit-modal');
         const editOverlay = document.getElementById('edit-overlay');
         const editPanel = document.getElementById('edit-panel');
@@ -268,6 +265,7 @@
         const deleteOverlay = document.getElementById('delete-overlay');
         const deletePanel = document.getElementById('delete-panel');
 
+        // --- OPEN EDIT ---
         function openEditModal(buttonElement) {
             const jsonString = buttonElement.getAttribute('data-json');
             const product = JSON.parse(jsonString);
@@ -282,40 +280,46 @@
             document.getElementById('edit-ukuran').value = product.ukuran;
             document.getElementById('edit-deskripsi').value = product.deskripsi;
             
+            // Tampilkan Wrapper
             editModal.classList.remove('hidden');
+            
+            // Jalankan Animasi
             animateFromButton(editPanel, buttonElement, editOverlay);
         }
 
         function closeEditModal() {
-            editOverlay.classList.add('opacity-0');
-            editPanel.classList.remove('scale-100', 'opacity-100');
-            editPanel.classList.add('scale-0', 'opacity-0');
-            setTimeout(() => editModal.classList.add('hidden'), 300);
+            animateClose(editPanel, editOverlay, () => {
+                editModal.classList.add('hidden');
+            });
         }
 
+        // --- OPEN DELETE ---
         function openDeleteModal(buttonElement = null) {
             deleteModal.classList.remove('hidden');
-            
-            if(buttonElement) {
-                animateFromButton(deletePanel, buttonElement, deleteOverlay);
-            } else {
-                // Fallback jika tidak ada button (jarang terjadi)
-                deletePanel.style.transformOrigin = 'center';
-                setTimeout(() => {
-                    deleteOverlay.classList.remove('opacity-0');
-                    deletePanel.classList.remove('scale-0', 'opacity-0');
-                    deletePanel.classList.add('scale-100', 'opacity-100');
-                }, 10);
-            }
+            animateFromButton(deletePanel, buttonElement, deleteOverlay);
         }
 
         function closeDeleteModal() {
-            deleteOverlay.classList.add('opacity-0');
-            deletePanel.classList.remove('scale-100', 'opacity-100');
-            deletePanel.classList.add('scale-0', 'opacity-0');
-            setTimeout(() => deleteModal.classList.add('hidden'), 300);
+            animateClose(deletePanel, deleteOverlay, () => {
+                deleteModal.classList.add('hidden');
+            });
         }
 
         function submitDelete() { deleteForm.submit(); }
+
+        // --- TOAST ---
+        const toastSuccess = document.getElementById('toast-success');
+        document.addEventListener("DOMContentLoaded", function() {
+            if (toastSuccess) {
+                setTimeout(() => toastSuccess.classList.remove('-translate-y-full', 'opacity-0'), 100);
+                setTimeout(() => closeToast(), 5000);
+            }
+        });
+        function closeToast() {
+            if(toastSuccess) {
+                toastSuccess.classList.add('-translate-y-full', 'opacity-0');
+                setTimeout(() => toastSuccess.style.display = 'none', 500);
+            }
+        }
     </script>
 </x-app-layout>
