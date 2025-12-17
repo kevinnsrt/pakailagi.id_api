@@ -58,16 +58,17 @@ public function store(Request $request)
      * Show wishlist daftar produk milik user.
      */
     public function show(Request $request)
-    {
-        $uid = $request->attributes->get('firebase_uid');
+    { $uid = $request->attributes->get('firebase_uid');
+
         $data = Wishlist::with('product')
             ->where('uid', $uid)
+            // ->where('status','Dikeranjang')
             ->get()
-            ->map(function ($wishlist) {
-                if ($wishlist->product && $wishlist->product->image_path) {
-                    $wishlist->product->image_path = URL::to('/storage/' . $wishlist->product->image_path);
+            ->map(function($cart) {
+                if ($cart->product && $cart->product->image_path) {
+                    $cart->product->image_path = URL::to('/storage/' . $cart->product->image_path);
                 }
-                return $wishlist;
+                return $cart;
             });
 
         return response()->json($data);
