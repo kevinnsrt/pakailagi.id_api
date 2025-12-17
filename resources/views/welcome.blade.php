@@ -19,61 +19,73 @@
             </style>
         @endif
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen flex items-center justify-center p-6">
+<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen flex items-center justify-center p-6">
 
-        <main
-            class="w-full max-w-md rounded-2xl
-                   bg-white/70 dark:bg-white/10
-                   backdrop-blur-xl backdrop-saturate-150
-                   shadow-xl border border-white/30
-                   p-8 text-center transition-opacity duration-700">
+    <main
+        class="relative w-full max-w-[335px]
+               rounded-2xl
+               bg-white/70 dark:bg-white/10
+               backdrop-blur-xl backdrop-saturate-150
+               shadow-lg
+               border border-white/30
+               p-6 text-center transition-opacity duration-700">
 
-            <!-- Title -->
-            <h1 class="text-2xl font-semibold mb-2 dark:text-[#EDEDEC]">
-                Selamat Datang
-            </h1>
+        <!-- inset border ala layout lama -->
+        <div
+            class="absolute inset-0 rounded-2xl pointer-events-none
+                   shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)]
+                   dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
+        </div>
 
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-8">
-                Silakan masuk atau daftar untuk melanjutkan
-            </p>
+        <!-- Content -->
+        <h1 class="text-xl font-semibold mb-1 dark:text-[#EDEDEC]">
+            Selamat Datang
+        </h1>
 
-            <!-- Auth Logic -->
-            @if (Route::has('login'))
-                @auth
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            Silakan masuk untuk melanjutkan
+        </p>
+
+        @if (Route::has('login'))
+            @auth
+                <a
+                    href="{{ url('/dashboard') }}"
+                    class="relative z-10 block w-full py-2.5 rounded-xl
+                           text-white text-sm font-medium
+                           bg-[#3E8A8E] hover:bg-[#35777A]
+                           transition">
+                    Masuk ke Dashboard
+                </a>
+            @else
+                <div class="relative z-10 flex flex-col gap-3">
                     <a
-                        href="{{ url('/dashboard') }}"
-                        class="block w-full py-3 rounded-xl text-white font-medium
-                            bg-[#3E8A8E] hover:bg-[#35777A]
-                            transition">
-                        Masuk ke Dashboard
+                        href="{{ route('login') }}"
+                        class="w-full py-2.5 rounded-xl
+                               text-sm font-medium text-white
+                               bg-[#3E8A8E] hover:bg-[#35777A]
+                               transition">
+                        Log in
                     </a>
-                @else
-                    <div class="flex flex-col gap-3">
+
+                    @if (Route::has('register'))
                         <a
-                            href="{{ route('login') }}"
-                            class="w-full py-3 rounded-xl font-medium
-                                text-white bg-[#3E8A8E]
-                                hover:bg-[#35777A] transition">
-                            Log in
+                            href="{{ route('register') }}"
+                            class="w-full py-2.5 rounded-xl
+                                   text-sm font-medium
+                                   border border-[#3E8A8E]
+                                   text-[#3E8A8E]
+                                   hover:bg-[#3E8A8E]/10
+                                   transition">
+                            Register
                         </a>
+                    @endif
+                </div>
+            @endauth
+        @endif
 
-                        @if (Route::has('register'))
-                            <a
-                                href="{{ route('register') }}"
-                                class="w-full py-3 rounded-xl font-medium
-                                    border border-[#3E8A8E]
-                                    text-[#3E8A8E]
-                                    hover:bg-[#3E8A8E]/10
-                                    transition">
-                                Register
-                            </a>
-                        @endif
-                    </div>
-                @endauth
-            @endif
+    </main>
 
-        </main>
+</body>
 
-    </body>
 
 </html>
