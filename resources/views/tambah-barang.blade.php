@@ -86,122 +86,126 @@
                                 </select>
                             </div>
 
-        <div class="form-control w-full">
-            <label class="label mb-1">
-                <span class="label-text text-gray-700 font-semibold">Harga</span>
-            </label>
-            <div class="relative w-full group">
-                <div id="price-scrub-handle" 
-                    class="absolute inset-y-0 left-0 pl-3 pr-2 flex items-center cursor-ew-resize select-none z-10 touch-none"
-                    title="Tahan dan geser kiri/kanan">
-                    <span class="text-gray-500 sm:text-sm font-bold group-hover:text-teal-600 transition-colors">Rp</span>
-                    
-                    <svg class="w-3 h-3 ml-1 text-gray-300 group-hover:text-teal-500 hidden sm:block transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                    </svg>
-                </div>
+                    <div class="form-control w-full">
+                        <label class="label mb-1">
+                            <span class="label-text text-gray-700 font-semibold">Harga</span>
+                        </label>
+                        <div class="relative w-full group">
+                            <div id="price-scrub-handle" 
+                                class="absolute inset-y-0 left-0 pl-3 pr-2 flex items-center cursor-ew-resize select-none z-10 touch-none"
+                                title="Tahan dan geser kiri/kanan">
+                                <span class="text-gray-500 sm:text-sm font-bold group-hover:text-teal-600 transition-colors">Rp</span>
+                                
+                                <svg class="w-3 h-3 ml-1 text-gray-300 group-hover:text-teal-500 hidden sm:block transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                </svg>
+                            </div>
 
-                <input name="price" id="price-input" type="number" value="{{ old('price') }}"
-                    class="input input-bordered h-12 w-full pl-14 text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
-                    placeholder="0" required />
-            </div>
-            <label class="label">
-                <span class="label-text-alt text-gray-400 text-xs">Tips: Geser "Rp" untuk ubah harga.</span>
-            </label>
-        </div>
+                            <input name="price" id="price-input" type="number" value="{{ old('price') }}"
+                                class="input input-bordered h-12 w-full pl-14 text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg 
+                                [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                                placeholder="0" required />
+                        </div>
+                        <label class="label">
+                            <span class="label-text-alt text-gray-400 text-xs">Tips: Geser "Rp" untuk ubah harga.</span>
+                        </label>
+                    </div>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const handle = document.getElementById('price-scrub-handle');
-                const input = document.getElementById('price-input');
-                
-                let isDragging = false;
-                let startX = 0;
-                let startValue = 0;
-                
-                // --- KONFIGURASI SENSITIVITAS ---
-                // Desktop: 1 pixel geser = Rp 1.000 (Cepat)
-                const SENSITIVITY_DESKTOP = 1000; 
-                
-                // Mobile: 1 pixel geser = Rp 100 (Lebih lambat/halus agar mudah dikontrol jari)
-                const SENSITIVITY_MOBILE = 100; 
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const handle = document.getElementById('price-scrub-handle');
+                            const input = document.getElementById('price-input');
+                            
+                            let isDragging = false;
+                            let startX = 0;
+                            let startValue = 0;
+                            
+                            // --- KONFIGURASI SENSITIVITAS (PIXEL PER STEP) ---
+                            // Semakin BESAR angkanya, semakin BERAT/KURANG SENSITIF geserannya.
+                            
+                            // Mobile: Geser 30px baru nambah harga (Biar stabil)
+                            const PIXELS_PER_STEP_MOBILE = 30; 
+                            // Desktop: Geser 5px baru nambah harga (Mouse lebih presisi)
+                            const PIXELS_PER_STEP_DESKTOP = 5;
 
-                let currentSensitivity = SENSITIVITY_DESKTOP;
+                            // Kelipatan harga
+                            const PRICE_STEP_MOBILE = 1000; // Mobile naik per 1000
+                            const PRICE_STEP_DESKTOP = 100; // Desktop naik per 100 (lebih detail)
 
-                // --- LOGIKA UTAMA (Update Nilai) ---
-                const handleMove = (clientX) => {
-                    if (!isDragging) return;
+                            let currentPixelThreshold = PIXELS_PER_STEP_DESKTOP;
+                            let currentPriceStep = PRICE_STEP_DESKTOP;
 
-                    const currentX = clientX;
-                    const deltaX = currentX - startX;
-                    
-                    // Hitung harga baru
-                    let newValue = startValue + (deltaX * currentSensitivity);
-                    
-                    // 1. Cegah Minus
-                    if (newValue < 0) newValue = 0;
+                            // --- LOGIKA UTAMA ---
+                            const handleMove = (clientX) => {
+                                if (!isDragging) return;
 
-                    // 2. Cegah Float (Desimal) -> Bulatkan ke integer terdekat
-                    newValue = Math.round(newValue);
+                                const currentX = clientX;
+                                // Jarak geser dalam pixel
+                                const deltaX = currentX - startX; 
+                                
+                                // Hitung berapa "langkah" yang sudah digeser
+                                // Contoh Mobile: Geser 60px / 30px threshold = 2 langkah
+                                const steps = Math.floor(deltaX / currentPixelThreshold);
 
-                    input.value = newValue;
-                };
+                                // Hitung harga baru: Nilai Awal + (Jumlah Langkah * Kelipatan Harga)
+                                let newValue = startValue + (steps * currentPriceStep);
+                                
+                                // 1. Cegah Minus
+                                if (newValue < 0) newValue = 0;
 
-                // --- LOGIKA STOP ---
-                const stopDrag = () => {
-                    if (isDragging) {
-                        isDragging = false;
-                        document.body.style.cursor = 'default';
-                        document.body.style.userSelect = 'auto';
-                        
-                        // Kembalikan scroll body (untuk mobile)
-                        document.body.style.overflow = 'auto';
-                    }
-                };
+                                input.value = newValue;
+                            };
 
-                // =========================================
-                // EVENT LISTENER: DESKTOP (MOUSE)
-                // =========================================
-                handle.addEventListener('mousedown', function(e) {
-                    isDragging = true;
-                    startX = e.clientX;
-                    startValue = parseInt(input.value) || 0;
-                    currentSensitivity = SENSITIVITY_DESKTOP; // Pakai settingan Desktop
-                    
-                    document.body.style.cursor = 'ew-resize';
-                    document.body.style.userSelect = 'none';
-                });
+                            const stopDrag = () => {
+                                if (isDragging) {
+                                    isDragging = false;
+                                    document.body.style.cursor = 'default';
+                                    document.body.style.userSelect = 'auto';
+                                    document.body.style.overflow = 'auto';
+                                }
+                            };
 
-                document.addEventListener('mousemove', (e) => handleMove(e.clientX));
-                document.addEventListener('mouseup', stopDrag);
+                            // --- DESKTOP ---
+                            handle.addEventListener('mousedown', function(e) {
+                                isDragging = true;
+                                startX = e.clientX;
+                                startValue = parseInt(input.value) || 0;
+                                
+                                // Settingan Desktop
+                                currentPixelThreshold = PIXELS_PER_STEP_DESKTOP;
+                                currentPriceStep = PRICE_STEP_DESKTOP;
+                                
+                                document.body.style.cursor = 'ew-resize';
+                                document.body.style.userSelect = 'none';
+                            });
 
-                // =========================================
-                // EVENT LISTENER: MOBILE (TOUCH)
-                // =========================================
-                handle.addEventListener('touchstart', function(e) {
-                    isDragging = true;
-                    // Ambil sentuhan pertama
-                    startX = e.touches[0].clientX; 
-                    startValue = parseInt(input.value) || 0;
-                    currentSensitivity = SENSITIVITY_MOBILE; // Pakai settingan Mobile (Lebih pelan)
-                    
-                    // Kunci scroll body agar layar tidak lari saat geser harga
-                    document.body.style.overflow = 'hidden';
-                }, { passive: false });
+                            document.addEventListener('mousemove', (e) => handleMove(e.clientX));
+                            document.addEventListener('mouseup', stopDrag);
 
-                document.addEventListener('touchmove', (e) => {
-                    if(isDragging) {
-                        // PENTING: Mencegah layar scroll/float saat drag
-                        if (e.cancelable) e.preventDefault(); 
-                        
-                        handleMove(e.touches[0].clientX);
-                    }
-                }, { passive: false }); // passive: false agar preventDefault bekerja
+                            // --- MOBILE ---
+                            handle.addEventListener('touchstart', function(e) {
+                                isDragging = true;
+                                startX = e.touches[0].clientX; 
+                                startValue = parseInt(input.value) || 0;
+                                
+                                // Settingan Mobile (Per 1000 rupiah & Gerakan Lebih Berat)
+                                currentPixelThreshold = PIXELS_PER_STEP_MOBILE; 
+                                currentPriceStep = PRICE_STEP_MOBILE;
+                                
+                                document.body.style.overflow = 'hidden';
+                            }, { passive: false });
 
-                document.addEventListener('touchend', stopDrag);
-                document.addEventListener('touchcancel', stopDrag);
-            });
-        </script>
+                            document.addEventListener('touchmove', (e) => {
+                                if(isDragging) {
+                                    if (e.cancelable) e.preventDefault(); 
+                                    handleMove(e.touches[0].clientX);
+                                }
+                            }, { passive: false });
+
+                            document.addEventListener('touchend', stopDrag);
+                            document.addEventListener('touchcancel', stopDrag);
+                        });
+                    </script>
 
                             <div class="form-control w-full">
                                 <label class="label mb-1">
