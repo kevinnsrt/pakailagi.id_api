@@ -8,22 +8,22 @@
     </x-slot>
 
     <div id="loading-overlay" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm grid place-items-center transition-opacity duration-300">
-        <div class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center transform transition-all scale-100">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center transform transition-all scale-100 mx-4">
             <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-100 border-t-teal-600 mb-4"></div>
-            <p id="loading-text" class="text-gray-800 font-bold text-base">Sedang Memproses...</p>
-            <p class="text-gray-500 text-xs mt-1">Mohon jangan tutup halaman ini.</p>
+            <p id="loading-text" class="text-gray-800 font-bold text-base text-center">Sedang Memproses...</p>
+            <p class="text-gray-500 text-xs mt-1 text-center">Mohon jangan tutup halaman ini.</p>
         </div>
     </div>
 
     @if(session('success'))
-        <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none">
-            <div class="mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl border-t-4 border-teal-500 pointer-events-auto" role="alert">
+        <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none px-4">
+            <div class="mt-6 flex items-center w-full max-w-lg p-4 sm:p-5 text-gray-600 bg-white rounded-xl shadow-2xl border-t-4 border-teal-500 pointer-events-auto" role="alert">
                 <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-teal-500 bg-teal-100 rounded-lg">
                     <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                     </svg>
                 </div>
-                <div class="ml-4 text-base font-medium text-gray-800 flex-grow">{{ session('success') }}</div>
+                <div class="ml-4 text-sm sm:text-base font-medium text-gray-800 flex-grow">{{ session('success') }}</div>
                 <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-9 w-9 transition">
                     <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -33,13 +33,13 @@
         </div>
     @endif
 
-    <div class="py-12 bg-gray-50 min-h-screen">
+    <div class="py-12 bg-gray-50 min-h-screen overflow-x-hidden">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             
             @if ($errors->any())
-                <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md shadow-sm">
+                <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md shadow-sm text-sm">
                     <p class="font-bold">Gagal menyimpan!</p>
-                    <ul class="list-disc pl-5 text-sm">
+                    <ul class="list-disc pl-5">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -215,7 +215,7 @@
                                 <h3 class="text-lg font-bold leading-6 text-gray-900 mb-4" id="modal-title">Preview Foto</h3>
                                 
                                 <div class="relative flex justify-center bg-gray-100 rounded-lg border border-dashed border-gray-300 p-2">
-                                    <img id="modal-image-preview" src="#" alt="Preview Upload" class="max-h-[60vh] w-auto object-contain rounded-md shadow-sm" />
+                                    <img id="modal-image-preview" src="#" alt="Preview Upload" class="max-h-[60vh] w-auto max-w-full object-contain rounded-md shadow-sm" />
                                 </div>
 
                                 <div class="mt-3 space-y-1">
@@ -362,6 +362,7 @@
                         loadingOverlay.classList.add('hidden');
                         
                         modal.classList.remove("hidden");
+                        // Kunci scroll body saat modal terbuka
                         document.body.style.overflow = 'hidden'; 
                         
                         animateOpen(modalPanel, modalOverlay);
@@ -401,6 +402,7 @@
         function closeModal() {
             animateClose(modalPanel, modalOverlay, () => {
                 modal.classList.add("hidden");
+                // Kembalikan scroll body
                 document.body.style.overflow = 'auto'; 
                 fileInfoContainer.classList.remove("hidden");
             });
@@ -412,6 +414,7 @@
                 fileInfoContainer.classList.add("hidden");
                 filenameDisplay.innerText = "";
                 modal.classList.add("hidden");
+                // Kembalikan scroll body
                 document.body.style.overflow = 'auto'; 
             });
         }
