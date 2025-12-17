@@ -65,7 +65,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Nama Barang</span>
                                 </label>
                                 <input name="name" type="text" value="{{ old('name') }}"
-                                    class="input input-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                    class="input input-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: Kemeja Flannel Uniqlo" required />
                             </div>
 
@@ -74,7 +74,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Kategori</span>
                                 </label>
                                 <select name="kategori" id="kategori" 
-                                    class="select select-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
+                                    class="select select-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kategori</option>
                                     <option value="Atasan">Atasan</option>
                                     <option value="Bawahan">Bawahan</option>
@@ -95,7 +95,7 @@
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
                                     <input name="price" type="number" value="{{ old('price') }}"
-                                        class="input input-bordered h-11 w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                        class="input input-bordered h-12 w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
                             </div>
@@ -105,7 +105,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Ukuran</span>
                                 </label>
                                 <input name="ukuran" type="text" value="{{ old('ukuran') }}"
-                                    class="input input-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                    class="input input-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: M, L, XL, 40, 42" />
                             </div>
 
@@ -114,7 +114,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Kondisi Barang</span>
                                 </label>
                                 <select name="kondisi" id="kondisi" 
-                                    class="select select-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
+                                    class="select select-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kondisi</option>
                                     <option value="Like New" class="text-teal-600 font-medium">✨ Like New (Seperti Baru)</option>
                                     <option value="Good" class="text-green-600 font-medium">✅ Good (Baik)</option>
@@ -130,8 +130,8 @@
                                 <input name="image" type="file" id="image-input" 
                                     accept="image/*" 
                                     onchange="handleFileSelect(event)"
-                                    class="sr-only md:not-sr-only file-input file-input-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
-                                    file:mr-4 file:py-2 file:px-4 file:h-full
+                                    class="sr-only md:not-sr-only file-input file-input-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
+                                    file:h-full file:mr-4 file:py-2 file:px-4
                                     file:rounded-l-lg file:border-0
                                     file:text-sm file:font-semibold
                                     file:bg-teal-50 file:text-teal-700
@@ -204,7 +204,7 @@
     <div id="preview-modal" class="hidden relative z-[150]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="preview-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeModal()"></div>
 
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="fixed inset-0 z-10 w-full h-full overflow-y-auto">
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
                 
                 <div id="preview-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
