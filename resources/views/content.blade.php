@@ -17,11 +17,9 @@
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                     </svg>
-                    <span class="sr-only">Check icon</span>
                 </div>
                 <div class="ml-3 text-sm font-normal text-gray-800">{{ session('success') }}</div>
                 <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 transition">
-                    <span class="sr-only">Close</span>
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -32,40 +30,22 @@
 
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
                 @forelse ($data as $item)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
-                        
                         <div class="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden group">
-                            <img src="{{ asset('storage/' . $item->image_path) }}" 
-                                 alt="{{ $item->name }}" 
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                            
+                            <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div class="absolute top-3 left-3">
-                                <span class="px-2.5 py-1 text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">
-                                    {{ $item->kategori }}
-                                </span>
+                                <span class="px-2.5 py-1 text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">{{ $item->kategori }}</span>
                             </div>
                         </div>
-
                         <div class="p-5 flex flex-col flex-grow">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-lg font-bold text-gray-900 line-clamp-1" title="{{ $item->name }}">
-                                    {{ $item->name }}
-                                </h3>
+                                <h3 class="text-lg font-bold text-gray-900 line-clamp-1" title="{{ $item->name }}">{{ $item->name }}</h3>
                             </div>
-
-                            <p class="text-xl font-bold text-teal-600 mb-3">
-                                Rp {{ number_format($item->price, 0, ',', '.') }}
-                            </p>
-
+                            <p class="text-xl font-bold text-teal-600 mb-3">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                             <div class="flex items-center gap-2 mb-4 text-sm">
-                                <span class="flex items-center text-gray-600 bg-gray-100 px-2 py-1 rounded text-xs font-medium">
-                                    Size: {{ $item->ukuran }}
-                                </span>
-
+                                <span class="flex items-center text-gray-600 bg-gray-100 px-2 py-1 rounded text-xs font-medium">Size: {{ $item->ukuran }}</span>
                                 @php
                                     $condColor = match($item->kondisi) {
                                         'Like New' => 'text-blue-700 bg-blue-50 border-blue-100',
@@ -74,18 +54,11 @@
                                         default => 'text-gray-600 bg-gray-50',
                                     };
                                 @endphp
-                                <span class="px-2 py-1 rounded text-xs font-medium border {{ $condColor }}">
-                                    {{ $item->kondisi }}
-                                </span>
+                                <span class="px-2 py-1 rounded text-xs font-medium border {{ $condColor }}">{{ $item->kondisi }}</span>
                             </div>
-
-                            <p class="text-gray-500 text-sm line-clamp-2 mb-4 flex-grow">
-                                {{ $item->deskripsi }}
-                            </p>
-                            
+                            <p class="text-gray-500 text-sm line-clamp-2 mb-4 flex-grow">{{ $item->deskripsi }}</p>
                             <div class="mt-auto pt-4 border-t border-gray-100">
-                                <button onclick="openEditModal({{ json_encode($item) }})" 
-                                    class="w-full inline-flex justify-center items-center px-4 py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                <button onclick="openEditModal({{ json_encode($item) }})" class="w-full inline-flex justify-center items-center px-4 py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                     Edit Barang
                                 </button>
                             </div>
@@ -98,15 +71,12 @@
                         <p class="text-gray-500 max-w-sm mt-1">Mulai tambahkan koleksi barang preloved Anda sekarang.</p>
                     </div>
                 @endforelse
-
             </div>
         </div>
     </div>
 
     <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
-
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg border border-gray-200 z-10">
                 
@@ -118,20 +88,16 @@
                 </div>
 
                 <form id="edit-form" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT') 
-
+                    @csrf @method('PUT') 
                     <div class="px-4 py-5 sm:p-6 space-y-4">
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Nama Barang</label>
                             <input type="text" name="name" id="edit-name" class="input input-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 h-10" required>
                         </div>
-
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Harga (Rp)</label>
                             <input type="number" name="price" id="edit-price" class="input input-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 h-10" required>
                         </div>
-
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-control w-full">
                                 <label class="label mb-1 font-semibold text-gray-700 text-sm">Kategori</label>
@@ -145,7 +111,6 @@
                                     <option value="Others">Others</option>
                                 </select>
                             </div>
-
                             <div class="form-control w-full">
                                 <label class="label mb-1 font-semibold text-gray-700 text-sm">Kondisi</label>
                                 <select name="kondisi" id="edit-kondisi" class="select select-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 h-10 min-h-0">
@@ -155,71 +120,73 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Ukuran</label>
                             <input type="text" name="ukuran" id="edit-ukuran" class="input input-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 h-10">
                         </div>
-
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Deskripsi</label>
                             <textarea name="deskripsi" id="edit-deskripsi" rows="3" class="textarea textarea-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
                         </div>
-
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Ganti Foto (Opsional)</label>
                             <input type="file" name="image" class="file-input file-input-bordered w-full file-input-xs rounded-lg text-xs">
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 flex flex-row-reverse gap-3">
-                        <button type="submit" class="inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm">
-                            Simpan Perubahan
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center">
+                        <button type="button" onclick="confirmDelete()" class="inline-flex justify-center items-center rounded-lg border border-transparent px-4 py-2 bg-red-100 text-red-700 text-sm font-medium hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            Hapus
                         </button>
-                        <button type="button" onclick="closeEditModal()" class="inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm">
-                            Batal
-                        </button>
+
+                        <div class="flex gap-2">
+                            <button type="button" onclick="closeEditModal()" class="inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm">
+                                Batal
+                            </button>
+                            <button type="submit" class="inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm">
+                                Simpan
+                            </button>
+                        </div>
                     </div>
                 </form>
+
+                <form id="delete-form" method="POST" class="hidden">
+                    @csrf @method('DELETE')
+                </form>
+
             </div>
         </div>
     </div>
 
     <script>
-        // LOGIKA TOAST NOTIFIKASI
         const toastSuccess = document.getElementById('toast-success');
-        
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-form');
+        const deleteForm = document.getElementById('delete-form');
+
+        // Toast Notification
         document.addEventListener("DOMContentLoaded", function() {
             if (toastSuccess) {
-                // 1. Munculkan Toast (Slide in)
-                setTimeout(() => {
-                    toastSuccess.classList.remove('translate-x-full', 'opacity-0');
-                }, 100);
-
-                // 2. Hilangkan otomatis setelah 5 detik
-                setTimeout(() => {
-                    closeToast();
-                }, 5000);
+                setTimeout(() => toastSuccess.classList.remove('translate-x-full', 'opacity-0'), 100);
+                setTimeout(() => closeToast(), 5000);
             }
         });
 
         function closeToast() {
             if(toastSuccess) {
-                // Animasi Slide Out
                 toastSuccess.classList.add('translate-x-full', 'opacity-0');
-                // Hapus dari DOM setelah animasi selesai (opsional, biar tidak menutupi klik)
-                setTimeout(() => {
-                    toastSuccess.style.display = 'none';
-                }, 500); // 500ms sesuai duration-500 tailwind
+                setTimeout(() => toastSuccess.style.display = 'none', 500);
             }
         }
 
-        // LOGIKA MODAL EDIT
-        const editModal = document.getElementById('edit-modal');
-        const editForm = document.getElementById('edit-form');
-
+        // Modal Logic
         function openEditModal(product) {
+            // Set URL Action untuk Update
             editForm.action = `/barang/${product.id}`;
+            
+            // Set URL Action untuk Delete (penting untuk tombol hapus)
+            deleteForm.action = `/barang/${product.id}`;
 
             document.getElementById('edit-name').value = product.name;
             document.getElementById('edit-price').value = product.price;
@@ -233,6 +200,13 @@
 
         function closeEditModal() {
             editModal.classList.add('hidden');
+        }
+
+        // Konfirmasi Hapus
+        function confirmDelete() {
+            if(confirm("Apakah Anda yakin ingin menghapus barang ini secara permanen?")) {
+                deleteForm.submit();
+            }
         }
     </script>
 </x-app-layout>

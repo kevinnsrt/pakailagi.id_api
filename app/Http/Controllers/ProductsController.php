@@ -178,8 +178,19 @@ class ProductsController extends Controller
     }
 
     // menghapus barang dari web admin
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        // 1. Hapus gambar dari storage jika ada
+        if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+
+        // 2. Hapus data dari database
+        $product->delete();
+
+        // 3. Redirect kembali dengan pesan sukses
+        return redirect()->route('barang')->with('success', 'Barang berhasil dihapus!');
     }
 }
