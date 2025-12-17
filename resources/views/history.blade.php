@@ -56,12 +56,20 @@
                                         <span class="text-gray-900 font-medium">{{ $item->product->name ?? '-' }}</span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="flex flex-col text-xs text-gray-500">
-                                            <span class="flex items-center gap-1">
-                                                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                                Lat: {{ $item->user->latitude ?? '-' }}
-                                            </span>
-                                            <span class="ml-4">Long: {{ $item->user->longitude ?? '-' }}</span>
+                                        <div class="flex flex-col text-xs text-gray-500 max-w-[200px]">
+                                            <div class="flex items-start gap-1">
+                                                <svg class="w-3 h-3 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                                
+                                                <span class="load-address leading-snug" 
+                                                      data-lat="{{ $item->user->latitude ?? '' }}" 
+                                                      data-lng="{{ $item->user->longitude ?? '' }}">
+                                                    <span class="text-gray-400">Memuat alamat...</span>
+                                                    <br>
+                                                    <span class="text-[10px] text-gray-400">
+                                                        ({{ $item->user->latitude ?? '-' }}, {{ $item->user->longitude ?? '-' }})
+                                                    </span>
+                                                </span>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
@@ -150,10 +158,12 @@
                                 </div>
 
                                 <div class="flex items-start gap-2 pl-0.5">
-                                    <svg class="w-4 h-4 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    <span class="text-xs">
-                                        Lat: {{ $item->user->latitude ?? '-' }}, <br>
-                                        Long: {{ $item->user->longitude ?? '-' }}
+                                    <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    
+                                    <span class="load-address text-xs leading-snug" 
+                                          data-lat="{{ $item->user->latitude ?? '' }}" 
+                                          data-lng="{{ $item->user->longitude ?? '' }}">
+                                        <span class="text-gray-400">Memuat alamat...</span>
                                     </span>
                                 </div>
                             </div>
@@ -185,4 +195,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const addressElements = document.querySelectorAll('.load-address');
+
+            // Fungsi untuk ambil alamat dari OpenStreetMap
+            const fetchAddress = (lat, lng, element, delay) => {
+                setTimeout(() => {
+                    // Cek jika lat/lng kosong
+                    if (!lat || !lng || lat === '-' || lng === '-') {
+                        element.innerHTML = '<span class="text-gray-400 italic">Lokasi tidak tersedia</span>';
+                        return;
+                    }
+
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.display_name) {
+                                // Potong alamat agar tidak terlalu panjang (opsional)
+                                // Ambil bagian Jalan, Kota, Provinsi
+                                const fullAddress = data.display_name;
+                                element.innerText = fullAddress;
+                                element.classList.add('text-gray-700'); // Gelapkan teks setelah dimuat
+                            } else {
+                                element.innerText = "Alamat tidak ditemukan";
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching address:', error);
+                            element.innerText = "Gagal memuat alamat";
+                        });
+                }, delay);
+            };
+
+            // Loop setiap elemen dan beri jeda request (Rate Limiting)
+            // OpenStreetMap gratis memiliki limit request (biasanya 1 req/detik disarankan)
+            addressElements.forEach((el, index) => {
+                const lat = el.getAttribute('data-lat');
+                const lng = el.getAttribute('data-lng');
+                
+                // Beri jeda 1.2 detik antar request agar tidak diblokir API
+                fetchAddress(lat, lng, el, index * 1200);
+            });
+        });
+    </script>
+
 </x-app-layout>
