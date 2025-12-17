@@ -36,6 +36,7 @@ Route::middleware('firebase.auth')->group(function () {
 
     // wishlist
     Route::post('/wishlist', [WishlistController::class, 'store']);
+    Route::post('/wishlist/user', [WishlistController::class, 'show']);
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 
@@ -60,9 +61,6 @@ Route::middleware('firebase.auth')->group(function () {
     // location
     Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
 
-    // wishlist
-    Route::post('/wishlist/user', [WishlistController::class, 'show']);
-    Route::post('/wishlist/store', [WishlistController::class, 'store']);
 
 });
 Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
