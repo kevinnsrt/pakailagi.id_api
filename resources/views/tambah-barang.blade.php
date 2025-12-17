@@ -88,7 +88,7 @@
 
                     <div class="card-actions justify-end mt-8">
                         <button type="button" onclick="history.back()" class="btn btn-ghost">Batal</button>
-                        <button type="submit" class="btn btn-neutral px-8">Simpan Barang</button>
+                        <button type="submit" class="btn btn-neutral px-8">Tambah</button>
                     </div>
 
                 </div>
