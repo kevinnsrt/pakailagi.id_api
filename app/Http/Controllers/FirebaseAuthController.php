@@ -30,7 +30,7 @@ public function register(Request $request)
 
 // mengambil data user
 public function getUserdata(Request $request){
-    $data = User::where('id',$request->uid);
+    $data = User::find($request->uid)->get;
     return response()->json($data);
 }
 
