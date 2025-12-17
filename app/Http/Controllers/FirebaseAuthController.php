@@ -30,8 +30,7 @@ public function register(Request $request)
 
 // mengambil data user
 public function getUserdata(Request $request){
-    $data = User::find($request->uid);
-    $data->profile_picture = URL::to('/storage/' . $data->profile_picture);
+    $data = User::where('id',$request->uid);
     return response()->json($data);
 }
 
