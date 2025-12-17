@@ -1,11 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\Request;
 use App\Services\FirebaseService;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
 class ProductsController extends Controller
@@ -14,7 +12,7 @@ class ProductsController extends Controller
     // menampilkan semua barang pada produk
     public function index(Request $request)
     {
-        $data = Product::all()->map(function($product) {
+        $data = Product::all()->map(function ($product) {
             // Mengubah image_path menjadi full URL
             $product->image_path = URL::to('/storage/' . $product->image_path);
             return $product;
@@ -23,70 +21,66 @@ class ProductsController extends Controller
         return response()->json($data);
     }
 
+    // menambahkan barang dari web admin
 
-    // menambahkan barang dari web admin 
+    public function store(Request $request, FirebaseService $firebase)
+    {
+        $request->validate([
+            'name'      => 'required|string',
+            'deskripsi' => 'required|string',
+            'kondisi'   => 'required|string',
+            'ukuran'    => 'required|string',
+            'kategori'  => 'required|string',
+            'price'     => 'required|integer',
+            'image'     => 'required|image|mimes:jpg,jpeg,png,svg',
+        ]);
 
+        // simpan gambar
+        $path = $request->file('image')->store('products', 'public');
 
-public function store(Request $request, FirebaseService $firebase)
-{
-    $request->validate([
-        'name'=> 'required|string',
-        'deskripsi'=>'required|string',
-        'kondisi'=>'required|string',
-        'ukuran'=>'required|string',
-        'kategori'=>'required|string',
-        'price' => 'required|integer',
-        'image' => 'required|image|mimes:jpg,jpeg,png,svg'
-    ]);
+        // simpan produk
+        $product = Product::create([
+            'name'       => $request->name,
+            'price'      => $request->price,
+            'deskripsi'  => $request->deskripsi,
+            'kondisi'    => $request->kondisi,
+            'kategori'   => $request->kategori,
+            'ukuran'     => $request->ukuran,
+            'image_path' => $path,
+            'status'     => 'Ready',
+        ]);
 
-    // simpan gambar
-    $path = $request->file('image')->store('products', 'public');
+        // 🔔 KIRIM NOTIFIKASI KE FIREBASE
+        $firebase->sendToTopic(
+            'all_users',
+            'Produk Baru Tersedia 🔥',
+            $product->name . ' - Rp ' . number_format($product->price, 0, ',', '.'),
+            url('storage/' . $path) // HTTPS
+        );
 
-    // simpan produk
-    $product = Product::create([
-        'name' => $request->name,
-        'price'=> $request->price,
-        'deskripsi'=> $request->deskripsi,
-        'kondisi'=> $request->kondisi,
-        'kategori'=> $request->kategori,
-        'ukuran'=> $request->ukuran,
-        'image_path'=> $path,
-        'status' => 'Ready'
-    ]);
+        return redirect()->route('barang');
+    }
 
-    // 🔔 KIRIM NOTIFIKASI KE FIREBASE
-    $firebase->sendToTopic(
-    'all_users',
-    'Produk Baru Tersedia 🔥',
-    $product->name . ' - Rp ' . number_format($product->price, 0, ',', '.'),
-    url('storage/' . $path) // HTTPS
-);
-
-
-    return redirect()->route('barang');
-}
-
-
-    // menampilkan detail produk 
-    public function details(Request $request){
+    // menampilkan detail produk
+    public function details(Request $request)
+    {
 
         $product = Product::findOrFail($request->id);
 
         $product->image_path = URL::to('/storage/' . $product->image_path);
 
-
-        if($product == null){
+        if ($product == null) {
             return response()->json([
                 'message' => 'produk tidak ditemukan',
             ]);
-        }   
+        }
 
         return response()->json([$product]);
     }
 
-
-    public function tambah_barang (){
-        return view ('tambah-barang');
+    public function tambah_barang()
+    {
+        return view('tambah-barang');
     }
 
     // menampilkan list produk pada web admin
@@ -95,7 +89,7 @@ public function store(Request $request, FirebaseService $firebase)
         //
         $data = Product::all();
 
-         return view('content', compact('data'));
+        return view('content', compact('data'));
     }
 
     // update barang dari admin
@@ -106,19 +100,40 @@ public function store(Request $request, FirebaseService $firebase)
 
     // menampilkan barang berdasarkan kategori
     public function filter(Request $request)
-{
-     
-    $data = Product::where('kategori', $request->kategori)
-        ->get() 
-        ->map(function ($product) {
-            // Mengubah image_path menjadi full URL
-            $product->image_path = URL::to('/storage/' . $product->image_path);
-            return $product;
-        });
+    {
 
-    return response()->json($data);
-}
+        $data = Product::where('kategori', $request->kategori)
+            ->get()
+            ->map(function ($product) {
+                // Mengubah image_path menjadi full URL
+                $product->image_path = URL::to('/storage/' . $product->image_path);
+                return $product;
+            });
 
+        return response()->json($data);
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'keyword' => 'required|string|min:2',
+        ]);
+
+        $data = Product::where('name', 'LIKE', '%' . $request->keyword . '%')
+            ->orWhere('description', 'LIKE', '%' . $request->keyword . '%')
+            ->get()
+            ->map(function ($product) {
+                $product->image_path = URL::to('/storage/' . $product->image_path);
+                return $product;
+            });
+
+        return response()->json([
+            'success' => true,
+            'keyword' => $request->keyword,
+            'total'   => $data->count(),
+            'data'    => $data,
+        ]);
+    }
 
     // menghapus barang dari web admin
     public function destroy(Product $product)
