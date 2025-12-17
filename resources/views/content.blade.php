@@ -84,8 +84,7 @@
                             <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
                                 <button onclick="openEditModal({{ json_encode($item) }})" 
                                     class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    <span class="block sm:hidden">EDIT</span>
-                                    <span class="hidden sm:block">EDIT BARANG</span>
+                                    Edit
                                 </button>
                             </div>
                         </div>
