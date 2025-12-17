@@ -161,11 +161,26 @@ public function selesai(Request $request)
 
 
     // menghapus barang dari keranjang
-    public function destroy(Request $request)
+    public function destroy(Request $request, $id)
     {
-        $data = Cart::where('id', $request->id)->delete();
+        $uid = $request->attributes->get('firebase_uid');
+
+        $wishlist = Cart::where('id', $id)
+            ->where('uid', $uid)
+            ->first();
+
+        if (! $wishlist) {
+            return response()->json([
+                'status'  => 'failed',
+                'message' => 'Cart tidak ditemukan',
+            ], 404);
+        }
+
+        $wishlist->delete();
+
         return response()->json([
-            'message' => 'Barang berhasil dihapus dari keranjang'
+            'status'  => 'success',
+            'message' => 'Produk dihapus dari keranjang',
         ]);
     }
 }
