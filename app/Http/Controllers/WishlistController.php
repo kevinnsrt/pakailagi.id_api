@@ -28,7 +28,7 @@ public function store(Request $request)
     }
 
     $request->validate([
-        'product_id' => 'required|string',
+        'product_id' => 'required|',
     ]);
 
     $exists = Wishlist::where('uid', $uid)
