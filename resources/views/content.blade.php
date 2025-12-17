@@ -83,9 +83,9 @@
     <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
-        <div class="flex min-h-full items-center justify-center p-4 text-center">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
             
-            <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all duration-300 ease-out scale-0 opacity-0 w-full max-w-lg border border-gray-200">
+            <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
                 
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
                     <h3 class="text-lg font-bold text-gray-900">Edit Barang</h3>
@@ -164,9 +164,9 @@
     <div id="delete-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
-        <div class="flex min-h-full items-center justify-center p-4 text-center">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
             
-            <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all duration-300 ease-out scale-0 opacity-0 w-full max-w-lg border border-gray-200">
+            <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
                 
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div>
@@ -222,7 +222,55 @@
             }
         }
 
-        // --- ANIMASI SCALE DARI TOMBOL (TRANSFORM ORIGIN) ---
+        // --- ANIMASI ROBUST & GENTLE (FINAL) ---
+        function animateFromButton(panel, buttonElement, overlay) {
+            // 1. Reset State (Inline Style Only)
+            panel.style.transition = 'none';
+            panel.style.opacity = '0';
+            panel.style.transform = 'scale(0.95)';
+            
+            // 2. Hitung Posisi
+            if (buttonElement) {
+                const btnRect = buttonElement.getBoundingClientRect();
+                const panelRect = panel.getBoundingClientRect();
+                
+                const btnX = btnRect.left + btnRect.width / 2;
+                const btnY = btnRect.top + btnRect.height / 2;
+                const panelX = panelRect.left + panelRect.width / 2;
+                const panelY = panelRect.top + panelRect.height / 2;
+
+                const originX = btnX - panelRect.left;
+                const originY = btnY - panelRect.top;
+
+                panel.style.transformOrigin = `${originX}px ${originY}px`;
+            } else {
+                panel.style.transformOrigin = 'center center';
+            }
+
+            // 3. Paksa Reflow
+            void panel.offsetWidth;
+
+            // 4. Jalankan Animasi (Gentle Curve + Slower Duration 0.4s)
+            panel.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'; 
+            
+            requestAnimationFrame(() => {
+                overlay.classList.remove('opacity-0');
+                panel.style.opacity = '1';
+                panel.style.transform = 'scale(1)';
+            });
+        }
+
+        function animateClose(panel, overlay, callbackWrapper) {
+            // Animasi tutup lebih cepat dan linear agar responsif
+            panel.style.transition = 'all 0.2s ease-in';
+            panel.style.opacity = '0';
+            panel.style.transform = 'scale(0.95)';
+            overlay.classList.add('opacity-0');
+            
+            setTimeout(callbackWrapper, 200);
+        }
+
+        // --- GLOBAL VARS ---
         const editModal = document.getElementById('edit-modal');
         const editOverlay = document.getElementById('edit-overlay');
         const editPanel = document.getElementById('edit-panel');
@@ -233,31 +281,7 @@
         const deleteOverlay = document.getElementById('delete-overlay');
         const deletePanel = document.getElementById('delete-panel');
 
-        function animateModalOpen(panel, buttonElement) {
-            // 1. Dapatkan posisi tombol
-            const rect = buttonElement.getBoundingClientRect();
-            // 2. Dapatkan posisi panel (panel harus visible untuk diukur, tapi opacity 0)
-            // Karena panel di tengah (fixed), kita hitung offsetnya
-            
-            // Trik: Set origin relatif terhadap panel itu sendiri
-            // Origin X = (Posisi Tengah Tombol X) - (Posisi Kiri Panel)
-            // Origin Y = (Posisi Tengah Tombol Y) - (Posisi Atas Panel)
-            
-            const panelRect = panel.getBoundingClientRect();
-            
-            const originX = (rect.left + rect.width / 2) - panelRect.left;
-            const originY = (rect.top + rect.height / 2) - panelRect.top;
-
-            // Set Transform Origin CSS
-            panel.style.transformOrigin = `${originX}px ${originY}px`;
-
-            // Trigger Animasi
-            setTimeout(() => {
-                panel.classList.remove('scale-0', 'opacity-0');
-                panel.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
+        // --- OPEN EDIT ---
         function openEditModal(buttonElement) {
             const jsonString = buttonElement.getAttribute('data-json');
             const product = JSON.parse(jsonString);
@@ -272,44 +296,26 @@
             document.getElementById('edit-ukuran').value = product.ukuran;
             document.getElementById('edit-deskripsi').value = product.deskripsi;
             
-            // Buka Modal dulu (masih invisible)
             editModal.classList.remove('hidden');
-            editOverlay.classList.remove('opacity-0');
-            
-            // Jalankan animasi dari tombol
-            animateModalOpen(editPanel, buttonElement);
+            animateFromButton(editPanel, buttonElement, editOverlay);
         }
 
         function closeEditModal() {
-            editOverlay.classList.add('opacity-0');
-            editPanel.classList.remove('scale-100', 'opacity-100');
-            editPanel.classList.add('scale-0', 'opacity-0');
-            
-            setTimeout(() => editModal.classList.add('hidden'), 300);
+            animateClose(editPanel, editOverlay, () => {
+                editModal.classList.add('hidden');
+            });
         }
 
+        // --- OPEN DELETE ---
         function openDeleteModal(buttonElement = null) {
             deleteModal.classList.remove('hidden');
-            deleteOverlay.classList.remove('opacity-0');
-
-            if(buttonElement) {
-                // Jika dibuka dari tombol (misal tombol hapus di dalam edit modal)
-                animateModalOpen(deletePanel, buttonElement);
-            } else {
-                // Default bounce from center jika tidak ada tombol spesifik
-                deletePanel.style.transformOrigin = 'center';
-                setTimeout(() => {
-                    deletePanel.classList.remove('scale-0', 'opacity-0');
-                    deletePanel.classList.add('scale-100', 'opacity-100');
-                }, 10);
-            }
+            animateFromButton(deletePanel, buttonElement, deleteOverlay);
         }
 
         function closeDeleteModal() {
-            deleteOverlay.classList.add('opacity-0');
-            deletePanel.classList.remove('scale-100', 'opacity-100');
-            deletePanel.classList.add('scale-0', 'opacity-0');
-            setTimeout(() => deleteModal.classList.add('hidden'), 300);
+            animateClose(deletePanel, deleteOverlay, () => {
+                deleteModal.classList.add('hidden');
+            });
         }
 
         function submitDelete() { deleteForm.submit(); }
