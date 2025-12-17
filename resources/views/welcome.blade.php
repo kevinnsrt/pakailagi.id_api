@@ -19,64 +19,46 @@
             </style>
         @endif
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen flex items-center justify-center p-6">
+    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
+        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
+            @if (Route::has('login'))
+                <nav class="flex items-center justify-end gap-4">
+                    @auth
+                        <a
+                            href="{{ url('/dashboard') }}"
+                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
+                        >
+                            Dashboard
+                        </a>
+                    @else
+                        <a
+                            href="{{ route('login') }}"
+                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
+                        >
+                            Log in
+                        </a>
 
-    <main
-        class="w-full max-w-[335px]
-               bg-white dark:bg-[#121212]
-               border border-[#e5e5e5] dark:border-[#2a2a2a]
-               rounded-xl
-               p-6 text-center">
-
-        <h1 class="text-xl font-semibold mb-1 dark:text-[#EDEDEC]">
-            Selamat Datang
-        </h1>
-
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
-            Silakan masuk untuk melanjutkan
-        </p>
+                        @if (Route::has('register'))
+                            <a
+                                href="{{ route('register') }}"
+                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
+                                Register
+                            </a>
+                        @endif
+                    @endauth
+                </nav>
+            @endif
+        </header>
+        <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
+            <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
+                
+                    <div class="absolute inset-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"></div>
+                </div>
+            </main>
+        </div>
 
         @if (Route::has('login'))
-            @auth
-                <a
-                    href="{{ url('/dashboard') }}"
-                    class="block w-full py-2.5 rounded-lg
-                           text-sm font-medium text-white
-                           bg-[#3E8A8E] hover:bg-[#35777A]
-                           transition">
-                    Masuk ke Dashboard
-                </a>
-            @else
-                <div class="flex flex-col gap-3">
-                    <a
-                        href="{{ route('login') }}"
-                        class="w-full py-2.5 rounded-lg
-                               text-sm font-medium text-white
-                               bg-[#3E8A8E] hover:bg-[#35777A]
-                               transition">
-                        Log in
-                    </a>
-
-                    @if (Route::has('register'))
-                        <a
-                            href="{{ route('register') }}"
-                            class="w-full py-2.5 rounded-lg
-                                   text-sm font-medium
-                                   border border-[#3E8A8E]
-                                   text-[#3E8A8E]
-                                   hover:bg-[#3E8A8E]/10
-                                   transition">
-                            Register
-                        </a>
-                    @endif
-                </div>
-            @endauth
+            <div class="h-14.5 hidden lg:block"></div>
         @endif
-
-    </main>
-
-</body>
-
-
-
+    </body>
 </html>
