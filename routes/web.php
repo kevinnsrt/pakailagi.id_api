@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/promosi', [PromotionController::class, 'store'])->name('promosi.store');
     Route::delete('/promosi/{id}', [PromotionController::class, 'destroy'])->name('promosi.destroy');
     Route::post('/promosi/{id}/resend', [PromotionController::class, 'resend'])->name('promosi.resend');
+    Route::get('/check-notifications', [CartController::class, 'checkNewNotifications'])->name('api.check.notif');
 
 });
 
