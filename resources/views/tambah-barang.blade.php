@@ -33,8 +33,8 @@
         </div>
     @endif
 
-    <div class="py-12 bg-gray-50 min-h-screen overflow-x-hidden">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-12 bg-gray-50 min-h-screen w-full overflow-x-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             
             @if ($errors->any())
                 <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md shadow-sm text-sm">
@@ -50,7 +50,7 @@
             <form id="upload-form" method="POST" action="{{ route('tambah-barang-post') }}" enctype="multipart/form-data">
                 @csrf
                 
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-xl border border-gray-100">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-xl border border-gray-100 w-full">
                     
                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
                         <h3 class="text-lg font-medium text-gray-900">Formulir Produk</h3>
@@ -65,7 +65,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Nama Barang</span>
                                 </label>
                                 <input name="name" type="text" value="{{ old('name') }}"
-                                    class="input input-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                    class="input input-bordered h-12 w-full text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: Kemeja Flannel Uniqlo" required />
                             </div>
 
@@ -74,7 +74,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Kategori</span>
                                 </label>
                                 <select name="kategori" id="kategori" 
-                                    class="select select-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
+                                    class="select select-bordered h-12 w-full text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kategori</option>
                                     <option value="Atasan">Atasan</option>
                                     <option value="Bawahan">Bawahan</option>
@@ -90,12 +90,12 @@
                                 <label class="label mb-1">
                                     <span class="label-text text-gray-700 font-semibold">Harga</span>
                                 </label>
-                                <div class="relative">
+                                <div class="relative w-full">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
                                     <input name="price" type="number" value="{{ old('price') }}"
-                                        class="input input-bordered h-12 w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                        class="input input-bordered h-12 w-full pl-10 text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
                             </div>
@@ -105,7 +105,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Ukuran</span>
                                 </label>
                                 <input name="ukuran" type="text" value="{{ old('ukuran') }}"
-                                    class="input input-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                    class="input input-bordered h-12 w-full text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: M, L, XL, 40, 42" />
                             </div>
 
@@ -114,7 +114,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Kondisi Barang</span>
                                 </label>
                                 <select name="kondisi" id="kondisi" 
-                                    class="select select-bordered h-12 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
+                                    class="select select-bordered h-12 w-full text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kondisi</option>
                                     <option value="Like New" class="text-teal-600 font-medium">✨ Like New (Seperti Baru)</option>
                                     <option value="Good" class="text-green-600 font-medium">✅ Good (Baik)</option>
@@ -137,29 +137,29 @@
                                     file:bg-teal-50 file:text-teal-700
                                     hover:file:bg-teal-100" />
 
-                                <div class="md:hidden grid grid-cols-2 gap-4 mb-2">
+                                <div class="md:hidden grid grid-cols-2 gap-4 mb-2 w-full">
                                     <button type="button" onclick="openCamera()" 
-                                        class="flex flex-col items-center justify-center gap-2 px-4 py-4 bg-teal-50 text-teal-700 border border-teal-200 rounded-xl hover:bg-teal-100 transition shadow-sm active:scale-95">
+                                        class="flex flex-col items-center justify-center gap-2 px-4 py-4 bg-teal-50 text-teal-700 border border-teal-200 rounded-xl hover:bg-teal-100 transition shadow-sm active:scale-95 w-full">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                         <span class="font-medium text-sm">Ambil Foto</span>
                                     </button>
 
                                     <button type="button" onclick="openGallery()" 
-                                        class="flex flex-col items-center justify-center gap-2 px-4 py-4 bg-white text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition shadow-sm active:scale-95">
+                                        class="flex flex-col items-center justify-center gap-2 px-4 py-4 bg-white text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition shadow-sm active:scale-95 w-full">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         <span class="font-medium text-sm">Pilih Galeri</span>
                                     </button>
                                 </div>
 
-                                <div id="file-info" class="hidden md:hidden mt-3 flex items-center justify-between text-sm text-teal-600 bg-teal-50 px-3 py-3 rounded-lg border border-teal-100">
-                                    <div class="flex items-center truncate">
+                                <div id="file-info" class="hidden md:hidden mt-3 flex items-center justify-between text-sm text-teal-600 bg-teal-50 px-3 py-3 rounded-lg border border-teal-100 w-full">
+                                    <div class="flex items-center truncate overflow-hidden">
                                         <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <div>
-                                            <span id="filename-display" class="font-medium truncate max-w-[150px] block"></span>
+                                        <div class="truncate">
+                                            <span id="filename-display" class="font-medium truncate block"></span>
                                             <span id="filesize-display" class="text-xs text-teal-500 block"></span>
                                         </div>
                                     </div>
-                                    <button type="button" onclick="cancelUpload()" class="text-gray-400 hover:text-red-500 ml-2 p-1">
+                                    <button type="button" onclick="cancelUpload()" class="text-gray-400 hover:text-red-500 ml-2 p-1 flex-shrink-0">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
@@ -178,7 +178,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Deskripsi</span>
                                 </label>
                                 <textarea name="deskripsi" rows="4"
-                                    class="textarea textarea-bordered h-32 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-base" 
+                                    class="textarea textarea-bordered h-32 w-full text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Jelaskan detail barang, kondisi fisik, minus (jika ada), dan kelebihan lainnya...">{{ old('deskripsi') }}</textarea>
                             </div>
 
@@ -362,7 +362,6 @@
                         loadingOverlay.classList.add('hidden');
                         
                         modal.classList.remove("hidden");
-                        // Kunci scroll body saat modal terbuka
                         document.body.style.overflow = 'hidden'; 
                         
                         animateOpen(modalPanel, modalOverlay);
@@ -402,7 +401,6 @@
         function closeModal() {
             animateClose(modalPanel, modalOverlay, () => {
                 modal.classList.add("hidden");
-                // Kembalikan scroll body
                 document.body.style.overflow = 'auto'; 
                 fileInfoContainer.classList.remove("hidden");
             });
@@ -414,7 +412,6 @@
                 fileInfoContainer.classList.add("hidden");
                 filenameDisplay.innerText = "";
                 modal.classList.add("hidden");
-                // Kembalikan scroll body
                 document.body.style.overflow = 'auto'; 
             });
         }
