@@ -11,16 +11,16 @@
     </x-slot>
 
     @if(session('success'))
-        <div id="toast-success" class="fixed top-5 right-5 z-[100] transform transition-all duration-500 ease-in-out translate-x-full opacity-0">
-            <div class="flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow-xl border-l-4 border-teal-500" role="alert">
-                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-teal-500 bg-teal-100 rounded-lg">
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none">
+            <div class="mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl border-t-4 border-teal-500 pointer-events-auto" role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-teal-500 bg-teal-100 rounded-lg">
+                    <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                     </svg>
                 </div>
-                <div class="ml-3 text-sm font-normal text-gray-800">{{ session('success') }}</div>
-                <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 transition">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <div class="ml-4 text-base font-medium text-gray-800 flex-grow">{{ session('success') }}</div>
+                <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-9 w-9 transition">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
                 </button>
@@ -30,40 +30,22 @@
 
     <div class="py-6 sm:py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-
                 @forelse ($data as $item)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
-                        
                         <div class="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden group">
-                            <img src="{{ asset('storage/' . $item->image_path) }}" 
-                                 alt="{{ $item->name }}" 
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                            
+                            <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div class="absolute top-2 left-2 sm:top-3 sm:left-3">
-                                <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">
-                                    {{ $item->kategori }}
-                                </span>
+                                <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">{{ $item->kategori }}</span>
                             </div>
                         </div>
-
                         <div class="p-3 sm:p-5 flex flex-col flex-grow">
                             <div class="flex justify-between items-start mb-1 sm:mb-2">
-                                <h3 class="text-sm sm:text-lg font-bold text-gray-900 line-clamp-1" title="{{ $item->name }}">
-                                    {{ $item->name }}
-                                </h3>
+                                <h3 class="text-sm sm:text-lg font-bold text-gray-900 line-clamp-1" title="{{ $item->name }}">{{ $item->name }}</h3>
                             </div>
-
-                            <p class="text-base sm:text-xl font-bold text-teal-600 mb-2 sm:mb-3">
-                                Rp {{ number_format($item->price, 0, ',', '.') }}
-                            </p>
-
+                            <p class="text-base sm:text-xl font-bold text-teal-600 mb-2 sm:mb-3">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                             <div class="flex flex-wrap items-center gap-1 sm:gap-2 mb-2 sm:mb-4 text-xs sm:text-sm">
-                                <span class="flex items-center text-gray-600 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium">
-                                    {{ $item->ukuran }}
-                                </span>
-
+                                <span class="flex items-center text-gray-600 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium">{{ $item->ukuran }}</span>
                                 @php
                                     $condColor = match($item->kondisi) {
                                         'Like New' => 'text-blue-700 bg-blue-50 border-blue-100',
@@ -72,19 +54,14 @@
                                         default => 'text-gray-600 bg-gray-50',
                                     };
                                 @endphp
-                                <span class="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium border {{ $condColor }}">
-                                    {{ $item->kondisi }}
-                                </span>
+                                <span class="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium border {{ $condColor }}">{{ $item->kondisi }}</span>
                             </div>
-
-                            <p class="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-3 flex-grow">
-                                {{ $item->deskripsi }}
-                            </p>
-                            
+                            <p class="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-3 flex-grow">{{ $item->deskripsi }}</p>
                             <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
-                                <button onclick="openEditModal({{ json_encode($item) }})" 
+                                <button onclick="openEditModal({{ htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8') }})" 
                                     class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    Edit
+                                    <span class="block sm:hidden">EDIT</span>
+                                    <span class="hidden sm:block">EDIT BARANG</span>
                                 </button>
                             </div>
                         </div>
@@ -96,7 +73,6 @@
                         <p class="text-gray-500 max-w-sm mt-1">Mulai tambahkan koleksi barang preloved Anda sekarang.</p>
                     </div>
                 @endforelse
-
             </div>
         </div>
     </div>
@@ -180,24 +156,18 @@
         </div>
     </div>
 
-<div id="delete-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        
+    <div id="delete-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
-
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            
             <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full max-w-lg border border-gray-200">
-                
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                    <div>
-                        
-                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
-                            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                             </svg>
                         </div>
-
-                        <div class="mt-3 text-center">
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">Hapus Barang?</h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
@@ -206,21 +176,16 @@
                                 </p>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
-
                 <div class="bg-gray-50 px-4 py-3 flex flex-col sm:flex-row-reverse sm:px-6 gap-3">
-                    <button type="button" onclick="submitDelete()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto transition-all">
+                    <button type="button" onclick="submitDelete()" class="inline-flex w-full justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto transition-all">
                         Ya, Hapus
                     </button>
-                    <button type="button" onclick="closeDeleteModal()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 sm:w-auto transition-all">
+                    <button type="button" onclick="closeDeleteModal()" class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 sm:w-auto transition-all">
                         Batal
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -230,24 +195,40 @@
     </form>
 
     <script>
+        // --- LOGIC TOAST NOTIFIKASI ---
         const toastSuccess = document.getElementById('toast-success');
+        document.addEventListener("DOMContentLoaded", function() {
+            if (toastSuccess) {
+                // Animasi Masuk (Slide Down)
+                // Hapus class -translate-y-full (yang bikin dia di atas layar) & opacity-0
+                setTimeout(() => {
+                    toastSuccess.classList.remove('-translate-y-full', 'opacity-0');
+                }, 100);
+
+                // Animasi Keluar (Slide Up) setelah 5 detik
+                setTimeout(() => {
+                    closeToast();
+                }, 5000);
+            }
+        });
+
+        function closeToast() {
+            if(toastSuccess) {
+                // Tambahkan lagi class agar naik ke atas & transparan
+                toastSuccess.classList.add('-translate-y-full', 'opacity-0');
+                
+                // Hapus dari display setelah animasi selesai (opsional)
+                setTimeout(() => {
+                    toastSuccess.style.display = 'none';
+                }, 500); 
+            }
+        }
+
+        // --- LOGIC MODAL & FORM ---
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-form');
         const deleteModal = document.getElementById('delete-modal');
         const deleteForm = document.getElementById('delete-form');
-
-        document.addEventListener("DOMContentLoaded", function() {
-            if (toastSuccess) {
-                setTimeout(() => toastSuccess.classList.remove('translate-x-full', 'opacity-0'), 100);
-                setTimeout(() => closeToast(), 5000);
-            }
-        });
-        function closeToast() {
-            if(toastSuccess) {
-                toastSuccess.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => toastSuccess.style.display = 'none', 500);
-            }
-        }
 
         function openEditModal(product) {
             editForm.action = `/barang/${product.id}`;
