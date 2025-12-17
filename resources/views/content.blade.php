@@ -135,7 +135,7 @@
                     </div>
 
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center">
-                        <button type="button" onclick="confirmDelete()" class="inline-flex justify-center items-center rounded-lg border border-transparent px-4 py-2 bg-red-100 text-red-700 text-sm font-medium hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
+                        <button type="button" onclick="openDeleteModal()" class="inline-flex justify-center items-center rounded-lg border border-transparent px-4 py-2 bg-red-100 text-red-700 text-sm font-medium hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             Hapus
                         </button>
@@ -150,29 +150,55 @@
                         </div>
                     </div>
                 </form>
-
-                <form id="delete-form" method="POST" class="hidden">
-                    @csrf @method('DELETE')
-                </form>
-
             </div>
         </div>
     </div>
 
-    <script>
-        const toastSuccess = document.getElementById('toast-success');
-        const editModal = document.getElementById('edit-modal');
-        const editForm = document.getElementById('edit-form');
-        const deleteForm = document.getElementById('delete-form');
+    <div id="delete-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
 
-        // Toast Notification
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full max-w-sm border border-gray-200">
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                            <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Hapus Barang?</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus barang ini? Data yang dihapus tidak dapat dikembalikan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+                    <button type="button" onclick="submitDelete()" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto">
+                        Ya, Hapus
+                    </button>
+                    <button type="button" onclick="closeDeleteModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="delete-form" method="POST" class="hidden">
+        @csrf @method('DELETE')
+    </form>
+
+    <script>
+        // LOGIKA TOAST
+        const toastSuccess = document.getElementById('toast-success');
         document.addEventListener("DOMContentLoaded", function() {
             if (toastSuccess) {
                 setTimeout(() => toastSuccess.classList.remove('translate-x-full', 'opacity-0'), 100);
                 setTimeout(() => closeToast(), 5000);
             }
         });
-
         function closeToast() {
             if(toastSuccess) {
                 toastSuccess.classList.add('translate-x-full', 'opacity-0');
@@ -180,12 +206,17 @@
             }
         }
 
-        // Modal Logic
+        // ELEMENT MODAL
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-form');
+        const deleteModal = document.getElementById('delete-modal');
+        const deleteForm = document.getElementById('delete-form');
+
+        // BUKA MODAL EDIT
         function openEditModal(product) {
             // Set URL Action untuk Update
             editForm.action = `/barang/${product.id}`;
-            
-            // Set URL Action untuk Delete (penting untuk tombol hapus)
+            // Set URL Action untuk Delete (penting agar modal hapus tau ID mana yg dihapus)
             deleteForm.action = `/barang/${product.id}`;
 
             document.getElementById('edit-name').value = product.name;
@@ -202,11 +233,19 @@
             editModal.classList.add('hidden');
         }
 
-        // Konfirmasi Hapus
-        function confirmDelete() {
-            if(confirm("Apakah Anda yakin ingin menghapus barang ini secara permanen?")) {
-                deleteForm.submit();
-            }
+        // LOGIKA MODAL HAPUS
+        function openDeleteModal() {
+            // Tampilkan modal hapus di atas modal edit
+            deleteModal.classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            deleteModal.classList.add('hidden');
+        }
+
+        function submitDelete() {
+            // Submit form hapus yang hidden
+            deleteForm.submit();
         }
     </script>
 </x-app-layout>
