@@ -113,4 +113,9 @@ class PromotionController extends Controller
 
         return back()->with('success', 'Promosi berhasil dikirim ulang ! 🚀');
     }
+
+    public function show(){
+        $data = Promotion::latest()->get();
+        return response()->json($data);
+    }
 }
