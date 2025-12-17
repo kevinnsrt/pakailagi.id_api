@@ -29,7 +29,7 @@
                 </header>
             @endisset
 
-            <main>
+            <main class="pb-24 md:pb-8">
                 {{ $slot }}
             </main>
         </div>
