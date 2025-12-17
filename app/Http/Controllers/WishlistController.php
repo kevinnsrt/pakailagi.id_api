@@ -74,20 +74,9 @@ public function store(Request $request)
         return response()->json($data);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Wishlist $wishlist)
+    public function destroy(Request $request)
     {
-        //
-    }
-
-    /**
-     * Remove specific wishlist item.
-     */
-    public function destroy($id)
-    {
-        $wishlist = Wishlist::find($id);
+        $wishlist = Wishlist::find($request->id);
 
         if (! $wishlist) {
             return response()->json([
