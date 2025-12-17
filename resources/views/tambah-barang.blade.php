@@ -86,19 +86,103 @@
                                 </select>
                             </div>
 
-                            <div class="form-control w-full">
-                                <label class="label mb-1">
-                                    <span class="label-text text-gray-700 font-semibold">Harga</span>
-                                </label>
-                                <div class="relative w-full">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
-                                    </div>
-                                    <input name="price" type="number" value="{{ old('price') }}"
-                                        class="input input-bordered h-12 w-full text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
-                                        placeholder="0" required />
-                                </div>
-                            </div>
+<div class="form-control w-full">
+    <label class="label mb-1">
+        <span class="label-text text-gray-700 font-semibold">Harga</span>
+    </label>
+    <div class="relative w-full">
+        <div id="price-scrub-handle" 
+             class="absolute inset-y-0 left-0 pl-3 flex items-center cursor-ew-resize select-none z-10 hover:text-teal-600 transition-colors group"
+             title="Tahan dan geser kiri/kanan untuk atur harga">
+            <span class="text-gray-500 sm:text-sm font-bold group-hover:text-teal-600">Rp</span>
+            <svg class="w-3 h-3 ml-1 text-gray-400 group-hover:text-teal-500 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+        </div>
+
+            <input name="price" id="price-input" type="number" value="{{ old('price') }}"
+                class="input input-bordered h-12 w-full pl-14 text-base focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                placeholder="0" required />
+        </div>
+            <label class="label">
+                <span class="label-text-alt text-gray-400 text-xs">Tips: Klik & geser label "Rp" untuk atur harga cepat.</span>
+            </label>
+        </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const handle = document.getElementById('price-scrub-handle');
+            const input = document.getElementById('price-input');
+            
+            let isDragging = false;
+            let startX = 0;
+            let startValue = 0;
+            
+            // Sensitivitas: Semakin besar angkanya, semakin cepat harga naik
+            // 1 pixel geser = Rp 1.000
+            const SENSITIVITY = 1000; 
+
+            // --- LOGIKA MOUSE (DESKTOP) ---
+            handle.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                startX = e.clientX;
+                // Jika input kosong, anggap 0
+                startValue = parseInt(input.value) || 0;
+                
+                // Ubah cursor body agar tetap resize walau mouse keluar dari handle
+                document.body.style.cursor = 'ew-resize';
+                // Hindari seleksi teks saat drag
+                document.body.style.userSelect = 'none';
+            });
+
+            // --- LOGIKA TOUCH (MOBILE) ---
+            handle.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                startValue = parseInt(input.value) || 0;
+                // Prevent scroll layar saat drag harga
+                e.preventDefault(); 
+            }, { passive: false });
+
+            // --- FUNGSI UPDATE NILAI (SHARED) ---
+            const handleMove = (clientX) => {
+                if (!isDragging) return;
+
+                const currentX = clientX;
+                // Hitung jarak geser (delta)
+                const deltaX = currentX - startX;
+                
+                // Hitung harga baru
+                let newValue = startValue + (deltaX * SENSITIVITY);
+                
+                // Pastikan tidak minus
+                if (newValue < 0) newValue = 0;
+
+                input.value = newValue;
+            };
+
+            // --- FUNGSI STOP DRAG ---
+            const stopDrag = () => {
+                if (isDragging) {
+                    isDragging = false;
+                    document.body.style.cursor = 'default';
+                    document.body.style.userSelect = 'auto';
+                }
+            };
+
+            // --- GLOBAL LISTENERS (Agar bisa drag sampai keluar elemen) ---
+            
+            // Desktop
+            document.addEventListener('mousemove', (e) => handleMove(e.clientX));
+            document.addEventListener('mouseup', stopDrag);
+
+            // Mobile
+            document.addEventListener('touchmove', (e) => {
+                if(isDragging) handleMove(e.touches[0].clientX);
+            });
+            document.addEventListener('touchend', stopDrag);
+        });
+    </script>
 
                             <div class="form-control w-full">
                                 <label class="label mb-1">
