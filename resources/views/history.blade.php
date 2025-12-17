@@ -137,8 +137,8 @@
                             
                             <div class="text-sm text-gray-600 mb-4 space-y-2">
                                 <div class="flex items-center gap-2">
-                                    @if (!empty($item->profile_picture))
-                                        <img src="{{ asset('storage/' . $item->profile_picture) }}" 
+                                    @if (!empty($item->user->profile_picture))
+                                        <img src="{{ asset('storage/' . $item->user->profile_picture) }}" 
                                              class="w-5 h-5 rounded-full object-cover border border-gray-200">
                                     @else
                                         <div class="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-[10px] border border-teal-200">
