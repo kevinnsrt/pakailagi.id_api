@@ -82,7 +82,7 @@ class CartController extends Controller
     // dashboard history admin web
     public function historyAdmin()
     {
-        $data = Cart::with(['user', 'product'])->get();
+        $data = Cart::with(['user', 'product'])->latest()->get();
 
         return view('history', compact('data'));
     }

@@ -12,7 +12,7 @@ class ProductsController extends Controller
     // menampilkan semua barang pada produk
     public function index(Request $request)
     {
-        $data = Product::all()->map(function ($product) {
+        $data = Product::latest()->get()->map(function ($product) {
             // Mengubah image_path menjadi full URL
             $product->image_path = URL::to('/storage/' . $product->image_path);
             return $product;
@@ -87,7 +87,7 @@ class ProductsController extends Controller
     public function show()
     {
         //
-        $data = Product::all();
+        $data = Product::latest()->get();
 
         return view('content', compact('data'));
     }
