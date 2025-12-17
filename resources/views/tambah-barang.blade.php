@@ -4,9 +4,6 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Tambah Barang Baru') }}
             </h2>
-            <a href="{{ url()->previous() }}" class="text-sm text-gray-500 hover:text-indigo-600 transition">
-                &larr; Kembali
-            </a>
         </div>
     </x-slot>
 
@@ -31,7 +28,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Nama Barang</span>
                                 </label>
                                 <input name="name" type="text" 
-                                    class="input input-bordered w-full focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg" 
+                                    class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: Kemeja Flannel Uniqlo" required />
                             </div>
 
@@ -40,7 +37,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Kategori</span>
                                 </label>
                                 <select name="kategori" id="kategori" 
-                                    class="select select-bordered w-full focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg text-gray-700">
+                                    class="select select-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kategori</option>
                                     <option value="Atasan">Atasan</option>
                                     <option value="Bawahan">Bawahan</option>
@@ -61,7 +58,7 @@
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
                                     <input name="price" type="number" 
-                                        class="input input-bordered w-full pl-10 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg" 
+                                        class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
                             </div>
@@ -71,7 +68,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Ukuran</span>
                                 </label>
                                 <input name="ukuran" type="text" 
-                                    class="input input-bordered w-full focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg" 
+                                    class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: M, L, XL, 40, 42" />
                             </div>
 
@@ -80,9 +77,9 @@
                                     <span class="label-text text-gray-700 font-semibold">Kondisi Barang</span>
                                 </label>
                                 <select name="kondisi" id="kondisi" 
-                                    class="select select-bordered w-full focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg text-gray-700">
+                                    class="select select-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kondisi</option>
-                                    <option value="Like New" class="text-indigo-600 font-medium">✨ Like New (Seperti Baru)</option>
+                                    <option value="Like New" class="text-teal-600 font-medium">✨ Like New (Seperti Baru)</option>
                                     <option value="Good" class="text-green-600 font-medium">✅ Good (Baik)</option>
                                     <option value="Fair" class="text-yellow-600 font-medium">⚠️ Fair (Layak Pakai)</option>
                                 </select>
@@ -93,12 +90,12 @@
                                     <span class="label-text text-gray-700 font-semibold">Foto Barang</span>
                                 </label>
                                 <input name="image" type="file" 
-                                    class="file-input file-input-bordered w-full file-input-ghost focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg text-sm text-gray-500
+                                    class="file-input file-input-bordered w-full file-input-ghost focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
                                     file:mr-4 file:py-2 file:px-4
                                     file:rounded-full file:border-0
                                     file:text-sm file:font-semibold
-                                    file:bg-indigo-50 file:text-indigo-700
-                                    hover:file:bg-indigo-100" />
+                                    file:bg-teal-50 file:text-teal-700
+                                    hover:file:bg-teal-100" />
                                 <label class="label">
                                     <span class="label-text-alt text-gray-400 text-xs mt-1">Format: JPG, PNG (Max 2MB)</span>
                                 </label>
@@ -109,7 +106,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Deskripsi</span>
                                 </label>
                                 <textarea name="deskripsi" rows="4"
-                                    class="textarea textarea-bordered h-32 w-full focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-lg text-base" 
+                                    class="textarea textarea-bordered h-32 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-base" 
                                     placeholder="Jelaskan detail barang, kondisi fisik, minus (jika ada), dan kelebihan lainnya..."></textarea>
                             </div>
 
@@ -118,11 +115,11 @@
 
                     <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-x-4">
                         <button type="button" onclick="history.back()" 
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition">
                             Batal
                         </button>
                         <button type="submit" 
-                            class="px-6 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition shadow-indigo-200">
+                            class="px-6 py-2 text-sm font-medium text-white bg-teal-600 border border-transparent rounded-lg shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition shadow-teal-200">
                             Simpan Barang
                         </button>
                     </div>
