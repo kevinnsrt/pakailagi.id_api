@@ -99,7 +99,18 @@
                                     <td class="px-6 py-4">{{ $order->user->name ?? 'Guest' }}</td>
                                     <td class="px-6 py-4 text-gray-800">{{ $order->product->name ?? '-' }}</td>
                                     <td class="px-6 py-4">
-                                        @include('components.status-badge', ['status' => $order->status])
+                                        @php
+                                            $color = match($order->status) {
+                                                'Selesai' => 'bg-green-100 text-green-700',
+                                                'Diproses' => 'bg-indigo-100 text-indigo-700',
+                                                'Dalam Pengiriman' => 'bg-blue-100 text-blue-700',
+                                                'Dibatalkan' => 'bg-red-100 text-red-700',
+                                                default => 'bg-gray-100 text-gray-600',
+                                            };
+                                        @endphp
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $color }}">
+                                            {{ $order->status }}
+                                        </span>
                                     </td>
                                     <td class="px-6 py-4 text-right text-xs text-gray-400">
                                         {{ $order->created_at->diffForHumans() }}
