@@ -124,13 +124,13 @@
                             // Semakin BESAR angkanya, semakin BERAT/KURANG SENSITIF geserannya.
                             
                             // Mobile: Geser 30px baru nambah harga (Biar stabil)
-                            const PIXELS_PER_STEP_MOBILE = 30; 
+                            const PIXELS_PER_STEP_MOBILE = 15; 
                             // Desktop: Geser 5px baru nambah harga (Mouse lebih presisi)
                             const PIXELS_PER_STEP_DESKTOP = 5;
 
                             // Kelipatan harga
                             const PRICE_STEP_MOBILE = 1000; // Mobile naik per 1000
-                            const PRICE_STEP_DESKTOP = 100; // Desktop naik per 100 (lebih detail)
+                            const PRICE_STEP_DESKTOP = 1000; // Desktop naik per 100 (lebih detail)
 
                             let currentPixelThreshold = PIXELS_PER_STEP_DESKTOP;
                             let currentPriceStep = PRICE_STEP_DESKTOP;
