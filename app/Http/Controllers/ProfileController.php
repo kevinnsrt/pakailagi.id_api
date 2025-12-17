@@ -23,7 +23,7 @@ class ProfileController extends Controller
 
 public function update(Request $request)
 {
-    $user = $request->user(); // pastikan auth middleware aktif
+    $user = $request->user(); 
 
     if (!$user) {
         return response()->json([

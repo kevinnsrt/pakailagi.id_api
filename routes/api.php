@@ -57,10 +57,17 @@ Route::middleware('firebase.auth')->group(function () {
         return response()->json(['success' => true]);
     });
 
+    // location
+    Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
+
+    // wishlist
+    Route::post('/wishlist/user', [WishlistController::class, 'show']);
+    Route::post('/wishlist/store', [WishlistController::class, 'store']);
+
 });
 Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
 // testing tanpa tokenn
-Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
-Route::post('/wishlist/user', [WishlistController::class, 'show']);
+
+
 
 // Route::post('/user/profile', [ProfileController::class, 'update']);
