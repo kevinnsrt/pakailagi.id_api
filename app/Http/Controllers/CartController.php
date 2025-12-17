@@ -120,7 +120,7 @@ public function prosesPesanan($id, FirebaseService $firebase)
 }
 
     // status pesanan -> Dibatalkan
-public function batalPesanan($id){
+public function batalPesanan($id, FirebaseService $firebase){
     // 1. Ambil datanya dulu
     $cart = Cart::find($id);
 
