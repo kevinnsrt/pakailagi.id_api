@@ -1,24 +1,18 @@
 @php
-    // LOGIKA ACTIVE STATE (SERVER SIDE)
+    // Kita tetap butuh logic index untuk Desktop (Sliding menu desktop tetap dipertahankan karena sudah bagus)
     $activeIndex = -1;
-
-    if (request()->routeIs('dashboard')) { 
-        $activeIndex = 0; 
-    } 
-    elseif (request()->routeIs('barang') || request()->routeIs('tambah-barang')) { 
-        $activeIndex = 1; 
-    } 
-    elseif (request()->routeIs('history.admin')) { 
-        $activeIndex = 2; 
-    } 
-    elseif (request()->routeIs('promosi.index')) { 
-        $activeIndex = 3; 
-    }
+    if (request()->routeIs('dashboard')) { $activeIndex = 0; } 
+    elseif (request()->routeIs('barang') || request()->routeIs('tambah-barang')) { $activeIndex = 1; } 
+    elseif (request()->routeIs('history.admin')) { $activeIndex = 2; } 
+    elseif (request()->routeIs('promosi.index')) { $activeIndex = 3; }
 @endphp
 
 <nav x-data="{ 
+        // Logic Desktop
         activeIndex: {{ $activeIndex }},
         hoverIndex: null,
+        
+        // Logic Mobile Modal
         mobileMenuOpen: false
     }" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
@@ -37,7 +31,6 @@
                 </div>
 
                 <div class="hidden sm:ml-10 sm:flex sm:items-center relative h-full" x-ref="navContainer">
-                    
                     <div class="absolute bottom-0 h-1 bg-teal-600 rounded-full transition-all duration-300 ease-out z-0 pointer-events-none"
                          x-show="hoverIndex !== null || activeIndex !== -1"
                          x-cloak
@@ -46,7 +39,6 @@
                              let refs = [$refs.link0, $refs.link1, $refs.link2, $refs.link3];
                              let target = refs[targetIndex];
                              if(!target) return 'opacity: 0';
-                             // Presisi Pixel Desktop
                              return `left: ${target.offsetLeft + 4}px; width: ${target.offsetWidth - 8}px; opacity: 1;`;
                          })()">
                     </div>
@@ -82,7 +74,7 @@
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-full text-gray-500 bg-gray-50 hover:text-teal-600 hover:bg-teal-50 focus:outline-none transition ease-in-out duration-150 group">
                             <div class="h-8 w-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700 font-bold text-xs mr-2 border border-teal-200 group-hover:bg-teal-200 transition">{{ substr(Auth::user()->name, 0, 1) }}</div>
                             <div class="font-semibold">{{ Auth::user()->name }}</div>
-                            <div class="ms-1"><svg class="fill-current h-4 w-4 text-gray-400 group-hover:text-teal-500 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
+                            <div class="ms-1"><svg class="fill-current h-4 w-4 text-gray-400 group-hover:text-teal-500 transition" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
                         </button>
                     </x-slot>
                     <x-slot name="content">
@@ -105,61 +97,30 @@
     </div>
 
     <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 pb-safe">
-        
-        <div class="relative grid grid-cols-4 h-16 w-full" x-ref="mobileNavContainer">
+        <div class="grid grid-cols-4 h-16 w-full">
             
-            <div class="absolute top-0 h-1 bg-teal-500 rounded-b-full shadow-[0_0_10px_rgba(20,184,166,0.6)] z-10 transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1)"
-                 x-show="activeIndex !== -1"
-                 x-cloak
-                 :style="(() => {
-                     // Ambil referensi ke elemen tombol mobile
-                     let refs = [$refs.mLink0, $refs.mLink1, $refs.mLink2, $refs.mLink3];
-                     let target = refs[activeIndex];
-                     
-                     // Jika target tidak ditemukan, sembunyikan
-                     if(!target) return 'opacity: 0;';
-                     
-                     // Kalkulasi posisi exact (left & width)
-                     // Tambah sedikit margin agar garis tidak memenuhi 100% lebar tombol
-                     let width = target.offsetWidth * 0.6; // 60% dari lebar tombol
-                     let left = target.offsetLeft + (target.offsetWidth - width) / 2; // Center alignment
-                     
-                     return `left: ${left}px; width: ${width}px; opacity: 1;`;
-                 })()">
-                 
-                 <div class="absolute top-0 -left-1/2 w-[200%] h-12 bg-gradient-to-b from-teal-50/50 to-transparent pointer-events-none"></div>
-            </div>
-
-            <a href="{{ route('dashboard') }}" x-ref="mLink0" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
-                <div class="transition-all duration-300 ease-out flex flex-col items-center"
-                     :class="activeIndex === 0 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 0 ? 'opacity-100 font-bold' : 'opacity-80'">Home</span>
-                </div>
+            <a href="{{ route('dashboard') }}" 
+               class="flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('dashboard') ? 'font-bold' : '' }}">Home</span>
             </a>
 
-            <a href="{{ route('barang') }}" x-ref="mLink1" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
-                <div class="transition-all duration-300 ease-out flex flex-col items-center"
-                     :class="activeIndex === 1 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 1 ? 'opacity-100 font-bold' : 'opacity-80'">Produk</span>
-                </div>
+            <a href="{{ route('barang') }}" 
+               class="flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200 {{ request()->routeIs('barang') || request()->routeIs('tambah-barang') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('barang') || request()->routeIs('tambah-barang') ? 'font-bold' : '' }}">Produk</span>
             </a>
 
-            <a href="{{ route('history.admin') }}" x-ref="mLink2" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
-                <div class="transition-all duration-300 ease-out flex flex-col items-center"
-                     :class="activeIndex === 2 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 2 ? 'opacity-100 font-bold' : 'opacity-80'">History</span>
-                </div>
+            <a href="{{ route('history.admin') }}" 
+               class="flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200 {{ request()->routeIs('history.admin') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('history.admin') ? 'font-bold' : '' }}">History</span>
             </a>
 
-            <a href="{{ route('promosi.index') }}" x-ref="mLink3" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
-                <div class="transition-all duration-300 ease-out flex flex-col items-center"
-                     :class="activeIndex === 3 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 3 ? 'opacity-100 font-bold' : 'opacity-80'">Promosi</span>
-                </div>
+            <a href="{{ route('promosi.index') }}" 
+               class="flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200 {{ request()->routeIs('promosi.index') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                <span class="text-[10px] font-medium {{ request()->routeIs('promosi.index') ? 'font-bold' : '' }}">Promosi</span>
             </a>
 
         </div>
