@@ -83,7 +83,8 @@
     <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
-        <div class="flex min-h-full items-center justify-center p-4 text-center">
+        <div class="flex min-h-screen items-center justify-center p-4">
+            
             <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 opacity-0 scale-90">
                 
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
@@ -163,8 +164,10 @@
     <div id="delete-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
-        <div class="flex min-h-full items-center justify-center p-4 text-center">
+        <div class="flex min-h-screen items-center justify-center p-4">
+            
             <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 opacity-0 scale-90">
+                
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div>
                         <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
@@ -172,6 +175,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                             </svg>
                         </div>
+
                         <div class="mt-3 text-center">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">Hapus Barang?</h3>
                             <div class="mt-2">
@@ -183,6 +187,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="bg-gray-50 px-4 py-3 flex flex-col sm:flex-row-reverse sm:px-6 gap-3">
                     <button type="button" onclick="submitDelete()" 
                         class="inline-flex w-full justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto transition-all">
@@ -204,25 +209,21 @@
     <script>
         // --- ANIMASI ROBUST (BULLETPROOF) ---
         function animateFromButton(panel, buttonElement, overlay) {
-            // 1. Reset State (Matikan transisi, sembunyikan)
+            // 1. Reset State
             panel.style.transition = 'none';
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.9)'; 
-            panel.classList.remove('scale-100', 'opacity-100'); // Hapus class tailwind active
-
-            // 2. Hitung Posisi (Hanya jika button ada)
+            
+            // 2. Hitung Posisi
             if (buttonElement) {
                 const btnRect = buttonElement.getBoundingClientRect();
                 const panelRect = panel.getBoundingClientRect();
                 
-                // Hitung koordinat tengah
                 const btnX = btnRect.left + btnRect.width / 2;
                 const btnY = btnRect.top + btnRect.height / 2;
                 const panelX = panelRect.left + panelRect.width / 2;
                 const panelY = panelRect.top + panelRect.height / 2;
 
-                // Hitung offset origin relatif terhadap panel
-                // (Kita set origin ke titik tombol)
                 const originX = btnX - panelRect.left;
                 const originY = btnY - panelRect.top;
 
@@ -231,16 +232,14 @@
                 panel.style.transformOrigin = 'center center';
             }
 
-            // 3. Paksa Reflow (Browser membaca ulang posisi)
+            // 3. Paksa Reflow
             void panel.offsetWidth;
 
-            // 4. Aktifkan Transisi & Jalankan Animasi
-            panel.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'; // Efek Bounce Halus
+            // 4. Jalankan Animasi
+            panel.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
             
             requestAnimationFrame(() => {
                 overlay.classList.remove('opacity-0');
-                
-                // Override inline style dengan class tailwind atau set manual
                 panel.style.opacity = '1';
                 panel.style.transform = 'scale(1)';
             });
@@ -280,10 +279,7 @@
             document.getElementById('edit-ukuran').value = product.ukuran;
             document.getElementById('edit-deskripsi').value = product.deskripsi;
             
-            // Tampilkan Wrapper
             editModal.classList.remove('hidden');
-            
-            // Jalankan Animasi
             animateFromButton(editPanel, buttonElement, editOverlay);
         }
 
