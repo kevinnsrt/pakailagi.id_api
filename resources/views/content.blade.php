@@ -89,11 +89,13 @@
         </div>
     </div>
 
-    <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
+<div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 w-full max-w-lg border border-gray-200">
+            
+            <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg border border-gray-200 z-10">
                 
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
                     <h3 class="text-lg font-bold text-gray-900">Edit Barang</h3>
@@ -107,7 +109,6 @@
                     @method('PUT') 
 
                     <div class="px-4 py-5 sm:p-6 space-y-4">
-                        
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Nama Barang</label>
                             <input type="text" name="name" id="edit-name" class="input input-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 h-10" required>
@@ -156,7 +157,6 @@
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Ganti Foto (Opsional)</label>
                             <input type="file" name="image" class="file-input file-input-bordered w-full file-input-xs rounded-lg text-xs">
                         </div>
-
                     </div>
 
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 flex flex-row-reverse gap-3">
