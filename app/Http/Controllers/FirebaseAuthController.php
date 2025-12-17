@@ -30,27 +30,10 @@ public function register(Request $request)
 
 // mengambil data user
 public function getUserdata(Request $request){
-    // ambil user berdasarkan uid
-    $user = User::find($request->uid);
-
-    if (!$user) {
-        return response()->json([
-            'success' => false,
-            'message' => 'User tidak ditemukan',
-        ], 404);
-    }
-
-    // tambahkan URL lengkap untuk profile_picture
-    $user->profile_picture_url = $user->profile_picture 
-        ? URL::to('/storage/' . $user->profile_picture) 
-        : null;
-
-    return response()->json([
-        'success' => true,
-        'data' => $user,
-    ]);
+    $data = User::find($request->uid);
+    $data->profile_picture = URL::to('/storage/' . $data->profile_picture);
+    return response()->json($data);
 }
-
 
 // register google
 public function registerGoogle(Request $request)
