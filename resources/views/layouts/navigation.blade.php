@@ -1,16 +1,21 @@
+@php
+    // Tentukan Index Aktif di Server Side agar posisi awal presisi
+    $activeIndex = -1;
+    if (request()->routeIs('dashboard')) { $activeIndex = 0; }
+    elseif (request()->routeIs('tambah-barang')) { $activeIndex = 1; }
+    elseif (request()->routeIs('barang')) { $activeIndex = 2; }
+    elseif (request()->routeIs('history.admin')) { $activeIndex = 3; }
+    elseif (request()->routeIs('promosi.index')) { $activeIndex = 4; }
+@endphp
+
 <nav x-data="{ 
-        // Logic Index (Untuk Desktop & Mobile)
-        // 0: Dashboard, 1: Tambah, 2: Barang, 3: History, 4: Promosi
-        activeIndex: {{ 
-            request()->routeIs('dashboard') ? 0 : 
-            (request()->routeIs('tambah-barang') ? 1 : 
-            (request()->routeIs('barang') ? 2 : 
-            (request()->routeIs('history.admin') ? 3 : 
-            (request()->routeIs('promosi.index') ? 4 : -1)))) 
-        }},
+        // Gunakan nilai dari PHP
+        activeIndex: {{ $activeIndex }},
         hoverIndex: null,
-        mobileMenuOpen: false 
+        mobileMenuOpen: false,
+        mounted: false // State untuk mencegah animasi saat loading
     }" 
+    x-init="setTimeout(() => mounted = true, 300)" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,7 +79,6 @@
                     <span class="text-xs font-bold text-teal-700">{{ substr(Auth::user()->name, 0, 1) }}</span>
                 </button>
             </div>
-
         </div>
     </div>
 
@@ -82,13 +86,12 @@
         
         <div class="relative grid grid-cols-4 h-16 w-full">
             
-            <div class="absolute top-0 left-0 w-1/4 h-full pointer-events-none transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1)"
+            <div class="absolute top-0 left-0 w-1/4 h-full pointer-events-none"
                  x-show="activeIndex !== -1 && activeIndex < 4" 
-                 x-cloak
-                 :style="'transform: translateX(' + (activeIndex * 100) + '%)'">
+                 :class="mounted ? 'transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1)' : ''"
+                 style="transform: translateX({{ max(0, $activeIndex) * 100 }}%)">
                 
-                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-teal-500 rounded-b-full shadow-[0_0_10px_rgba(20,184,166,0.7)]"></div>
-                
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-teal-500 rounded-b-full shadow-[0_0_10px_rgba(20,184,166,0.7)]"></div>
                 <div class="absolute top-0 inset-x-0 h-full bg-gradient-to-b from-teal-50/80 to-transparent mx-2 rounded-t-lg"></div>
             </div>
 
