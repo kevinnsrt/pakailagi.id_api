@@ -63,7 +63,7 @@ public function store(Request $request, FirebaseService $firebase)
 );
 
 
-    return view('dashboard');
+    return redirect()->route('barang');
 }
 
 

@@ -19,7 +19,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/proses/pesanan/{id}', [CartController::class, 'prosesPesanan'])->name('proses.pesanan');
     Route::post('/batal/pesanan/{id}', [CartController::class, 'batalPesanan'])->name('batal.pesanan');
     Route::post('/tambah-barang', [ProductsController::class, 'store'])->name('tambah-barang-post');
-    Route::get('/barang', [ProductsController::class, 'show'])->name('barang');
+    Route::get('/barang', [ProductsController::class, 'show'])->name('barang'); 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
