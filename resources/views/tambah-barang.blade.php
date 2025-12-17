@@ -33,7 +33,7 @@
         </div>
     @endif
 
-    <div class="py-12 bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="py-6 bg-gray-50 min-h-screen w-full overflow-x-hidden">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             
             @if ($errors->any())
