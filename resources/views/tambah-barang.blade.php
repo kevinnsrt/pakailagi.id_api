@@ -124,7 +124,7 @@
                             // Semakin BESAR angkanya, semakin BERAT/KURANG SENSITIF geserannya.
                             
                             // Mobile: Geser 30px baru nambah harga (Biar stabil)
-                            const PIXELS_PER_STEP_MOBILE = 15; 
+                            const PIXELS_PER_STEP_MOBILE = 5; 
                             // Desktop: Geser 5px baru nambah harga (Mouse lebih presisi)
                             const PIXELS_PER_STEP_DESKTOP = 5;
 
