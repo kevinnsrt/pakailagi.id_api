@@ -125,6 +125,19 @@ public function prosesPesanan($id, FirebaseService $firebase)
             'status' => 'Dibatalkan'
         ]);
 
+            // Ambil user
+    $user = User::find($cart->uid);
+
+    // Kirim notif jika ada token
+    if ($user && $user->fcm_token) {
+        $firebase->sendToToken(
+            $user->fcm_token,
+            'Pesanan Anda Dibatalkan 😔',
+            $cart->product->name . ' dibatalkan',
+            null
+        );
+    }
+
         return redirect(route('history.admin'));
     }
 
