@@ -44,20 +44,28 @@ Route::middleware('firebase.auth')->group(function () {
     // update profile
     Route::post('/user/profile', [ProfileController::class, 'update']);
 
-
     // fcm token
     Route::post('/save-fcm-token', function (Request $request) {
         $request->validate([
             'fcm_token' => 'required|string',
         ]);
 
-        $request->user()->update([
+        $uid = $request->attributes->get('firebase_uid');
+
+        if (!$uid) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+         }
+
+         $data = User::find($uid);
+
+        $data->update([
             'fcm_token' => $request->fcm_token,
         ]);
         // dd($request->user(), $request->fcm_token);
 
         return response()->json(['success' => true]);
     });
+
 
     // location
     Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
