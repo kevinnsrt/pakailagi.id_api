@@ -201,41 +201,50 @@
         </div>
     </div>
 
-    <div id="preview-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div id="preview-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeModal()"></div>
+<div id="preview-modal" class="hidden relative z-[150]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div id="preview-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeModal()"></div>
 
-        <div class="flex min-h-screen items-center justify-center p-4 text-center">
-            <div id="preview-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
                 
-                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start flex-col items-center">
-                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4 text-center" id="modal-title">Preview Foto</h3>
-                            <div class="mt-2 flex justify-center bg-gray-100 rounded-lg border border-dashed border-gray-300 p-2">
-                                <img id="modal-image-preview" src="#" alt="Preview Upload" class="max-h-[300px] w-auto object-contain rounded-md shadow-sm" />
+                <div id="preview-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
+                    
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="flex flex-col items-center">
+                            <div class="mt-2 text-center w-full">
+                                <h3 class="text-lg font-bold leading-6 text-gray-900 mb-4" id="modal-title">Preview Foto</h3>
+                                
+                                <div class="relative flex justify-center bg-gray-100 rounded-lg border border-dashed border-gray-300 p-2">
+                                    <img id="modal-image-preview" src="#" alt="Preview Upload" class="max-h-[60vh] w-auto object-contain rounded-md shadow-sm" />
+                                </div>
+
+                                <div class="mt-3 space-y-1">
+                                    <p id="modal-filename" class="text-sm font-medium text-gray-700 truncate px-4"></p>
+                                    <p id="modal-filesize" class="text-xs text-teal-600 font-bold"></p>
+                                </div>
                             </div>
-                            <p id="modal-filename" class="text-sm text-gray-500 mt-2 text-center break-all"></p>
-                            <p id="modal-filesize" class="text-xs text-teal-600 mt-1 text-center font-semibold"></p>
                         </div>
                     </div>
-                </div>
-                
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
-                    <button type="button" onclick="closeModal()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all sm:w-auto">
-                        Konfirmasi
-                    </button>
-                    <button type="button" onclick="cancelUpload()" 
-                        class="mt-3 sm:mt-0 inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
-                        Ganti Foto
-                    </button>
+                    
+                    <div class="bg-gray-50 px-4 py-4 sm:px-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+                        <button type="button" onclick="cancelUpload()" 
+                            class="w-full sm:w-auto inline-flex justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all">
+                            Ganti Foto
+                        </button>
+                        <button type="button" onclick="closeModal()" 
+                            class="w-full sm:w-auto inline-flex justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all">
+                            Konfirmasi
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- TOAST & UI LOGIC ---
+        // --- SCRIPT PERBAIKAN ---
+
+        // LOGIKA TOAST
         const toastSuccess = document.getElementById('toast-success');
         const uploadForm = document.getElementById('upload-form');
         const loadingOverlay = document.getElementById('loading-overlay');
@@ -260,8 +269,7 @@
             loadingOverlay.classList.remove('hidden');
         });
 
-        // --- COMPRESSION LOGIC ---
-        // Fungsi Kompresi Gambar
+        // --- COMPRESSION LOGIC (SAMA SEPERTI SEBELUMNYA) ---
         async function compressImage(file, { quality = 0.7, maxWidth = 1280, type = 'image/jpeg' }) {
             return new Promise((resolve, reject) => {
                 const image = new Image();
@@ -271,7 +279,6 @@
                     let width = image.width;
                     let height = image.height;
 
-                    // Resize jika melebihi maxWidth
                     if (width > maxWidth) {
                         height *= maxWidth / width;
                         width = maxWidth;
@@ -283,10 +290,7 @@
                     ctx.drawImage(image, 0, 0, width, height);
 
                     canvas.toBlob((blob) => {
-                        if (!blob) {
-                            reject(new Error('Canvas is empty'));
-                            return;
-                        }
+                        if (!blob) { reject(new Error('Canvas is empty')); return; }
                         resolve(blob);
                     }, type, quality);
                 };
@@ -330,37 +334,24 @@
             const file = event.target.files[0];
 
             if (file) {
-                // Tampilkan loading saat kompresi
                 loadingText.innerText = "Mengompres Foto...";
                 loadingOverlay.classList.remove('hidden');
 
                 try {
                     let processedFile = file;
-                    let infoText = "";
-
-                    // Cek jika file > 1MB (1024 * 1024 bytes)
+                    
                     if (file.size > 1024 * 1024) {
-                        console.log("File original: " + formatBytes(file.size) + ". Starting compression...");
                         const compressedBlob = await compressImage(file, { quality: 0.7, maxWidth: 1280 });
-                        
-                        // Buat file baru dari blob
                         processedFile = new File([compressedBlob], file.name, {
                             type: compressedBlob.type,
                             lastModified: Date.now(),
                         });
 
-                        // Ganti file di input element menggunakan DataTransfer
                         const dataTransfer = new DataTransfer();
                         dataTransfer.items.add(processedFile);
                         imageInput.files = dataTransfer.files;
-
-                        infoText = `(Dikompres: ${formatBytes(file.size)} -> ${formatBytes(processedFile.size)})`;
-                        console.log("Compressed to: " + formatBytes(processedFile.size));
-                    } else {
-                        infoText = `(${formatBytes(file.size)})`;
                     }
 
-                    // Tampilkan Preview
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         modalImage.src = e.target.result;
@@ -370,9 +361,13 @@
                         filenameDisplay.innerText = processedFile.name;
                         filesizeDisplay.innerText = formatBytes(processedFile.size);
                         
-                        // Sembunyikan loading, tampilkan modal
                         loadingOverlay.classList.add('hidden');
+                        
+                        // OPEN MODAL
                         modal.classList.remove("hidden");
+                        // Kunci scroll body agar tidak goyang di mobile
+                        document.body.style.overflow = 'hidden'; 
+                        
                         animateOpen(modalPanel, modalOverlay);
                     }
                     reader.readAsDataURL(processedFile);
@@ -380,7 +375,7 @@
                 } catch (error) {
                     console.error("Compression failed:", error);
                     loadingOverlay.classList.add('hidden');
-                    alert("Gagal memproses gambar. Silakan coba lagi.");
+                    alert("Gagal memproses gambar.");
                 }
             }
         }
@@ -410,6 +405,8 @@
         function closeModal() {
             animateClose(modalPanel, modalOverlay, () => {
                 modal.classList.add("hidden");
+                // Kembalikan scroll body
+                document.body.style.overflow = 'auto'; 
                 fileInfoContainer.classList.remove("hidden");
             });
         }
@@ -420,6 +417,8 @@
                 fileInfoContainer.classList.add("hidden");
                 filenameDisplay.innerText = "";
                 modal.classList.add("hidden");
+                // Kembalikan scroll body
+                document.body.style.overflow = 'auto'; 
             });
         }
     </script>
