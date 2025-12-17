@@ -60,15 +60,18 @@
                                             <div class="flex items-start gap-1">
                                                 <svg class="w-3 h-3 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                                 
-                                                <span class="load-address leading-snug" 
-                                                      data-lat="{{ $item->user->latitude ?? '' }}" 
-                                                      data-lng="{{ $item->user->longitude ?? '' }}">
+                                                <a href="https://www.google.com/maps/search/?api=1&query={{ $item->user->latitude }},{{ $item->user->longitude }}" 
+                                                   target="_blank"
+                                                   class="load-address leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150" 
+                                                   title="Klik untuk buka di Google Maps"
+                                                   data-lat="{{ $item->user->latitude ?? '' }}" 
+                                                   data-lng="{{ $item->user->longitude ?? '' }}">
                                                     <span class="text-gray-400">Memuat alamat...</span>
                                                     <br>
                                                     <span class="text-[10px] text-gray-400">
                                                         ({{ $item->user->latitude ?? '-' }}, {{ $item->user->longitude ?? '-' }})
                                                     </span>
-                                                </span>
+                                                </a>
                                             </div>
                                         </div>
                                     </td>
@@ -160,11 +163,14 @@
                                 <div class="flex items-start gap-2 pl-0.5">
                                     <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                     
-                                    <span class="load-address text-xs leading-snug" 
-                                          data-lat="{{ $item->user->latitude ?? '' }}" 
-                                          data-lng="{{ $item->user->longitude ?? '' }}">
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $item->user->latitude }},{{ $item->user->longitude }}" 
+                                       target="_blank"
+                                       class="load-address text-xs leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150"
+                                       title="Klik untuk buka di Google Maps"
+                                       data-lat="{{ $item->user->latitude ?? '' }}" 
+                                       data-lng="{{ $item->user->longitude ?? '' }}">
                                         <span class="text-gray-400">Memuat alamat...</span>
-                                    </span>
+                                    </a>
                                 </div>
                             </div>
 
@@ -206,6 +212,9 @@
                     // Cek jika lat/lng kosong
                     if (!lat || !lng || lat === '-' || lng === '-') {
                         element.innerHTML = '<span class="text-gray-400 italic">Lokasi tidak tersedia</span>';
+                        // Hapus href agar tidak bisa diklik jika lokasi kosong
+                        element.removeAttribute('href');
+                        element.classList.remove('hover:underline', 'cursor-pointer');
                         return;
                     }
 
@@ -214,28 +223,23 @@
                         .then(data => {
                             if (data.display_name) {
                                 // Potong alamat agar tidak terlalu panjang (opsional)
-                                // Ambil bagian Jalan, Kota, Provinsi
                                 const fullAddress = data.display_name;
                                 element.innerText = fullAddress;
-                                element.classList.add('text-gray-700'); // Gelapkan teks setelah dimuat
+                                element.classList.add('text-gray-700'); 
                             } else {
-                                element.innerText = "Alamat tidak ditemukan";
+                                element.innerText = "Alamat tidak ditemukan (Buka Peta)";
                             }
                         })
                         .catch(error => {
                             console.error('Error fetching address:', error);
-                            element.innerText = "Gagal memuat alamat";
+                            element.innerText = "Gagal memuat alamat (Buka Peta)";
                         });
                 }, delay);
             };
 
-            // Loop setiap elemen dan beri jeda request (Rate Limiting)
-            // OpenStreetMap gratis memiliki limit request (biasanya 1 req/detik disarankan)
             addressElements.forEach((el, index) => {
                 const lat = el.getAttribute('data-lat');
                 const lng = el.getAttribute('data-lng');
-                
-                // Beri jeda 1.2 detik antar request agar tidak diblokir API
                 fetchAddress(lat, lng, el, index * 1200);
             });
         });
