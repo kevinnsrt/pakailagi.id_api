@@ -67,11 +67,37 @@
                                             </div>
                                         </div>
                                     </td>
+                                    
                                     <td class="px-6 py-4">
-                                        @include('components.status-badge', ['status' => $item->status])
+                                        @php
+                                            $statusClasses = match($item->status) {
+                                                'Selesai' => 'bg-green-50 text-green-700 border-green-100',
+                                                'Diproses' => 'bg-teal-50 text-teal-700 border-teal-100',
+                                                'Dibatalkan' => 'bg-red-50 text-red-700 border-red-100',
+                                                'Dikeranjang' => 'bg-gray-50 text-gray-600 border-gray-200',
+                                                default => 'bg-yellow-50 text-yellow-700 border-yellow-100',
+                                            };
+                                        @endphp
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $statusClasses }}">
+                                            {{ $item->status }}
+                                        </span>
                                     </td>
+
                                     <td class="px-6 py-4 text-right">
-                                        @include('components.action-buttons', ['id' => $item->id, 'status' => $item->status])
+                                        @if ($item->status == 'Diproses')
+                                            <div class="flex items-center justify-end gap-2">
+                                                <form method="POST" action="{{ route('proses.pesanan', $item->id) }}">
+                                                    @csrf
+                                                    <button type="submit" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium rounded-md transition shadow-sm hover:shadow">Proses</button>
+                                                </form>
+                                                <form method="POST" action="{{ route('batal.pesanan', $item->id) }}">
+                                                    @csrf
+                                                    <button type="submit" class="px-3 py-1.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-medium rounded-md transition">Batal</button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-gray-400 italic">No Action</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
@@ -90,11 +116,14 @@
                                     <h4 class="font-bold text-gray-900">{{ $item->product->name ?? 'Unknown Product' }}</h4>
                                 </div>
                                 @php
-                                    $color = match($item->status) {
-                                        'Selesai' => 'bg-green-50 text-green-700', 'Diproses' => 'bg-teal-50 text-teal-700', 'Dibatalkan' => 'bg-red-50 text-red-700', default => 'bg-gray-100 text-gray-600'
+                                    $statusClasses = match($item->status) {
+                                        'Selesai' => 'bg-green-50 text-green-700',
+                                        'Diproses' => 'bg-teal-50 text-teal-700',
+                                        'Dibatalkan' => 'bg-red-50 text-red-700',
+                                        default => 'bg-gray-100 text-gray-600',
                                     };
                                 @endphp
-                                <span class="px-2 py-1 rounded text-xs font-semibold {{ $color }}">{{ $item->status }}</span>
+                                <span class="px-2 py-1 rounded text-xs font-semibold {{ $statusClasses }}">{{ $item->status }}</span>
                             </div>
                             
                             <div class="text-sm text-gray-600 mb-4 space-y-2">
@@ -185,7 +214,7 @@
             
             const fetchAddress = (lat, lng, element, delay) => {
                 setTimeout(() => {
-                    const addressSpan = element.querySelector('.address-text'); // Target SPAN khusus
+                    const addressSpan = element.querySelector('.address-text'); 
                     
                     if (!lat || !lng || lat === '-') {
                         if(addressSpan) addressSpan.innerText = 'Lokasi tidak tersedia'; 
@@ -195,7 +224,6 @@
                     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
                         .then(r => r.json()).then(d => {
                             if (d.display_name && addressSpan) {
-                                // Hanya update teks alamat, koordinat aman
                                 addressSpan.innerText = d.display_name;
                                 addressSpan.classList.remove('text-gray-400');
                                 addressSpan.classList.add('text-gray-700');
