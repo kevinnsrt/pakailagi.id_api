@@ -35,7 +35,7 @@ class FirebaseAuthMiddleware
             $user = User::find($uid);
 
             if (!$user) {
-                 $user = User::firstOrCreate([
+            $user = User::firstOrCreate([
             'id' => $request->uid],
             [
             'name' => $request->username,
