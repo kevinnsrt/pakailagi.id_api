@@ -91,37 +91,44 @@
                                 </label>
                                 
                                 <input name="image" type="file" id="image-input" 
-                                    accept="image/*" 
-                                    onchange="handleFileSelect(event)"
-                                    class="hidden" />
+                                       accept="image/*" 
+                                       onchange="handleFileSelect(event)"
+                                       class="hidden" />
 
-                                <div class="grid grid-cols-2 gap-4 mb-2">
+                                <div class="hidden md:block">
+                                    <div onclick="document.getElementById('image-input').removeAttribute('capture'); document.getElementById('image-input').click()" 
+                                         class="cursor-pointer flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg hover:bg-gray-50 transition">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau drag and drop</p>
+                                            <p class="text-xs text-gray-500">JPG, PNG (MAX. 2MB)</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="md:hidden grid grid-cols-2 gap-4 mb-2">
                                     <button type="button" onclick="openCamera()" 
-                                        class="flex items-center justify-center gap-2 px-4 py-3 bg-teal-50 text-teal-700 border border-teal-200 rounded-xl hover:bg-teal-100 transition shadow-sm">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        class="flex flex-col items-center justify-center gap-2 px-4 py-4 bg-teal-50 text-teal-700 border border-teal-200 rounded-xl hover:bg-teal-100 transition shadow-sm active:scale-95">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                         <span class="font-medium text-sm">Ambil Foto</span>
                                     </button>
 
                                     <button type="button" onclick="openGallery()" 
-                                        class="flex items-center justify-center gap-2 px-4 py-3 bg-white text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition shadow-sm">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        class="flex flex-col items-center justify-center gap-2 px-4 py-4 bg-white text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition shadow-sm active:scale-95">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         <span class="font-medium text-sm">Pilih Galeri</span>
                                     </button>
                                 </div>
 
-                                <div id="file-info" class="hidden flex items-center justify-between text-sm text-teal-600 bg-teal-50 px-3 py-2 rounded-lg border border-teal-100">
+                                <div id="file-info" class="hidden mt-3 flex items-center justify-between text-sm text-teal-600 bg-teal-50 px-3 py-3 rounded-lg border border-teal-100">
                                     <div class="flex items-center truncate">
-                                        <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        <span id="filename-display" class="font-medium truncate max-w-[200px]"></span>
+                                        <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span id="filename-display" class="font-medium truncate max-w-[200px] md:max-w-xs"></span>
                                     </div>
-                                    <button type="button" onclick="cancelUpload()" class="text-gray-400 hover:text-red-500 ml-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    <button type="button" onclick="cancelUpload()" class="text-gray-400 hover:text-red-500 ml-2 p-1">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
-
-                                <label class="label">
-                                    <span class="label-text-alt text-gray-400 text-xs mt-1">Format: JPG, PNG (Max 2MB)</span>
-                                </label>
                             </div>
 
                             <div class="form-control w-full md:col-span-2">
@@ -168,6 +175,7 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
                     <button type="button" onclick="closeModal()" 
                         class="inline-flex w-full justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all sm:w-auto">
@@ -175,7 +183,7 @@
                     </button>
                     
                     <button type="button" onclick="cancelUpload()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
+                        class="mt-3 sm:mt-0 inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
                         Ganti Foto
                     </button>
                 </div>
@@ -192,7 +200,19 @@
         const fileInfoContainer = document.getElementById("file-info");
         const filenameDisplay = document.getElementById("filename-display");
 
-        // 1. Saat user memilih file -> Baca file -> Tampilkan Modal
+        // FUNGSI KHUSUS MOBILE: KAMERA
+        function openCamera() {
+            imageInput.setAttribute('capture', 'environment'); // Pakai kamera belakang
+            imageInput.click();
+        }
+
+        // FUNGSI KHUSUS MOBILE: GALERI
+        function openGallery() {
+            imageInput.removeAttribute('capture'); // Hapus capture agar buka file picker biasa
+            imageInput.click();
+        }
+
+        // SAAT FILE DIPILIH
         function handleFileSelect(event) {
             const file = event.target.files[0];
 
@@ -200,11 +220,8 @@
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
-                    // Set gambar ke modal
                     modalImage.src = e.target.result;
                     modalFilename.innerText = file.name;
-                    
-                    // Set nama file ke indikator form (tapi belum ditampilkan karena tertutup modal)
                     filenameDisplay.innerText = file.name;
                     
                     // Tampilkan Modal
@@ -215,19 +232,18 @@
             }
         }
 
-        // 2. Tombol "Konfirmasi & Tutup" -> Sembunyikan Modal -> Tampilkan Nama File di Form
+        // KONFIRMASI (Tutup Modal, Tampilkan Nama File)
         function closeModal() {
             modal.classList.add("hidden");
-            // Tampilkan indikator nama file di form utama
             fileInfoContainer.classList.remove("hidden");
         }
 
-        // 3. Tombol "Ganti Foto" -> Reset Input -> Tutup Modal
+        // BATAL/RESET (Hapus File, Tutup Modal)
         function cancelUpload() {
-            imageInput.value = ""; // Reset input
-            fileInfoContainer.classList.add("hidden"); // Sembunyikan info file
+            imageInput.value = ""; 
+            fileInfoContainer.classList.add("hidden");
             filenameDisplay.innerText = "";
-            modal.classList.add("hidden"); // Tutup modal
+            modal.classList.add("hidden");
         }
     </script>
 
