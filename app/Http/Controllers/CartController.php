@@ -34,12 +34,15 @@ class CartController extends Controller
     // tambah barang ke keranjang
     public function store(Request $request)
     {
+
+        $uid = $request->attributes->get('firebase_uid');
+
         $request->validate([
             'uid' => 'required|string',
             'product_id'=>'required|string',
         ]);
 
-        $exists = Cart::where('uid',$request->uid)
+        $exists = Cart::where('uid',$uid)
         ->where('product_id',$request->product_id)
         ->exists();
 
@@ -50,7 +53,7 @@ class CartController extends Controller
         }
 
         $data = Cart::create([
-            'uid' => (string) $request->uid,
+            'uid' => (string) $uid,
             'product_id'=>$request->product_id,
             'status'=> 'Dikeranjang'
         ]);
@@ -64,8 +67,10 @@ class CartController extends Controller
     // menampilkan barang yang dikeranjang
     public function show(Request $request)
     {
+        $uid = $request->attributes->get('firebase_uid');
+
         $data = Cart::with('product')
-            ->where('uid', $request->uid)
+            ->where('uid', $uid)
             // ->where('status','Dikeranjang')
             ->get()
             ->map(function($cart) {
