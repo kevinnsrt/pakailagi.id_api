@@ -5,10 +5,13 @@
         </h2>
     </x-slot>
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="bg-white shadow-sm sm:rounded-xl border border-gray-100 overflow-hidden">
+            <div class="bg-white shadow-sm sm:rounded-xl border border-gray-100 overflow-visible">
                 
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h3 class="text-lg font-medium text-gray-900">Daftar Transaksi</h3>
@@ -17,7 +20,7 @@
                     </span>
                 </div>
 
-                <div class="hidden md:block overflow-x-auto">
+                <div class="hidden md:block overflow-x-auto overflow-y-visible"> 
                     <table class="w-full text-left text-sm text-gray-500">
                         <thead class="bg-gray-50 text-xs uppercase text-gray-700">
                             <tr>
@@ -32,46 +35,43 @@
                         <tbody class="divide-y divide-gray-100 border-t border-gray-100">
                             @forelse ($data as $item)
                                 <tr class="hover:bg-gray-50 transition-colors duration-200">
-                                    <td class="px-6 py-4 font-medium text-gray-900">
-                                        #{{ $item->id }}
-                                    </td>
+                                    <td class="px-6 py-4 font-medium text-gray-900">#{{ $item->id }}</td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             @if ($item->user && $item->user->profile_picture)
-                                                <img src="{{ asset('storage/' . $item->user->profile_picture) }}" 
-                                                     alt="{{ $item->user->name }}" 
-                                                     class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                                                <img src="{{ asset('storage/' . $item->user->profile_picture) }}" alt="{{ $item->user->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
                                             @else
-                                                <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs border border-teal-200">
-                                                    {{ substr($item->user->name ?? 'U', 0, 1) }}
-                                                </div>
+                                                <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs border border-teal-200">{{ substr($item->user->name ?? 'U', 0, 1) }}</div>
                                             @endif
-                                            
-                                            <div class="font-medium text-gray-900">
-                                                {{ $item->user->name ?? 'Guest' }}
-                                            </div>
+                                            <div class="font-medium text-gray-900">{{ $item->user->name ?? 'Guest' }}</div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="text-gray-900 font-medium">{{ $item->product->name ?? '-' }}</span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 relative group"> 
                                         <div class="flex flex-col text-xs text-gray-500 max-w-[200px]">
                                             <div class="flex items-start gap-1">
                                                 <svg class="w-3 h-3 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                                 
                                                 <a href="https://www.google.com/maps/search/?api=1&query={{ $item->user->latitude }},{{ $item->user->longitude }}" 
                                                    target="_blank"
-                                                   class="load-address leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150" 
-                                                   title="Klik untuk buka di Google Maps"
+                                                   class="load-address leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150 z-10 relative" 
                                                    data-lat="{{ $item->user->latitude ?? '' }}" 
-                                                   data-lng="{{ $item->user->longitude ?? '' }}">
+                                                   data-lng="{{ $item->user->longitude ?? '' }}"
+                                                   data-id="{{ $item->id }}"
+                                                   onmouseenter="showMap(this)"
+                                                   onmouseleave="hideMap(this)">
                                                     <span class="text-gray-400">Memuat alamat...</span>
                                                     <br>
-                                                    <span class="text-[10px] text-gray-400">
-                                                        ({{ $item->user->latitude ?? '-' }}, {{ $item->user->longitude ?? '-' }})
-                                                    </span>
+                                                    <span class="text-[10px] text-gray-400">({{ $item->user->latitude ?? '-' }}, {{ $item->user->longitude ?? '-' }})</span>
                                                 </a>
+
+                                                <div id="map-container-{{ $item->id }}" 
+                                                     class="hidden absolute left-0 bottom-full mb-2 w-64 h-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden pointer-events-none transition-opacity duration-300 opacity-0">
+                                                    <div id="map-{{ $item->id }}" class="w-full h-full"></div>
+                                                    <div class="absolute -bottom-1 left-4 w-3 h-3 bg-white border-b border-r border-gray-200 transform rotate-45"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -85,25 +85,18 @@
                                                 default => 'bg-yellow-50 text-yellow-700 border-yellow-100',
                                             };
                                         @endphp
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $statusClasses }}">
-                                            {{ $item->status }}
-                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $statusClasses }}">{{ $item->status }}</span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         @if ($item->status == 'Diproses')
                                             <div class="flex items-center justify-end gap-2">
                                                 <form method="POST" action="{{ route('proses.pesanan', $item->id) }}">
                                                     @csrf
-                                                    <button type="submit" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium rounded-md transition shadow-sm hover:shadow">
-                                                        Proses
-                                                    </button>
+                                                    <button type="submit" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium rounded-md transition shadow-sm hover:shadow">Proses</button>
                                                 </form>
-                                                
                                                 <form method="POST" action="{{ route('batal.pesanan', $item->id) }}">
                                                     @csrf
-                                                    <button type="submit" class="px-3 py-1.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-medium rounded-md transition">
-                                                        Batal
-                                                    </button>
+                                                    <button type="submit" class="px-3 py-1.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-medium rounded-md transition">Batal</button>
                                                 </form>
                                             </div>
                                         @else
@@ -141,22 +134,16 @@
                                         default => 'bg-gray-100 text-gray-600',
                                     };
                                 @endphp
-                                <span class="px-2 py-1 rounded text-xs font-semibold {{ $statusClasses }}">
-                                    {{ $item->status }}
-                                </span>
+                                <span class="px-2 py-1 rounded text-xs font-semibold {{ $statusClasses }}">{{ $item->status }}</span>
                             </div>
                             
                             <div class="text-sm text-gray-600 mb-4 space-y-2">
                                 <div class="flex items-center gap-2">
                                     @if ($item->user && $item->user->profile_picture)
-                                        <img src="{{ asset('storage/' . $item->user->profile_picture) }}" 
-                                             class="w-5 h-5 rounded-full object-cover border border-gray-200">
+                                        <img src="{{ asset('storage/' . $item->user->profile_picture) }}" class="w-5 h-5 rounded-full object-cover border border-gray-200">
                                     @else
-                                        <div class="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-[10px] border border-teal-200">
-                                            {{ substr($item->user->name ?? 'U', 0, 1) }}
-                                        </div>
+                                        <div class="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-[10px] border border-teal-200">{{ substr($item->user->name ?? 'U', 0, 1) }}</div>
                                     @endif
-                                    
                                     <span class="font-medium">{{ $item->user->name ?? '-' }}</span>
                                 </div>
 
@@ -166,7 +153,6 @@
                                     <a href="https://www.google.com/maps/search/?api=1&query={{ $item->user->latitude }},{{ $item->user->longitude }}" 
                                        target="_blank"
                                        class="load-address text-xs leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150"
-                                       title="Klik untuk buka di Google Maps"
                                        data-lat="{{ $item->user->latitude ?? '' }}" 
                                        data-lng="{{ $item->user->longitude ?? '' }}">
                                         <span class="text-gray-400">Memuat alamat...</span>
@@ -178,23 +164,17 @@
                                 <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-100">
                                     <form method="POST" action="{{ route('batal.pesanan', $item->id) }}" class="w-full">
                                         @csrf
-                                        <button type="submit" class="w-full py-2 bg-white border border-gray-200 text-gray-700 hover:bg-red-50 hover:border-red-200 hover:text-red-600 text-xs font-medium rounded-lg transition">
-                                            Batal
-                                        </button>
+                                        <button type="submit" class="w-full py-2 bg-white border border-gray-200 text-gray-700 hover:bg-red-50 hover:border-red-200 hover:text-red-600 text-xs font-medium rounded-lg transition">Batal</button>
                                     </form>
                                     <form method="POST" action="{{ route('proses.pesanan', $item->id) }}" class="w-full">
                                         @csrf
-                                        <button type="submit" class="w-full py-2 bg-teal-600 text-white hover:bg-teal-700 text-xs font-medium rounded-lg shadow-sm transition">
-                                            Proses Pesanan
-                                        </button>
+                                        <button type="submit" class="w-full py-2 bg-teal-600 text-white hover:bg-teal-700 text-xs font-medium rounded-lg shadow-sm transition">Proses Pesanan</button>
                                     </form>
                                 </div>
                             @endif
                         </div>
                     @empty
-                        <div class="p-8 text-center text-gray-500 text-sm">
-                            Tidak ada data pesanan.
-                        </div>
+                        <div class="p-8 text-center text-gray-500 text-sm">Tidak ada data pesanan.</div>
                     @endforelse
                 </div>
 
@@ -203,18 +183,71 @@
     </div>
 
     <script>
+        // Object untuk menyimpan instance map agar tidak di-init berulang kali
+        const maps = {};
+
+        // FUNGSI 1: TAMPILKAN MAP SAAT HOVER
+        function showMap(element) {
+            const id = element.getAttribute('data-id');
+            const lat = element.getAttribute('data-lat');
+            const lng = element.getAttribute('data-lng');
+            const container = document.getElementById(`map-container-${id}`);
+            const mapId = `map-${id}`;
+
+            // Validasi lat/lng
+            if (!lat || !lng || lat === '-' || lng === '-') return;
+
+            // Tampilkan container
+            container.classList.remove('hidden');
+            // Sedikit delay untuk efek fade-in
+            setTimeout(() => {
+                container.classList.remove('opacity-0');
+            }, 10);
+
+            // Jika map belum pernah dibuat untuk item ini, buat baru
+            if (!maps[id]) {
+                const map = L.map(mapId, {
+                    zoomControl: false, // Hilangkan kontrol zoom agar bersih
+                    attributionControl: false // Hilangkan teks atribusi
+                }).setView([lat, lng], 15);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                }).addTo(map);
+
+                L.marker([lat, lng]).addTo(map);
+                
+                // Simpan instance map
+                maps[id] = map;
+            } else {
+                // Jika sudah ada, pastikan ukurannya benar (fix bug render abu-abu)
+                maps[id].invalidateSize();
+            }
+        }
+
+        // FUNGSI 2: SEMBUNYIKAN MAP SAAT LEAVE
+        function hideMap(element) {
+            const id = element.getAttribute('data-id');
+            const container = document.getElementById(`map-container-${id}`);
+            
+            // Efek fade-out
+            container.classList.add('opacity-0');
+            
+            // Sembunyikan elemen setelah transisi selesai
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, 300);
+        }
+
+        // FUNGSI 3: REVERSE GEOCODING (AMBIL NAMA JALAN)
         document.addEventListener("DOMContentLoaded", function() {
             const addressElements = document.querySelectorAll('.load-address');
 
-            // Fungsi untuk ambil alamat dari OpenStreetMap
             const fetchAddress = (lat, lng, element, delay) => {
                 setTimeout(() => {
-                    // Cek jika lat/lng kosong
                     if (!lat || !lng || lat === '-' || lng === '-') {
                         element.innerHTML = '<span class="text-gray-400 italic">Lokasi tidak tersedia</span>';
-                        // Hapus href agar tidak bisa diklik jika lokasi kosong
                         element.removeAttribute('href');
-                        element.classList.remove('hover:underline', 'cursor-pointer');
                         return;
                     }
 
@@ -222,8 +255,9 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.display_name) {
-                                // Potong alamat agar tidak terlalu panjang (opsional)
                                 const fullAddress = data.display_name;
+                                // Masukkan teks alamat ke dalam <a> tanpa menghapus span loading lat/lng di bawahnya jika ingin
+                                // Di sini kita replace semua isinya dengan alamat baru
                                 element.innerText = fullAddress;
                                 element.classList.add('text-gray-700'); 
                             } else {
