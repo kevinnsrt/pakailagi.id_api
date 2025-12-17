@@ -126,7 +126,7 @@ public function prosesPesanan($id, FirebaseService $firebase)
         ]);
 
             // Ambil user
-    $user = User::find($cart->uid);
+        $user = User::find($data->uid);
 
     // Kirim notif jika ada token
     if ($user && $user->fcm_token) {
