@@ -59,10 +59,11 @@
                             <p class="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-3 flex-grow">{{ $item->deskripsi }}</p>
                             <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
                                 
-                                <button onclick="openEditModal({{ htmlspecialchars(json_encode($item)) }})" 
-                                    class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    <span class="block sm:hidden">EDIT</span>
-                                    <span class="hidden sm:block">EDIT BARANG</span>
+                                <button type="button" 
+                                        onclick="openEditModal(this)" 
+                                        data-json="{{ htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8') }}"
+                                        class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    Edit
                                 </button>
 
                             </div>
@@ -211,7 +212,7 @@
     </form>
 
     <script>
-        // LOGIKA TOAST
+        // --- LOGIC TOAST ---
         const toastSuccess = document.getElementById('toast-success');
         document.addEventListener("DOMContentLoaded", function() {
             if (toastSuccess) {
@@ -226,14 +227,23 @@
             }
         }
 
-        // LOGIKA EDIT MODAL
+        // --- LOGIC EDIT MODAL (Update: Pakai Data Attribute) ---
         const editModal = document.getElementById('edit-modal');
         const editOverlay = document.getElementById('edit-overlay');
         const editPanel = document.getElementById('edit-panel');
         const editForm = document.getElementById('edit-form');
+        const deleteForm = document.getElementById('delete-form');
         
-        function openEditModal(product) {
+        function openEditModal(buttonElement) {
+            // Ambil data JSON dari atribut tombol
+            const jsonString = buttonElement.getAttribute('data-json');
+            const product = JSON.parse(jsonString);
+
+            // Set Action Forms
             editForm.action = `/barang/${product.id}`;
+            if(deleteForm) deleteForm.action = `/barang/${product.id}`;
+
+            // Isi Value Form
             document.getElementById('edit-name').value = product.name;
             document.getElementById('edit-price').value = product.price;
             document.getElementById('edit-kategori').value = product.kategori;
@@ -241,9 +251,7 @@
             document.getElementById('edit-ukuran').value = product.ukuran;
             document.getElementById('edit-deskripsi').value = product.deskripsi;
             
-            const deleteForm = document.getElementById('delete-form');
-            if(deleteForm) deleteForm.action = `/barang/${product.id}`;
-
+            // Animasi Buka
             editModal.classList.remove('hidden');
             setTimeout(() => {
                 editOverlay.classList.remove('opacity-0');
@@ -257,11 +265,10 @@
             setTimeout(() => editModal.classList.add('hidden'), 300);
         }
 
-        // LOGIKA DELETE MODAL
+        // --- LOGIC DELETE MODAL ---
         const deleteModal = document.getElementById('delete-modal');
         const deleteOverlay = document.getElementById('delete-overlay');
         const deletePanel = document.getElementById('delete-panel');
-        const deleteForm = document.getElementById('delete-form');
 
         function openDeleteModal() {
             deleteModal.classList.remove('hidden');
