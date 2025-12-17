@@ -79,11 +79,11 @@
     </div>
 
     <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
+        <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeEditModal()"></div>
 
-        <div class="flex min-h-screen items-center justify-center p-4 text-center" onclick="if(event.target === this) closeEditModal()">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center pointer-events-none">
             
-            <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
+            <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 pointer-events-auto" style="opacity: 0; transform: scale(0.95);">
                 
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
                     <h3 class="text-lg font-bold text-gray-900">Edit Barang</h3>
@@ -160,11 +160,11 @@
     </div>
 
     <div id="delete-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
+        <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeDeleteModal()"></div>
 
-        <div class="flex min-h-screen items-center justify-center p-4 text-center" onclick="if(event.target === this) closeDeleteModal()">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center pointer-events-none">
             
-            <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
+            <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 pointer-events-auto" style="opacity: 0; transform: scale(0.95);">
                 
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div>
@@ -222,17 +222,18 @@
 
         // --- ANIMASI ROBUST & GENTLE (FINAL) ---
         function animateFromButton(panel, buttonElement, overlay) {
+            // Reset
             panel.style.transition = 'none';
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.95)';
             
+            // Hitung Posisi
             if (buttonElement) {
                 const btnRect = buttonElement.getBoundingClientRect();
                 const panelRect = panel.getBoundingClientRect();
                 
                 const btnX = btnRect.left + btnRect.width / 2;
                 const btnY = btnRect.top + btnRect.height / 2;
-                
                 const originX = btnX - panelRect.left;
                 const originY = btnY - panelRect.top;
 
@@ -241,10 +242,11 @@
                 panel.style.transformOrigin = 'center center';
             }
 
+            // Force Reflow
             void panel.offsetWidth;
 
+            // Animasi
             panel.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'; 
-            
             requestAnimationFrame(() => {
                 overlay.classList.remove('opacity-0');
                 panel.style.opacity = '1';
@@ -257,7 +259,6 @@
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.95)';
             overlay.classList.add('opacity-0');
-            
             setTimeout(callbackWrapper, 200);
         }
 
