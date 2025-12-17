@@ -72,11 +72,13 @@ class CartController extends Controller
 
         $data = Cart::with('product')
             ->where('uid', $uid)
-            // ->where('status','Dikeranjang')
             ->get()
             ->map(function($cart) {
                 if ($cart->product && $cart->product->image_path) {
-                    $cart->product->image_path = URL::to('/storage/' . $cart->product->image_path);
+                    // HANYA tambah prefix jika image_path BUKAN link internet (URL)
+                    if (!filter_var($cart->product->image_path, FILTER_VALIDATE_URL)) {
+                        $cart->product->image_path = asset('storage/' . $cart->product->image_path);
+                    }
                 }
                 return $cart;
             });
