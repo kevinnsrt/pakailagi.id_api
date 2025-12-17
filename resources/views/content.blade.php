@@ -58,14 +58,12 @@
                             </div>
                             <p class="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-3 flex-grow">{{ $item->deskripsi }}</p>
                             <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
-                                
                                 <button type="button" 
                                         onclick="openEditModal(this)" 
                                         data-json="{{ json_encode($item) }}"
                                         class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                     Edit
                                 </button>
-
                             </div>
                         </div>
                     </div>
@@ -224,21 +222,17 @@
 
         // --- ANIMASI ROBUST & GENTLE (FINAL) ---
         function animateFromButton(panel, buttonElement, overlay) {
-            // 1. Reset State (Inline Style Only)
             panel.style.transition = 'none';
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.95)';
             
-            // 2. Hitung Posisi
             if (buttonElement) {
                 const btnRect = buttonElement.getBoundingClientRect();
                 const panelRect = panel.getBoundingClientRect();
                 
                 const btnX = btnRect.left + btnRect.width / 2;
                 const btnY = btnRect.top + btnRect.height / 2;
-                const panelX = panelRect.left + panelRect.width / 2;
-                const panelY = panelRect.top + panelRect.height / 2;
-
+                
                 const originX = btnX - panelRect.left;
                 const originY = btnY - panelRect.top;
 
@@ -247,10 +241,8 @@
                 panel.style.transformOrigin = 'center center';
             }
 
-            // 3. Paksa Reflow
             void panel.offsetWidth;
 
-            // 4. Jalankan Animasi (Gentle Curve + Slower Duration 0.4s)
             panel.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'; 
             
             requestAnimationFrame(() => {
@@ -261,7 +253,6 @@
         }
 
         function animateClose(panel, overlay, callbackWrapper) {
-            // Animasi tutup lebih cepat dan linear agar responsif
             panel.style.transition = 'all 0.2s ease-in';
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.95)';
@@ -270,7 +261,6 @@
             setTimeout(callbackWrapper, 200);
         }
 
-        // --- GLOBAL VARS ---
         const editModal = document.getElementById('edit-modal');
         const editOverlay = document.getElementById('edit-overlay');
         const editPanel = document.getElementById('edit-panel');
@@ -281,7 +271,6 @@
         const deleteOverlay = document.getElementById('delete-overlay');
         const deletePanel = document.getElementById('delete-panel');
 
-        // --- OPEN EDIT ---
         function openEditModal(buttonElement) {
             const jsonString = buttonElement.getAttribute('data-json');
             const product = JSON.parse(jsonString);
@@ -306,7 +295,6 @@
             });
         }
 
-        // --- OPEN DELETE ---
         function openDeleteModal(buttonElement = null) {
             deleteModal.classList.remove('hidden');
             animateFromButton(deletePanel, buttonElement, deleteOverlay);
