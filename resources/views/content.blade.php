@@ -44,37 +44,72 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                 @forelse ($data as $item)
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transform transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                    @php
+                        // Cek Status di View
+                        $isSoldOut = $item->status === 'Sold Out';
+                    @endphp
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transform transition-all duration-300 
+                        {{ $isSoldOut 
+                            ? 'grayscale opacity-70 pointer-events-none select-none bg-gray-50' 
+                            : 'hover:shadow-xl hover:scale-[1.02]' 
+                        }}">
+                        
                         <div class="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden">
                             <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-full h-full object-cover" />
-                            <div class="absolute top-2 left-2 sm:top-3 sm:left-3">
-                                <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">{{ $item->kategori }}</span>
-                            </div>
+                            
+                            @if($isSoldOut)
+                                <div class="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
+                                    <div class="border-2 border-white text-white px-3 py-1 sm:px-4 font-black text-sm sm:text-xl tracking-widest -rotate-12 uppercase opacity-90 shadow-2xl">
+                                        SOLD OUT
+                                    </div>
+                                </div>
+                            @else
+                                <div class="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+                                    <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">{{ $item->kategori }}</span>
+                                </div>
+                            @endif
                         </div>
+
                         <div class="p-3 sm:p-5 flex flex-col flex-grow">
                             <div class="flex justify-between items-start mb-1 sm:mb-2">
                                 <h3 class="text-sm sm:text-lg font-bold text-gray-900 line-clamp-1" title="{{ $item->name }}">{{ $item->name }}</h3>
                             </div>
-                            <p class="text-base sm:text-xl font-bold text-teal-600 mb-2 sm:mb-3">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
+                            
+                            <p class="text-base sm:text-xl font-bold {{ $isSoldOut ? 'text-gray-500' : 'text-teal-600' }} mb-2 sm:mb-3">
+                                Rp {{ number_format($item->price, 0, ',', '.') }}
+                            </p>
+
                             <div class="flex flex-wrap items-center gap-1 sm:gap-2 mb-2 sm:mb-4 text-xs sm:text-sm">
                                 <span class="flex items-center text-gray-600 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium">{{ $item->ukuran }}</span>
                                 @php
-                                    $condColor = match($item->kondisi) {
-                                        'Like New' => 'text-blue-700 bg-blue-50 border-blue-100',
-                                        'Good' => 'text-green-700 bg-green-50 border-green-100',
-                                        'Fair' => 'text-yellow-700 bg-yellow-50 border-yellow-100',
-                                        default => 'text-gray-600 bg-gray-50',
-                                    };
+                                    if ($isSoldOut) {
+                                        $condColor = 'text-gray-500 bg-gray-200 border-gray-300';
+                                    } else {
+                                        $condColor = match($item->kondisi) {
+                                            'Like New' => 'text-blue-700 bg-blue-50 border-blue-100',
+                                            'Good' => 'text-green-700 bg-green-50 border-green-100',
+                                            'Fair' => 'text-yellow-700 bg-yellow-50 border-yellow-100',
+                                            default => 'text-gray-600 bg-gray-50',
+                                        };
+                                    }
                                 @endphp
                                 <span class="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium border {{ $condColor }}">{{ $item->kondisi }}</span>
                             </div>
+                            
                             <p class="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-3 flex-grow">{{ $item->deskripsi }}</p>
+                            
                             <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
                                 <button type="button" 
                                         onclick="openEditModal(this)" 
                                         data-json="{{ json_encode($item) }}"
-                                        class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-teal-600 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    Edit
+                                        {{ $isSoldOut ? 'disabled' : '' }}
+                                        class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs uppercase tracking-widest transition ease-in-out duration-150
+                                        {{ $isSoldOut 
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-200' 
+                                            : 'bg-teal-600 text-white hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2' 
+                                        }}">
+                                    {{ $isSoldOut ? 'Terjual' : 'Edit' }}
                                 </button>
                             </div>
                         </div>
@@ -94,7 +129,6 @@
         <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeEditModal()"></div>
 
         <div class="flex min-h-screen items-center justify-center p-4 text-center pointer-events-none">
-            
             <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 pointer-events-auto" style="opacity: 0; transform: scale(0.95);">
                 
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
@@ -175,9 +209,7 @@
         <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeDeleteModal()"></div>
 
         <div class="flex min-h-screen items-center justify-center p-4 text-center pointer-events-none">
-            
             <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full max-w-lg border border-gray-200 pointer-events-auto" style="opacity: 0; transform: scale(0.95);">
-                
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div>
                         <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
@@ -185,7 +217,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                             </svg>
                         </div>
-
                         <div class="mt-3 text-center">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">Hapus Barang?</h3>
                             <div class="mt-2">
@@ -197,16 +228,9 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-gray-50 px-4 py-3 flex flex-col sm:flex-row-reverse sm:px-6 gap-3">
-                    <button type="button" onclick="submitDelete()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto transition-all">
-                        Ya, Hapus
-                    </button>
-                    <button type="button" onclick="closeDeleteModal()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 sm:w-auto transition-all">
-                        Batal
-                    </button>
+                    <button type="button" onclick="submitDelete()" class="inline-flex w-full justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto transition-all">Ya, Hapus</button>
+                    <button type="button" onclick="closeDeleteModal()" class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300 sm:w-auto transition-all">Batal</button>
                 </div>
             </div>
         </div>
@@ -217,18 +241,15 @@
     </form>
 
     <script>
-        // LOGIKA TOAST & TIMER
         const toastSuccess = document.getElementById('toast-success');
         const toastProgress = document.getElementById('toast-progress');
 
         document.addEventListener("DOMContentLoaded", function() {
             if (toastSuccess) {
-                // 1. Tampilkan Toast (Slide Down)
                 setTimeout(() => {
                     toastSuccess.classList.remove('-translate-y-full', 'opacity-0');
                 }, 100);
 
-                // 2. Jalankan Progress Bar (Mengecil dari 100% ke 0%)
                 if(toastProgress) {
                     setTimeout(() => {
                         toastProgress.classList.remove('w-full');
@@ -236,7 +257,6 @@
                     }, 200);
                 }
 
-                // 3. Tutup Toast Setelah 5 Detik
                 setTimeout(() => closeToast(), 5000);
             }
         });
@@ -248,7 +268,7 @@
             }
         }
 
-        // --- ANIMASI ROBUST & GENTLE (FINAL) ---
+        // --- ANIMASI MODAL ---
         function animateFromButton(panel, buttonElement, overlay) {
             panel.style.transition = 'none';
             panel.style.opacity = '0';
