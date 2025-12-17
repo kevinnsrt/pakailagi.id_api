@@ -126,12 +126,9 @@ class ProductsController extends Controller
                 return $product;
             });
 
-        return response()->json([
-            'success' => true,
-            'keyword' => $request->keyword,
-            'total'   => $data->count(),
-            'data'    => $data,
-        ]);
+        return response()->json(
+            $data,
+        );
     }
 
     // menghapus barang dari web admin
