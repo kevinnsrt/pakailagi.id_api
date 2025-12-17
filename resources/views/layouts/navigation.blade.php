@@ -1,5 +1,6 @@
 <nav x-data="{ 
-        // Logic Desktop Slide
+        // Logic Index (Untuk Desktop & Mobile)
+        // 0: Dashboard, 1: Tambah, 2: Barang, 3: History, 4: Promosi
         activeIndex: {{ 
             request()->routeIs('dashboard') ? 0 : 
             (request()->routeIs('tambah-barang') ? 1 : 
@@ -8,8 +9,6 @@
             (request()->routeIs('promosi.index') ? 4 : -1)))) 
         }},
         hoverIndex: null,
-
-        // Logic Mobile Bottom Sheet
         mobileMenuOpen: false 
     }" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
@@ -80,26 +79,49 @@
     </div>
 
     <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 pb-safe">
-        <div class="flex justify-around items-center h-16 px-2">
+        
+        <div class="relative grid grid-cols-4 h-16 w-full">
             
-            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('dashboard') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                <span class="text-[10px] font-medium">Home</span>
+            <div class="absolute top-0 left-0 w-1/4 h-full pointer-events-none transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1)"
+                 x-show="activeIndex !== -1 && activeIndex < 4" 
+                 x-cloak
+                 :style="'transform: translateX(' + (activeIndex * 100) + '%)'">
+                
+                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-teal-500 rounded-b-full shadow-[0_0_10px_rgba(20,184,166,0.7)]"></div>
+                
+                <div class="absolute top-0 inset-x-0 h-full bg-gradient-to-b from-teal-50/80 to-transparent mx-2 rounded-t-lg"></div>
+            </div>
+
+            <a href="{{ route('dashboard') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+                <div class="transition-all duration-300 ease-out flex flex-col items-center"
+                     :class="activeIndex === 0 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
+                    <svg class="w-6 h-6 transition-transform duration-300" :class="activeIndex === 0 ? 'drop-shadow-sm' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 0 ? 'opacity-100 font-bold' : 'opacity-80'">Home</span>
+                </div>
             </a>
 
-            <a href="{{ route('tambah-barang') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('tambah-barang') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                <span class="text-[10px] font-medium">Tambah</span>
+            <a href="{{ route('tambah-barang') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+                <div class="transition-all duration-300 ease-out flex flex-col items-center"
+                     :class="activeIndex === 1 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 1 ? 'opacity-100 font-bold' : 'opacity-80'">Tambah</span>
+                </div>
             </a>
 
-            <a href="{{ route('barang') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('barang') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span class="text-[10px] font-medium">Produk</span>
+            <a href="{{ route('barang') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+                <div class="transition-all duration-300 ease-out flex flex-col items-center"
+                     :class="activeIndex === 2 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 2 ? 'opacity-100 font-bold' : 'opacity-80'">Produk</span>
+                </div>
             </a>
 
-            <a href="{{ route('history.admin') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('history.admin') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                <span class="text-[10px] font-medium">Order</span>
+            <a href="{{ route('history.admin') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+                <div class="transition-all duration-300 ease-out flex flex-col items-center"
+                     :class="activeIndex === 3 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 3 ? 'opacity-100 font-bold' : 'opacity-80'">Order</span>
+                </div>
             </a>
 
         </div>
