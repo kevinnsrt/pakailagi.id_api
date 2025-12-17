@@ -30,6 +30,7 @@ public function register(Request $request)
 
 // mengambil data user
 public function getUserdata(Request $request){
+    $uid= $request->attributes->set('firebase_uid', $uid);
     $data = User::find($request->uid);
 
     if (!$data) {
