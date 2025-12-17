@@ -40,6 +40,9 @@ Route::middleware('firebase.auth')->group(function () {
     // update profile
     Route::post('/user/profile', [ProfileController::class, 'update']);
 
+    // search
+    Route::post('/products/search', [ProductController::class, 'search']);
+
     // fcm token
     Route::post('/save-fcm-token', function (Request $request) {
         $request->validate([
