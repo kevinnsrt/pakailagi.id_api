@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/promosi', [PromotionController::class, 'index'])->name('promosi.index');
     Route::post('/promosi', [PromotionController::class, 'store'])->name('promosi.store');
     Route::delete('/promosi/{id}', [PromotionController::class, 'destroy'])->name('promosi.destroy');
+    Route::post('/promosi/{id}/resend', [PromotionController::class, 'resend'])->name('promosi.resend');
 
 });
 

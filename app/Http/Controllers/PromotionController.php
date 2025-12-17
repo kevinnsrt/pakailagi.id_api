@@ -70,4 +70,22 @@ class PromotionController extends Controller
 
         return redirect()->route('promosi.index')->with('success', 'Promosi berhasil dihapus!');
     }
+
+    public function resend($id, FirebaseService $firebase)
+    {
+        $promotion = Promotion::findOrFail($id);
+
+        try {
+            $firebase->sendToTopic(
+                'all_users',                 
+                $promotion->title,           
+                $promotion->body,            
+                url('storage/' . $promotion->image_path)      
+            );
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengirim notifikasi: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Notifikasi berhasil dikirim ulang! 🚀');
+    }
 }

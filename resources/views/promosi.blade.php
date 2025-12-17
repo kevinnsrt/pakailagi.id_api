@@ -52,7 +52,7 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Riwayat Promosi</h3>
                     
                     <div class="space-y-4">
-                        @forelse($data as $promo)
+@forelse($data as $promo)
                             <div class="flex items-start border-b border-gray-100 pb-4">
                                 <img src="{{ asset('storage/' . $promo->image_path) }}" class="w-16 h-16 object-cover rounded-md mr-4">
                                 <div class="flex-1">
@@ -60,15 +60,27 @@
                                     <p class="text-sm text-gray-600 line-clamp-2">{{ $promo->body }}</p>
                                     <p class="text-xs text-gray-400 mt-1">{{ $promo->created_at->diffForHumans() }}</p>
                                 </div>
-                                <form action="{{ route('promosi.destroy', $promo->id) }}" method="POST" onsubmit="return confirm('Hapus promosi ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </form>
+                                
+                                <div class="flex flex-col space-y-2 ml-2">
+                                    <form action="{{ route('promosi.resend', $promo->id) }}" method="POST" onsubmit="return confirm('Kirim ulang notifikasi ini ke semua user?');">
+                                        @csrf
+                                        <button type="submit" class="text-blue-500 hover:text-blue-700" title="Kirim Ulang Notifikasi">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('promosi.destroy', $promo->id) }}" method="POST" onsubmit="return confirm('Hapus riwayat promosi ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500 hover:text-red-700" title="Hapus Riwayat">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         @empty
                             <p class="text-gray-500 text-center">Belum ada promosi yang dibuat.</p>
