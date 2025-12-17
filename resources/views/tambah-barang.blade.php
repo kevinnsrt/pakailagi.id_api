@@ -7,11 +7,11 @@
         </div>
     </x-slot>
 
-    <div id="loading-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
-        <div class="bg-white p-5 rounded-2xl shadow-2xl flex flex-col items-center animate-bounce-gentle">
-            <div class="animate-spin rounded-full h-10 w-10 border-4 border-teal-100 border-t-teal-600 mb-3"></div>
-            <p id="loading-text" class="text-gray-700 font-semibold text-sm">Sedang Memproses...</p>
-            <p class="text-gray-400 text-xs">Mohon tunggu sebentar.</p>
+    <div id="loading-overlay" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm grid place-items-center transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center transform transition-all scale-100">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-100 border-t-teal-600 mb-4"></div>
+            <p id="loading-text" class="text-gray-800 font-bold text-base">Sedang Memproses...</p>
+            <p class="text-gray-500 text-xs mt-1">Mohon jangan tutup halaman ini.</p>
         </div>
     </div>
 
@@ -65,7 +65,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Nama Barang</span>
                                 </label>
                                 <input name="name" type="text" value="{{ old('name') }}"
-                                    class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                    class="input input-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: Kemeja Flannel Uniqlo" required />
                             </div>
 
@@ -74,7 +74,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Kategori</span>
                                 </label>
                                 <select name="kategori" id="kategori" 
-                                    class="select select-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
+                                    class="select select-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kategori</option>
                                     <option value="Atasan">Atasan</option>
                                     <option value="Bawahan">Bawahan</option>
@@ -95,7 +95,7 @@
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
                                     <input name="price" type="number" value="{{ old('price') }}"
-                                        class="input input-bordered w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                        class="input input-bordered h-11 w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
                             </div>
@@ -105,7 +105,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Ukuran</span>
                                 </label>
                                 <input name="ukuran" type="text" value="{{ old('ukuran') }}"
-                                    class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                    class="input input-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: M, L, XL, 40, 42" />
                             </div>
 
@@ -114,7 +114,7 @@
                                     <span class="label-text text-gray-700 font-semibold">Kondisi Barang</span>
                                 </label>
                                 <select name="kondisi" id="kondisi" 
-                                    class="select select-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
+                                    class="select select-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-gray-700">
                                     <option disabled selected>Pilih Kondisi</option>
                                     <option value="Like New" class="text-teal-600 font-medium">✨ Like New (Seperti Baru)</option>
                                     <option value="Good" class="text-green-600 font-medium">✅ Good (Baik)</option>
@@ -130,8 +130,8 @@
                                 <input name="image" type="file" id="image-input" 
                                     accept="image/*" 
                                     onchange="handleFileSelect(event)"
-                                    class="sr-only md:not-sr-only file-input file-input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
-                                    file:mr-4 file:py-2 file:px-4
+                                    class="sr-only md:not-sr-only file-input file-input-bordered h-11 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4 file:h-full
                                     file:rounded-l-lg file:border-0
                                     file:text-sm file:font-semibold
                                     file:bg-teal-50 file:text-teal-700
@@ -201,7 +201,7 @@
         </div>
     </div>
 
-<div id="preview-modal" class="hidden relative z-[150]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="preview-modal" class="hidden relative z-[150]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="preview-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeModal()"></div>
 
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -242,9 +242,7 @@
     </div>
 
     <script>
-        // --- SCRIPT PERBAIKAN ---
-
-        // LOGIKA TOAST
+        // --- TOAST & UI LOGIC ---
         const toastSuccess = document.getElementById('toast-success');
         const uploadForm = document.getElementById('upload-form');
         const loadingOverlay = document.getElementById('loading-overlay');
@@ -269,7 +267,7 @@
             loadingOverlay.classList.remove('hidden');
         });
 
-        // --- COMPRESSION LOGIC (SAMA SEPERTI SEBELUMNYA) ---
+        // --- COMPRESSION LOGIC ---
         async function compressImage(file, { quality = 0.7, maxWidth = 1280, type = 'image/jpeg' }) {
             return new Promise((resolve, reject) => {
                 const image = new Image();
@@ -363,9 +361,7 @@
                         
                         loadingOverlay.classList.add('hidden');
                         
-                        // OPEN MODAL
                         modal.classList.remove("hidden");
-                        // Kunci scroll body agar tidak goyang di mobile
                         document.body.style.overflow = 'hidden'; 
                         
                         animateOpen(modalPanel, modalOverlay);
@@ -405,7 +401,6 @@
         function closeModal() {
             animateClose(modalPanel, modalOverlay, () => {
                 modal.classList.add("hidden");
-                // Kembalikan scroll body
                 document.body.style.overflow = 'auto'; 
                 fileInfoContainer.classList.remove("hidden");
             });
@@ -417,7 +412,6 @@
                 fileInfoContainer.classList.add("hidden");
                 filenameDisplay.innerText = "";
                 modal.classList.add("hidden");
-                // Kembalikan scroll body
                 document.body.style.overflow = 'auto'; 
             });
         }
