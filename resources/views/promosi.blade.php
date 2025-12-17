@@ -6,24 +6,25 @@
     </x-slot>
 
     @if(session('success'))
-        <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none">
-            <div class="mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl border-t-4 border-teal-500 pointer-events-auto" role="alert">
+        <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none px-4">
+            <div class="relative mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl pointer-events-auto overflow-hidden">
                 <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-teal-500 bg-teal-100 rounded-lg">
                     <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                     </svg>
                 </div>
-                <div class="ml-4 text-base font-medium text-gray-800 flex-grow">{{ session('success') }}</div>
+                <div class="ml-4 text-sm sm:text-base font-medium text-gray-800 flex-grow">{{ session('success') }}</div>
                 <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-9 w-9 transition">
                     <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
                 </button>
+                <div id="toast-progress" class="absolute bottom-0 left-0 h-1.5 bg-teal-500 w-full transition-all duration-[5000ms] ease-linear"></div>
             </div>
         </div>
     @endif
 
-    <div class="py-12 bg-gray-50 min-h-screen">
+    <div class="py-12 bg-gray-50 min-h-screen w-full overflow-x-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             
             <div>
@@ -72,12 +73,12 @@
                                 </div>
                                 
                                 <div class="flex flex-col space-y-2 flex-shrink-0 w-24">
-                                    <button type="button" onclick="openResendModal({{ $promo->id }})" 
+                                    <button type="button" onclick="openResendModal({{ $promo->id }}, this)" 
                                         class="inline-flex justify-center items-center px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 w-full">
                                         Kirim Ulang
                                     </button>
 
-                                    <button type="button" onclick="openDeleteModal({{ $promo->id }})" 
+                                    <button type="button" onclick="openDeleteModal({{ $promo->id }}, this)" 
                                         class="inline-flex justify-center items-center px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 w-full">
                                         Hapus
                                     </button>
@@ -182,16 +183,63 @@
     </form>
 
     <script>
-        // --- ANIMASI GENTLE BOUNCE ---
-        function animateOpen(panel, overlay) {
+        // --- TOAST LOGIC ---
+        const toastSuccess = document.getElementById('toast-success');
+        const toastProgress = document.getElementById('toast-progress');
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (toastSuccess) {
+                // Show
+                setTimeout(() => {
+                    toastSuccess.classList.remove('-translate-y-full', 'opacity-0');
+                }, 100);
+
+                // Progress Bar Animation
+                if(toastProgress) {
+                    setTimeout(() => {
+                        toastProgress.classList.remove('w-full');
+                        toastProgress.classList.add('w-0');
+                    }, 200);
+                }
+
+                // Hide
+                setTimeout(() => closeToast(), 5000);
+            }
+        });
+
+        function closeToast() {
+            if(toastSuccess) {
+                toastSuccess.classList.add('-translate-y-full', 'opacity-0');
+                setTimeout(() => toastSuccess.style.display = 'none', 500);
+            }
+        }
+
+        // --- ANIMASI ROBUST & GENTLE (SAMA DENGAN BARANG) ---
+        function animateFromButton(panel, buttonElement, overlay) {
+            // Reset
             panel.style.transition = 'none';
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.95)';
             
-            panel.style.transformOrigin = 'center center';
+            // Hitung Posisi
+            if (buttonElement) {
+                const btnRect = buttonElement.getBoundingClientRect();
+                const panelRect = panel.getBoundingClientRect();
+                
+                const btnX = btnRect.left + btnRect.width / 2;
+                const btnY = btnRect.top + btnRect.height / 2;
+                const originX = btnX - panelRect.left;
+                const originY = btnY - panelRect.top;
 
+                panel.style.transformOrigin = `${originX}px ${originY}px`;
+            } else {
+                panel.style.transformOrigin = 'center center';
+            }
+
+            // Force Reflow
             void panel.offsetWidth;
 
+            // Animate
             panel.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'; 
             requestAnimationFrame(() => {
                 overlay.classList.remove('opacity-0');
@@ -214,10 +262,10 @@
         const resendPanel = document.getElementById('resend-panel');
         const resendForm = document.getElementById('resend-form');
 
-        function openResendModal(id) {
+        function openResendModal(id, buttonElement) {
             resendForm.action = `/promosi/${id}/resend`;
             resendModal.classList.remove('hidden');
-            animateOpen(resendPanel, resendOverlay);
+            animateFromButton(resendPanel, buttonElement, resendOverlay);
         }
 
         function closeResendModal() {
@@ -236,10 +284,10 @@
         const deletePanel = document.getElementById('delete-panel');
         const deleteForm = document.getElementById('delete-form');
 
-        function openDeleteModal(id) {
+        function openDeleteModal(id, buttonElement) {
             deleteForm.action = `/promosi/${id}`;
             deleteModal.classList.remove('hidden');
-            animateOpen(deletePanel, deleteOverlay);
+            animateFromButton(deletePanel, buttonElement, deleteOverlay);
         }
 
         function closeDeleteModal() {
@@ -250,21 +298,6 @@
 
         function submitDelete() {
             deleteForm.submit();
-        }
-
-        // --- TOAST LOGIC ---
-        const toastSuccess = document.getElementById('toast-success');
-        document.addEventListener("DOMContentLoaded", function() {
-            if (toastSuccess) {
-                setTimeout(() => toastSuccess.classList.remove('-translate-y-full', 'opacity-0'), 100);
-                setTimeout(() => closeToast(), 5000);
-            }
-        });
-        function closeToast() {
-            if(toastSuccess) {
-                toastSuccess.classList.add('-translate-y-full', 'opacity-0');
-                setTimeout(() => toastSuccess.style.display = 'none', 500);
-            }
         }
     </script>
 </x-app-layout>
