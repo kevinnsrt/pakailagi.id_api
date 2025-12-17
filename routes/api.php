@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\FirebaseAuthController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WishlistController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\ProductsController;
-use App\Http\Controllers\WishlistController;
-use App\Http\Controllers\FirebaseAuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,7 +22,7 @@ Route::middleware('firebase.auth')->group(function () {
     // firebase auth
     Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
     Route::post('/register-google', [FirebaseAuthController::class, 'registerGoogle']);
-    
+
     Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
     // Route::post('/login', [FirebaseAuthController::class, 'getUserdata']);
 
@@ -37,27 +38,27 @@ Route::middleware('firebase.auth')->group(function () {
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
 
+    // update profile
+    Route::post('/user/profile', [ProfileController::class, 'update']);
+
     // fcm token
-Route::post('/save-fcm-token', function (Request $request) {
-    $request->validate([
-        'fcm_token' => 'required|string'
-    ]);
+    Route::post('/save-fcm-token', function (Request $request) {
+        $request->validate([
+            'fcm_token' => 'required|string',
+        ]);
 
-    $request->user()->update([
-        'fcm_token' => $request->fcm_token
-    ]);
-    // dd($request->user(), $request->fcm_token);
+        $request->user()->update([
+            'fcm_token' => $request->fcm_token,
+        ]);
+        // dd($request->user(), $request->fcm_token);
 
-    return response()->json(['success' => true]);
+        return response()->json(['success' => true]);
+    });
+
 });
-
-
-});
-
-
 
 // testing tanpa tokenn
 Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
 Route::post('/wishlist/user', [WishlistController::class, 'show']);
 
-
+// Route::post('/user/profile', [ProfileController::class, 'update']);

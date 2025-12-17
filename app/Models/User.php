@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -35,14 +34,15 @@ class User extends Authenticatable
         'latitude',
         'longitude',
         'role',
+        'profile_picture',
         'email',
         'password',
-        'fcm_token'
+        'fcm_token',
     ];
 
     protected $primaryKey = 'id';
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected $keyType    = 'string';
+    public $incrementing  = false;
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -53,6 +53,15 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = ['profile_picture_url'];
+
+    public function getProfilePictureUrlAttribute()
+    {
+        return $this->profile_picture
+            ? asset('storage/' . $this->profile_picture)
+            : null;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -62,7 +71,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 }

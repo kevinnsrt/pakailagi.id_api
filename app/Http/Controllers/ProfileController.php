@@ -1,8 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,17 +22,46 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $request->validate([
+            'name'            => 'nullable|string|max:255',
+            'number'          => 'nullable|string|max:20',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        // Upload profile picture
+        if ($request->hasFile('profile_picture')) {
+
+            // Hapus foto lama
+            if ($user->profile_picture) {
+                Storage::disk('public')->delete($user->profile_picture);
+            }
+
+            $path = $request->file('profile_picture')
+                ->store('profile_pictures', 'public');
+
+            $user->profile_picture = $path;
         }
 
-        $request->user()->save();
+        // Update field lain
+        $user->update([
+            'name'      => $request->name ?? $user->name,
+            'number'    => $request->number ?? $user->number,
+        ]);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully',
+            'data'    => [
+                'id'                  => $user->id,
+                'name'                => $user->name,
+                'number'              => $user->number,
+                'profile_picture_url' => $user->profile_picture_url,
+            ],
+        ]);
     }
 
     /**
