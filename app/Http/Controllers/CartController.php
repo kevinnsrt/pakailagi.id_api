@@ -205,20 +205,23 @@ public function selesai(Request $request)
         ]);
     }
 
-    public function checkNewNotifications(Request $request)
+public function checkNewNotifications(Request $request)
     {
-        // Ambil waktu terakhir check dari parameter (atau default 5 detik lalu)
         $lastCheck = $request->query('last_check', now()->subSeconds(5));
 
-        // 1. Cek Pesanan Masuk (Status berubah jadi 'Diproses')
-        // Kita cek 'updated_at' karena status berubah saat checkout
+        // 1. Cek Pesanan Masuk (Diproses)
         $newOrders = Cart::with('user')
             ->where('status', 'Diproses')
             ->where('updated_at', '>', $lastCheck)
             ->get();
 
-        // 2. Cek Barang Masuk Keranjang (Status 'Dikeranjang')
-        // Kita cek 'created_at' karena ini data baru dibuat
+        // 2. Cek Pesanan Selesai (BARU DITAMBAHKAN)
+        $completedOrders = Cart::with('user')
+            ->where('status', 'Selesai')
+            ->where('updated_at', '>', $lastCheck)
+            ->get();
+
+        // 3. Cek Masuk Keranjang
         $newCarts = Cart::with('product')
             ->where('status', 'Dikeranjang')
             ->where('created_at', '>', $lastCheck)
@@ -226,8 +229,10 @@ public function selesai(Request $request)
 
         return response()->json([
             'new_orders' => $newOrders,
+            'completed_orders' => $completedOrders, // Kirim data selesai
             'new_carts'  => $newCarts,
-            'server_time'=> now()->toDateTimeString() // Kirim waktu server saat ini
+            'server_time'=> now()->toDateTimeString()
         ]);
+    
     }
 }
