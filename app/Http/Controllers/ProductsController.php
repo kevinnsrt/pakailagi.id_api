@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Services\FirebaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
