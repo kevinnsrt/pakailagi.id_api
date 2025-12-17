@@ -90,23 +90,19 @@
                                     <span class="label-text text-gray-700 font-semibold">Foto Barang</span>
                                 </label>
                                 
-                                <div id="image-preview-container" class="hidden mb-3 relative w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden group">
-                                    <img id="image-preview" src="#" alt="Preview" class="w-full h-full object-cover" />
-                                    <button type="button" onclick="removeImage()" 
-                                        class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                <input name="image" type="file" id="image-input" accept="image/*" onchange="previewImage(event)"
+                                <input name="image" type="file" id="image-input" accept="image/*" onchange="handleFileSelect(event)"
                                     class="file-input file-input-bordered w-full file-input-ghost focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
                                     file:mr-4 file:py-2 file:px-4
                                     file:rounded-full file:border-0
                                     file:text-sm file:font-semibold
                                     file:bg-teal-50 file:text-teal-700
                                     hover:file:bg-teal-100" />
+                                
+                                <div id="file-info" class="hidden mt-2 flex items-center text-sm text-teal-600 bg-teal-50 px-3 py-2 rounded-lg border border-teal-100">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span id="filename-display" class="font-medium truncate"></span>
+                                </div>
+
                                 <label class="label">
                                     <span class="label-text-alt text-gray-400 text-xs mt-1">Format: JPG, PNG (Max 2MB)</span>
                                 </label>
@@ -140,32 +136,79 @@
         </div>
     </div>
 
+    <div id="preview-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
+
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-200">
+                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start flex-col items-center">
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4 text-center" id="modal-title">Preview Foto</h3>
+                            <div class="mt-2 flex justify-center bg-gray-100 rounded-lg border border-dashed border-gray-300 p-2">
+                                <img id="modal-image-preview" src="#" alt="Preview Upload" class="max-h-[300px] w-auto object-contain rounded-md shadow-sm" />
+                            </div>
+                            <p id="modal-filename" class="text-sm text-gray-500 mt-2 text-center break-all"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <button type="button" onclick="closeModal()" class="inline-flex w-full justify-center rounded-md bg-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-500 sm:ml-3 sm:w-auto">
+                        Konfirmasi & Tutup
+                    </button>
+                    <button type="button" onclick="cancelUpload()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                        Ganti Foto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function previewImage(event) {
-            const reader = new FileReader();
-            const imageField = document.getElementById("image-preview");
-            const container = document.getElementById("image-preview-container");
+        const imageInput = document.getElementById("image-input");
+        const modal = document.getElementById("preview-modal");
+        const modalImage = document.getElementById("modal-image-preview");
+        const modalFilename = document.getElementById("modal-filename");
+        
+        const fileInfoContainer = document.getElementById("file-info");
+        const filenameDisplay = document.getElementById("filename-display");
 
-            reader.onload = function(){
-                if(reader.readyState == 2){
-                    imageField.src = reader.result;
-                    container.classList.remove("hidden"); // Tampilkan container preview
+        // 1. Saat user memilih file -> Baca file -> Tampilkan Modal
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Set gambar ke modal
+                    modalImage.src = e.target.result;
+                    modalFilename.innerText = file.name;
+                    
+                    // Set nama file ke indikator form (tapi belum ditampilkan karena tertutup modal)
+                    filenameDisplay.innerText = file.name;
+                    
+                    // Tampilkan Modal
+                    modal.classList.remove("hidden");
                 }
-            }
-
-            if(event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
+                
+                reader.readAsDataURL(file);
             }
         }
 
-        function removeImage() {
-            const input = document.getElementById("image-input");
-            const container = document.getElementById("image-preview-container");
-            const imageField = document.getElementById("image-preview");
+        // 2. Tombol "Konfirmasi & Tutup" -> Sembunyikan Modal -> Tampilkan Nama File di Form
+        function closeModal() {
+            modal.classList.add("hidden");
+            // Tampilkan indikator nama file di form utama
+            fileInfoContainer.classList.remove("hidden");
+        }
 
-            input.value = ""; // Reset input file
-            imageField.src = "#";
-            container.classList.add("hidden"); // Sembunyikan preview
+        // 3. Tombol "Ganti Foto" -> Reset Input -> Tutup Modal
+        function cancelUpload() {
+            imageInput.value = ""; // Reset input
+            fileInfoContainer.classList.add("hidden"); // Sembunyikan info file
+            filenameDisplay.innerText = "";
+            modal.classList.add("hidden"); // Tutup modal
         }
     </script>
 
