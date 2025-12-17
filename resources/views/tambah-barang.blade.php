@@ -7,6 +7,14 @@
         </div>
     </x-slot>
 
+    <div id="loading-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
+        <div class="bg-white p-5 rounded-2xl shadow-2xl flex flex-col items-center animate-bounce-gentle">
+            <div class="animate-spin rounded-full h-10 w-10 border-4 border-teal-100 border-t-teal-600 mb-3"></div>
+            <p class="text-gray-700 font-semibold text-sm">Sedang Mengupload...</p>
+            <p class="text-gray-400 text-xs">Mohon tunggu sebentar.</p>
+        </div>
+    </div>
+
     @if(session('success'))
         <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none">
             <div class="mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl border-t-4 border-teal-500 pointer-events-auto" role="alert">
@@ -39,7 +47,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('tambah-barang-post') }}" enctype="multipart/form-data">
+            <form id="upload-form" method="POST" action="{{ route('tambah-barang-post') }}" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-xl border border-gray-100">
@@ -191,10 +199,12 @@
     </div>
 
     <div id="preview-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
+        <div id="preview-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeModal()"></div>
 
-        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-200">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            
+            <div id="preview-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
+                
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start flex-col items-center">
                         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
@@ -206,13 +216,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-4 flex flex-col sm:flex-row-reverse gap-3 sm:px-6">
+                
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
                     <button type="button" onclick="closeModal()" 
                         class="inline-flex w-full justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all sm:w-auto">
                         Konfirmasi
                     </button>
+                    
                     <button type="button" onclick="cancelUpload()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
+                        class="mt-3 sm:mt-0 inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
                         Ganti Foto
                     </button>
                 </div>
@@ -236,9 +248,21 @@
             }
         }
 
-        // LOGIKA UPLOAD & MODAL
+        // LOGIKA LOADING SAAT SUBMIT
+        const uploadForm = document.getElementById('upload-form');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        uploadForm.addEventListener('submit', function() {
+            // Tampilkan loading overlay saat form disubmit
+            loadingOverlay.classList.remove('hidden');
+        });
+
+        // LOGIKA UPLOAD & MODAL PREVIEW
         const imageInput = document.getElementById("image-input");
         const modal = document.getElementById("preview-modal");
+        const modalOverlay = document.getElementById("preview-overlay");
+        const modalPanel = document.getElementById("preview-panel");
+        
         const modalImage = document.getElementById("modal-image-preview");
         const modalFilename = document.getElementById("modal-filename");
         
@@ -270,22 +294,56 @@
                     modalImage.src = e.target.result;
                     modalFilename.innerText = file.name;
                     filenameDisplay.innerText = file.name;
+                    
+                    // Tampilkan Modal & Jalankan Animasi
                     modal.classList.remove("hidden");
+                    animateOpen(modalPanel, modalOverlay);
                 }
                 reader.readAsDataURL(file);
             }
         }
 
+        // --- FUNGSI ANIMASI (SAMA DENGAN PAGE BARANG) ---
+        function animateOpen(panel, overlay) {
+            // Reset
+            panel.style.transition = 'none';
+            panel.style.opacity = '0';
+            panel.style.transform = 'scale(0.95)';
+            
+            // Force Reflow
+            void panel.offsetWidth;
+
+            // Animate (Gentle Bounce)
+            panel.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            requestAnimationFrame(() => {
+                overlay.classList.remove('opacity-0');
+                panel.style.opacity = '1';
+                panel.style.transform = 'scale(1)';
+            });
+        }
+
+        function animateClose(panel, overlay, callback) {
+            panel.style.transition = 'all 0.2s ease-in';
+            panel.style.opacity = '0';
+            panel.style.transform = 'scale(0.95)';
+            overlay.classList.add('opacity-0');
+            setTimeout(callback, 200);
+        }
+
         function closeModal() {
-            modal.classList.add("hidden");
-            fileInfoContainer.classList.remove("hidden");
+            animateClose(modalPanel, modalOverlay, () => {
+                modal.classList.add("hidden");
+                fileInfoContainer.classList.remove("hidden");
+            });
         }
 
         function cancelUpload() {
-            imageInput.value = ""; 
-            fileInfoContainer.classList.add("hidden");
-            filenameDisplay.innerText = "";
-            modal.classList.add("hidden");
+            animateClose(modalPanel, modalOverlay, () => {
+                imageInput.value = ""; 
+                fileInfoContainer.classList.add("hidden");
+                filenameDisplay.innerText = "";
+                modal.classList.add("hidden");
+            });
         }
     </script>
 
