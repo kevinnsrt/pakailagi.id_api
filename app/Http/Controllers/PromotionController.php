@@ -71,22 +71,47 @@ class PromotionController extends Controller
         return redirect()->route('promosi.index')->with('success', 'Promosi berhasil dihapus!');
     }
 
+// FUNGSI BARU: Duplikasi Postingan & Kirim Ulang Notifikasi
     public function resend($id, FirebaseService $firebase)
     {
-        $promotion = Promotion::findOrFail($id);
+        // 1. Cari data promosi lama
+        $oldPromo = Promotion::findOrFail($id);
 
+        // 2. Cek apakah file gambar fisik masih ada
+        if (!Storage::disk('public')->exists($oldPromo->image_path)) {
+            return back()->with('error', 'Gagal: File gambar asli tidak ditemukan di server.');
+        }
+
+        // 3. Buat nama file baru untuk duplikat (agar file independen)
+        // Ambil ekstensi file (jpg/png)
+        $extension = pathinfo($oldPromo->image_path, PATHINFO_EXTENSION);
+        // Generate nama unik baru
+        $newImagePath = 'promotions/' . uniqid('resend_') . '.' . $extension;
+
+        // 4. Copy file fisik di storage
+        Storage::disk('public')->copy($oldPromo->image_path, $newImagePath);
+
+        // 5. Simpan sebagai record BARU di database
+        $newPromo = Promotion::create([
+            'title'      => $oldPromo->title,
+            'body'       => $oldPromo->body,
+            'image_path' => $newImagePath, // Gunakan path gambar yang baru
+        ]);
+
+        // 6. Kirim Notifikasi ke Firebase menggunakan data BARU
         try {
             $firebase->sendToTopic(
                 'all_users',                 
-                $promotion->title,           
-                $promotion->body,            
-                url('storage/' . $promotion->image_path)      
+                $newPromo->title,           
+                $newPromo->body,            
+                url('storage/' . $newPromo->image_path)      
             );
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal mengirim notifikasi: ' . $e->getMessage());
+            // Opsional: Hapus record baru jika notifikasi gagal, atau biarkan saja
+            return back()->with('error', 'Promosi tersimpan tapi gagal kirim notifikasi: ' . $e->getMessage());
         }
 
-        return back()->with('success', 'Notifikasi berhasil dikirim ulang! 🚀');
+        return back()->with('success', 'Promosi berhasil dikirim ulang ! 🚀');
     }
 
     public function show(){
