@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('history.admin')" :active="request()->routeIs('history.admin')">
+                    <x-nav-link :href="route('promosi.index')" :active="request()->routeIs('promosi.index')">
                         {{ __('Promosi') }}
                     </x-nav-link>
                 </div>
@@ -110,6 +110,10 @@
 
             <x-responsive-nav-link :href="route('history.admin')" :active="request()->routeIs('history.admin')">
                 {{ __('History Pesanan') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('promosi.index')" :active="request()->routeIs('promosi.index')">
+                {{ __('Promosi') }}
             </x-responsive-nav-link>
         </div>
 

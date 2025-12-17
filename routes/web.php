@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PromotionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,6 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::put('/barang/{id}', [ProductsController::class, 'update'])->name('barang.update');
     Route::delete('/barang/{id}', [ProductsController::class, 'destroy'])->name('barang.destroy');
+
+    Route::get('/promosi', [PromotionController::class, 'index'])->name('promosi.index');
+    Route::post('/promosi', [PromotionController::class, 'store'])->name('promosi.store');
+    Route::delete('/promosi/{id}', [PromotionController::class, 'destroy'])->name('promosi.destroy');
+
 });
 
 require __DIR__.'/auth.php';
