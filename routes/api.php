@@ -56,7 +56,6 @@ Route::middleware('firebase.auth')->group(function () {
 
 });
 Route::post('/firebase-register', [FirebaseAuthController::class, 'register']);
-
 // testing tanpa tokenn
 Route::post('/update/location', [FirebaseAuthController::class, 'updateLocation']);
 Route::post('/wishlist/user', [WishlistController::class, 'show']);
