@@ -35,7 +35,7 @@ public function update(Request $request)
     $request->validate([
         'name'            => 'nullable|string|max:255',
         'number'          => 'nullable|string|max:20',
-        'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
     ]);
 
     try {
