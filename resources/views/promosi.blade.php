@@ -64,24 +64,22 @@
                     <div class="space-y-4">
                         @forelse($data as $promo)
                             <div class="flex items-start border-b border-gray-100 pb-4 last:border-0">
-                                <img src="{{ asset('storage/' . $promo->image_path) }}" class="w-16 h-16 object-cover rounded-md mr-4 shadow-sm border border-gray-100">
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-800">{{ $promo->title }}</h4>
+                                <img src="{{ asset('storage/' . $promo->image_path) }}" class="w-16 h-16 object-cover rounded-md mr-4 shadow-sm border border-gray-100 flex-shrink-0">
+                                <div class="flex-1 min-w-0 mr-4">
+                                    <h4 class="font-bold text-gray-800 truncate">{{ $promo->title }}</h4>
                                     <p class="text-sm text-gray-600 line-clamp-2">{{ $promo->body }}</p>
                                     <p class="text-xs text-gray-400 mt-1">{{ $promo->created_at->diffForHumans() }}</p>
                                 </div>
                                 
-                                <div class="flex flex-col space-y-2 ml-2">
-                                    <button type="button" onclick="openResendModal({{ $promo->id }})" class="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 rounded-md transition" title="Kirim Ulang">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                                        </svg>
+                                <div class="flex flex-col space-y-2 flex-shrink-0 w-24">
+                                    <button type="button" onclick="openResendModal({{ $promo->id }})" 
+                                        class="inline-flex justify-center items-center px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 w-full">
+                                        Kirim Ulang
                                     </button>
 
-                                    <button type="button" onclick="openDeleteModal({{ $promo->id }})" class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-md transition" title="Hapus">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                        </svg>
+                                    <button type="button" onclick="openDeleteModal({{ $promo->id }})" 
+                                        class="inline-flex justify-center items-center px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 w-full">
+                                        Hapus
                                     </button>
                                 </div>
                             </div>
@@ -190,13 +188,10 @@
             panel.style.opacity = '0';
             panel.style.transform = 'scale(0.95)';
             
-            // Set Origin Center untuk Modal Alert (lebih natural di tengah)
             panel.style.transformOrigin = 'center center';
 
-            // Paksa Reflow
             void panel.offsetWidth;
 
-            // Animasi Masuk
             panel.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'; 
             requestAnimationFrame(() => {
                 overlay.classList.remove('opacity-0');
