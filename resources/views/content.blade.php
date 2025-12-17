@@ -94,7 +94,6 @@
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            
             <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg border border-gray-200 z-10">
                 
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
@@ -106,9 +105,7 @@
 
                 <form id="edit-form" method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT') 
-
-                    <div class="px-4 py-5 sm:p-6 space-y-4">
+                    @method('PUT') <div class="px-4 py-5 sm:p-6 space-y-4">
                         <div class="form-control w-full">
                             <label class="label mb-1 font-semibold text-gray-700 text-sm">Nama Barang</label>
                             <input type="text" name="name" id="edit-name" class="input input-bordered w-full rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 h-10" required>
@@ -176,10 +173,9 @@
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-form');
 
-        // Fungsi Membuka Modal & Mengisi Data
         function openEditModal(product) {
-            // 1. Set Action URL Form (Ganti {id} dengan ID produk)
-            // Pastikan route di web.php: Route::put('/barang/{id}', ...)
+            // 1. Set Action URL Form
+            // Ini akan menghasilkan URL seperti: /barang/15
             editForm.action = `/barang/${product.id}`;
 
             // 2. Isi Input Form dengan Data Produk
@@ -194,10 +190,8 @@
             editModal.classList.remove('hidden');
         }
 
-        // Fungsi Menutup Modal
         function closeEditModal() {
             editModal.classList.add('hidden');
         }
     </script>
-
 </x-app-layout>
