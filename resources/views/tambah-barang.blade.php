@@ -58,7 +58,7 @@
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
                                     <input name="price" type="number" 
-                                        class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                        class="input input-bordered w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
                             </div>
@@ -89,7 +89,18 @@
                                 <label class="label mb-1">
                                     <span class="label-text text-gray-700 font-semibold">Foto Barang</span>
                                 </label>
-                                <input name="image" type="file" 
+                                
+                                <div id="image-preview-container" class="hidden mb-3 relative w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden group">
+                                    <img id="image-preview" src="#" alt="Preview" class="w-full h-full object-cover" />
+                                    <button type="button" onclick="removeImage()" 
+                                        class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <input name="image" type="file" id="image-input" accept="image/*" onchange="previewImage(event)"
                                     class="file-input file-input-bordered w-full file-input-ghost focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
                                     file:mr-4 file:py-2 file:px-4
                                     file:rounded-full file:border-0
@@ -128,4 +139,34 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            const imageField = document.getElementById("image-preview");
+            const container = document.getElementById("image-preview-container");
+
+            reader.onload = function(){
+                if(reader.readyState == 2){
+                    imageField.src = reader.result;
+                    container.classList.remove("hidden"); // Tampilkan container preview
+                }
+            }
+
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function removeImage() {
+            const input = document.getElementById("image-input");
+            const container = document.getElementById("image-preview-container");
+            const imageField = document.getElementById("image-preview");
+
+            input.value = ""; // Reset input file
+            imageField.src = "#";
+            container.classList.add("hidden"); // Sembunyikan preview
+        }
+    </script>
+
 </x-app-layout>
