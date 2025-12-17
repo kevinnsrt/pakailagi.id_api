@@ -44,6 +44,7 @@ class CartController extends Controller
 
         $exists = Cart::where('uid',$uid)
         ->where('product_id',$request->product_id)
+        ->where('status', 'Dikeranjang')
         ->exists();
 
         if($exists){
