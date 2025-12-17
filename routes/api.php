@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\FirebaseAuthController;
-use App\Http\Controllers\ProductsController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\WishlistController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\FirebaseAuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -40,6 +41,8 @@ Route::middleware('firebase.auth')->group(function () {
     Route::post('/wishlist/user', [WishlistController::class, 'show']);
     // Route::post('/wishlist/user', [WishlistController::class, 'show']);
     Route::delete('/delete/{id}', [WishlistController::class, 'destroy']);
+
+    Route::get('/notification', [PromotionController::class, 'show']);
 
     // update profile
     Route::post('/user/profile', [ProfileController::class, 'update']);
