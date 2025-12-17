@@ -18,7 +18,9 @@ Route::middleware('firebase.auth')->group(function () {
     Route::get('/products', [ProductsController::class, 'index']);
     Route::post('/products/kategori', [ProductsController::class, 'filter']);
     Route::post('/products/details', [ProductsController::class, 'details']);
-
+    // search
+    Route::post('/products/search', [ProductsController::class, 'search']);
+    
     // firebase auth
     Route::post('/register-google', [FirebaseAuthController::class, 'registerGoogle']);
 
@@ -40,8 +42,6 @@ Route::middleware('firebase.auth')->group(function () {
     // update profile
     Route::post('/user/profile', [ProfileController::class, 'update']);
 
-    // search
-    Route::post('/products/search', [ProductController::class, 'search']);
 
     // fcm token
     Route::post('/save-fcm-token', function (Request $request) {
