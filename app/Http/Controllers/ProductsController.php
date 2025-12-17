@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Services\FirebaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
@@ -93,9 +94,54 @@ class ProductsController extends Controller
     }
 
     // update barang dari admin
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        // 1. Validasi input
+        $request->validate([
+            'name'      => 'required|string',
+            'deskripsi' => 'required|string',
+            'kondisi'   => 'required|string',
+            'ukuran'    => 'required|string',
+            'kategori'  => 'required|string',
+            'price'     => 'required|integer',
+            // Image bersifat nullable (tidak wajib diisi saat edit)
+            'image'     => 'nullable|image|mimes:jpg,jpeg,png,svg|max:2048', 
+        ]);
+
+        // 2. Cari produk berdasarkan ID
+        $product = Product::findOrFail($id);
+
+        // 3. Siapkan data yang akan diupdate
+        $data = [
+            'name'      => $request->name,
+            'price'     => $request->price,
+            'deskripsi' => $request->deskripsi,
+            'kondisi'   => $request->kondisi,
+            'kategori'  => $request->kategori,
+            'ukuran'    => $request->ukuran,
+        ];
+
+        // 4. Cek apakah user mengupload gambar baru
+        if ($request->hasFile('image')) {
+            
+            // Hapus gambar lama jika ada di storage
+            if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+
+            // Simpan gambar baru
+            $path = $request->file('image')->store('products', 'public');
+            
+            // Masukkan path baru ke array data
+            $data['image_path'] = $path;
+        }
+
+        // 5. Update database
+        $product->update($data);
+
+        // 6. Redirect kembali ke halaman barang
+        return redirect()->route('barang')->with('success', 'Barang berhasil diperbarui!');
+    
     }
 
     // menampilkan barang berdasarkan kategori
@@ -132,8 +178,19 @@ class ProductsController extends Controller
     }
 
     // menghapus barang dari web admin
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        // 1. Hapus gambar dari storage jika ada
+        if ($product->image_path && Storage::disk('public')->exists($product->image_path)) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+
+        // 2. Hapus data dari database
+        $product->delete();
+
+        // 3. Redirect kembali dengan pesan sukses
+        return redirect()->route('barang')->with('success', 'Barang berhasil dihapus!');
     }
 }
