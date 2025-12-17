@@ -93,18 +93,12 @@
                                 <input name="image" type="file" id="image-input" 
                                        accept="image/*" 
                                        onchange="handleFileSelect(event)"
-                                       class="hidden" />
-
-                                <div class="hidden md:block">
-                                    <div onclick="document.getElementById('image-input').removeAttribute('capture'); document.getElementById('image-input').click()" 
-                                         class="cursor-pointer flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg hover:bg-gray-50 transition">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau drag and drop</p>
-                                            <p class="text-xs text-gray-500">JPG, PNG (MAX. 2MB)</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                       class="hidden md:block file-input file-input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
+                                              file:mr-4 file:py-2 file:px-4
+                                              file:rounded-l-lg file:border-0
+                                              file:text-sm file:font-semibold
+                                              file:bg-teal-50 file:text-teal-700
+                                              hover:file:bg-teal-100" />
 
                                 <div class="md:hidden grid grid-cols-2 gap-4 mb-2">
                                     <button type="button" onclick="openCamera()" 
@@ -120,15 +114,19 @@
                                     </button>
                                 </div>
 
-                                <div id="file-info" class="hidden mt-3 flex items-center justify-between text-sm text-teal-600 bg-teal-50 px-3 py-3 rounded-lg border border-teal-100">
+                                <div id="file-info" class="hidden md:hidden mt-3 flex items-center justify-between text-sm text-teal-600 bg-teal-50 px-3 py-3 rounded-lg border border-teal-100">
                                     <div class="flex items-center truncate">
                                         <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span id="filename-display" class="font-medium truncate max-w-[200px] md:max-w-xs"></span>
+                                        <span id="filename-display" class="font-medium truncate max-w-[200px]"></span>
                                     </div>
                                     <button type="button" onclick="cancelUpload()" class="text-gray-400 hover:text-red-500 ml-2 p-1">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
+                                
+                                <label class="label md:hidden">
+                                    <span class="label-text-alt text-gray-400 text-xs mt-1">Format: JPG, PNG (Max 2MB)</span>
+                                </label>
                             </div>
 
                             <div class="form-control w-full md:col-span-2">
@@ -202,13 +200,13 @@
 
         // FUNGSI KHUSUS MOBILE: KAMERA
         function openCamera() {
-            imageInput.setAttribute('capture', 'environment'); // Pakai kamera belakang
+            imageInput.setAttribute('capture', 'environment'); 
             imageInput.click();
         }
 
         // FUNGSI KHUSUS MOBILE: GALERI
         function openGallery() {
-            imageInput.removeAttribute('capture'); // Hapus capture agar buka file picker biasa
+            imageInput.removeAttribute('capture');
             imageInput.click();
         }
 
@@ -232,7 +230,7 @@
             }
         }
 
-        // KONFIRMASI (Tutup Modal, Tampilkan Nama File)
+        // KONFIRMASI (Tutup Modal, Tampilkan Info di Mobile)
         function closeModal() {
             modal.classList.add("hidden");
             fileInfoContainer.classList.remove("hidden");
@@ -244,6 +242,9 @@
             fileInfoContainer.classList.add("hidden");
             filenameDisplay.innerText = "";
             modal.classList.add("hidden");
+            
+            // Khusus desktop: jika di cancel, kita perlu trigger ulang biar UI native reset (opsional)
+            // Tapi value="" sudah cukup mereset.
         }
     </script>
 
