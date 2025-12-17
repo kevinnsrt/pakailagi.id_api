@@ -1,13 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Daftar Barang') }}
-            </h2>
-            <a href="{{ route('tambah-barang') }}" class="inline-flex items-center px-4 py-2 bg-teal-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                + Tambah Baru
-            </a>
-        </div>
+            <div class="flex items-center justify-between">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        {{ __('Daftar Barang') }}
+                    </h2>
+                    
+                    <a href="{{ route('tambah-barang') }}" 
+                    class="group relative inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-teal-500 to-teal-700 text-white text-xs sm:text-sm font-bold tracking-wide rounded-xl shadow-md shadow-teal-500/30 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-teal-500/50 hover:from-teal-400 hover:to-teal-600 active:scale-95 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 overflow-hidden">
+                        
+                        <div class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12"></div>
+
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:rotate-90 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+
+                        <span class="relative z-10">Tambah Baru</span>
+                    </a>
+                </div>
     </x-slot>
 
     @if(session('success'))
