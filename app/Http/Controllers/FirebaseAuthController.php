@@ -29,15 +29,23 @@ public function register(Request $request)
 }
 
 // mengambil data user
-public function getUserdata(Request $request){
-    $uid= $request->attributes->set('firebase_uid', $uid);
-    $data = User::find($request->uid);
+public function getUserdata(Request $request)
+{
+    // Ambil UID dari Firebase Middleware
+    $uid = $request->attributes->get('firebase_uid');
+
+    if (!$uid) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+
+    // Karena PK = UID
+    $data = User::find($uid);
 
     if (!$data) {
         return response()->json(['error' => 'User not found'], 404);
     }
 
-    $data->profile_picture = $data->profile_picture 
+    $data->profile_picture = $data->profile_picture
         ? url('/storage/' . $data->profile_picture)
         : null;
 
@@ -45,11 +53,12 @@ public function getUserdata(Request $request){
         'id' => $data->id,
         'name' => $data->name,
         'number' => $data->number,
-        'latitude'=> $data->latitude,
-        'longitude' =>$data->longitude,
+        'latitude' => $data->latitude,
+        'longitude' => $data->longitude,
         'profile_picture' => $data->profile_picture,
     ]);
 }
+
 
 
 // register google
