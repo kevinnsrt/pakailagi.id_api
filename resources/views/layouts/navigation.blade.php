@@ -9,8 +9,8 @@
         }},
         hoverIndex: null,
 
-        // Logic Mobile Bottom Sheet
-        mobileMenuOpen: false 
+        // Logic Mobile Dropdown
+        mobileDropdownOpen: false 
     }" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
 
@@ -22,7 +22,7 @@
                     <a href="{{ route('dashboard') }}">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo Aplikasi" class="block h-9 w-auto" />
                     </a>
-                    <p class="ml-3 font-['Comfortaa'] text-[#3E8A8E] text-xl font-bold hidden md:block">
+                    <p class="ml-3 font-['Comfortaa'] text-[#3E8A8E] text-lg sm:text-xl font-bold">
                         pakailagi.id
                     </p>
                 </div>
@@ -70,10 +70,39 @@
                 </x-dropdown>
             </div>
 
-            <div class="flex items-center sm:hidden">
-                <button @click="mobileMenuOpen = true" class="relative w-8 h-8 rounded-full bg-teal-50 border border-teal-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+            <div class="flex items-center sm:hidden relative">
+                <button @click="mobileDropdownOpen = !mobileDropdownOpen" 
+                        class="relative w-8 h-8 rounded-full bg-teal-50 border border-teal-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
                     <span class="text-xs font-bold text-teal-700">{{ substr(Auth::user()->name, 0, 1) }}</span>
                 </button>
+
+                <div x-show="mobileDropdownOpen" 
+                     @click.outside="mobileDropdownOpen = false"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute right-0 top-12 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                     style="display: none;">
+                    
+                    <div class="px-4 py-2 border-b border-gray-100">
+                        <p class="text-xs text-gray-500">Signed in as</p>
+                        <p class="text-sm font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                    </div>
+
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700">
+                        Profile
+                    </a>
+                    
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                            Log Out
+                        </button>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -102,66 +131,6 @@
                 <span class="text-[10px] font-medium">Order</span>
             </a>
 
-        </div>
-    </div>
-
-    <div class="relative z-[60] md:hidden" 
-         aria-labelledby="modal-title" role="dialog" aria-modal="true" 
-         x-show="mobileMenuOpen" 
-         style="display: none;">
-        
-        <div x-show="mobileMenuOpen"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" 
-             @click="mobileMenuOpen = false"></div>
-
-        <div class="fixed inset-x-0 bottom-0 z-10 w-full overflow-hidden bg-white rounded-t-2xl shadow-2xl pb-safe"
-             x-show="mobileMenuOpen"
-             x-transition:enter="transform transition ease-in-out duration-300"
-             x-transition:enter-start="translate-y-full"
-             x-transition:enter-end="translate-y-0"
-             x-transition:leave="transform transition ease-in-out duration-300"
-             x-transition:leave-start="translate-y-0"
-             x-transition:leave-end="translate-y-full">
-            
-            <div class="p-4 sm:p-6">
-                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
-
-                <div class="flex items-center space-x-4 mb-6">
-                    <div class="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xl border border-teal-200">
-                        {{ substr(Auth::user()->name, 0, 1) }}
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 leading-tight">{{ Auth::user()->name }}</h3>
-                        <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <a href="{{ route('profile.edit') }}" 
-                       class="flex items-center w-full px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-colors">
-                        <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        Edit Profile
-                    </a>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="flex items-center w-full px-4 py-3 text-left text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                            Log Out
-                        </button>
-                    </form>
-                </div>
-
-                <button @click="mobileMenuOpen = false" class="mt-6 w-full py-3 text-sm font-semibold text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-50">
-                    Tutup
-                </button>
-            </div>
         </div>
     </div>
 </nav>
