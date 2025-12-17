@@ -10,17 +10,6 @@
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            @if ($errors->any())
-                <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
-                    <p class="font-bold">Gagal menyimpan!</p>
-                    <ul class="list-disc pl-5 text-sm">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('tambah-barang-post') }}" enctype="multipart/form-data">
                 @csrf
                 
@@ -38,7 +27,7 @@
                                 <label class="label mb-1">
                                     <span class="label-text text-gray-700 font-semibold">Nama Barang</span>
                                 </label>
-                                <input name="name" type="text" value="{{ old('name') }}"
+                                <input name="name" type="text" 
                                     class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: Kemeja Flannel Uniqlo" required />
                             </div>
@@ -68,7 +57,7 @@
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
-                                    <input name="price" type="number" value="{{ old('price') }}"
+                                    <input name="price" type="number" 
                                         class="input input-bordered w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
@@ -78,7 +67,7 @@
                                 <label class="label mb-1">
                                     <span class="label-text text-gray-700 font-semibold">Ukuran</span>
                                 </label>
-                                <input name="ukuran" type="text" value="{{ old('ukuran') }}"
+                                <input name="ukuran" type="text" 
                                     class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: M, L, XL, 40, 42" />
                             </div>
@@ -102,14 +91,14 @@
                                 </label>
                                 
                                 <input name="image" type="file" id="image-input" 
-                                    accept="image/*" 
-                                    onchange="handleFileSelect(event)"
-                                    class="sr-only md:not-sr-only file-input file-input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
-                                    file:mr-4 file:py-2 file:px-4
-                                    file:rounded-l-lg file:border-0
-                                    file:text-sm file:font-semibold
-                                    file:bg-teal-50 file:text-teal-700
-                                    hover:file:bg-teal-100" />
+                                       accept="image/*" 
+                                       onchange="handleFileSelect(event)"
+                                       class="hidden md:block file-input file-input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
+                                              file:mr-4 file:py-2 file:px-4
+                                              file:rounded-l-lg file:border-0
+                                              file:text-sm file:font-semibold
+                                              file:bg-teal-50 file:text-teal-700
+                                              hover:file:bg-teal-100" />
 
                                 <div class="md:hidden grid grid-cols-2 gap-4 mb-2">
                                     <button type="button" onclick="openCamera()" 
@@ -138,10 +127,6 @@
                                 <label class="label md:hidden">
                                     <span class="label-text-alt text-gray-400 text-xs mt-1">Format: JPG, PNG (Max 2MB)</span>
                                 </label>
-
-                                @error('image')
-                                    <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p>
-                                @enderror
                             </div>
 
                             <div class="form-control w-full md:col-span-2">
@@ -150,7 +135,7 @@
                                 </label>
                                 <textarea name="deskripsi" rows="4"
                                     class="textarea textarea-bordered h-32 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-base" 
-                                    placeholder="Jelaskan detail barang, kondisi fisik, minus (jika ada), dan kelebihan lainnya...">{{ old('deskripsi') }}</textarea>
+                                    placeholder="Jelaskan detail barang, kondisi fisik, minus (jika ada), dan kelebihan lainnya..."></textarea>
                             </div>
 
                         </div>
@@ -188,13 +173,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-4 flex flex-col sm:flex-row-reverse gap-3 sm:px-6">
+                
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
                     <button type="button" onclick="closeModal()" 
                         class="inline-flex w-full justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all sm:w-auto">
                         Konfirmasi
                     </button>
+                    
                     <button type="button" onclick="cancelUpload()" 
-                        class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
+                        class="mt-3 sm:mt-0 inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
                         Ganti Foto
                     </button>
                 </div>
@@ -211,50 +198,53 @@
         const fileInfoContainer = document.getElementById("file-info");
         const filenameDisplay = document.getElementById("filename-display");
 
+        // FUNGSI KHUSUS MOBILE: KAMERA
         function openCamera() {
             imageInput.setAttribute('capture', 'environment'); 
             imageInput.click();
         }
 
+        // FUNGSI KHUSUS MOBILE: GALERI
         function openGallery() {
             imageInput.removeAttribute('capture');
             imageInput.click();
         }
 
+        // SAAT FILE DIPILIH
         function handleFileSelect(event) {
             const file = event.target.files[0];
 
             if (file) {
-                // VALIDASI UKURAN FILE (2MB) DI SISI CLIENT
-                // Ini penting karena kamera HP sekarang filenya besar (5MB++)
-                // Jika tidak dicek disini, server akan menolak dan halaman refresh tanpa notif jelas
-                if (file.size > 2 * 1024 * 1024) {
-                    alert("Ukuran file terlalu besar (Max 2MB). Silakan kompres atau pilih foto lain.");
-                    imageInput.value = ""; // Reset input
-                    return;
-                }
-
                 const reader = new FileReader();
+                
                 reader.onload = function(e) {
                     modalImage.src = e.target.result;
                     modalFilename.innerText = file.name;
                     filenameDisplay.innerText = file.name;
+                    
+                    // Tampilkan Modal
                     modal.classList.remove("hidden");
                 }
+                
                 reader.readAsDataURL(file);
             }
         }
 
+        // KONFIRMASI (Tutup Modal, Tampilkan Info di Mobile)
         function closeModal() {
             modal.classList.add("hidden");
             fileInfoContainer.classList.remove("hidden");
         }
 
+        // BATAL/RESET (Hapus File, Tutup Modal)
         function cancelUpload() {
             imageInput.value = ""; 
             fileInfoContainer.classList.add("hidden");
             filenameDisplay.innerText = "";
             modal.classList.add("hidden");
+            
+            // Khusus desktop: jika di cancel, kita perlu trigger ulang biar UI native reset (opsional)
+            // Tapi value="" sudah cukup mereset.
         }
     </script>
 
