@@ -59,7 +59,7 @@ class ProductsController extends Controller
             url('storage/' . $path) // HTTPS
         );
 
-        return redirect()->route('barang');
+        return redirect()->route('barang')->with('success', 'Barang berhasil di upload!');
     }
 
     // menampilkan detail produk

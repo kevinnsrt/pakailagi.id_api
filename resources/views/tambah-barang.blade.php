@@ -7,9 +7,38 @@
         </div>
     </x-slot>
 
+    @if(session('success'))
+        <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none">
+            <div class="mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl border-t-4 border-teal-500 pointer-events-auto" role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-teal-500 bg-teal-100 rounded-lg">
+                    <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                    </svg>
+                </div>
+                <div class="ml-4 text-base font-medium text-gray-800 flex-grow">{{ session('success') }}</div>
+                <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-9 w-9 transition">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    @endif
+
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             
+            @if ($errors->any())
+                <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md shadow-sm">
+                    <p class="font-bold">Gagal menyimpan!</p>
+                    <ul class="list-disc pl-5 text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('tambah-barang-post') }}" enctype="multipart/form-data">
                 @csrf
                 
@@ -27,7 +56,7 @@
                                 <label class="label mb-1">
                                     <span class="label-text text-gray-700 font-semibold">Nama Barang</span>
                                 </label>
-                                <input name="name" type="text" 
+                                <input name="name" type="text" value="{{ old('name') }}"
                                     class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: Kemeja Flannel Uniqlo" required />
                             </div>
@@ -57,8 +86,8 @@
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm font-bold">Rp</span>
                                     </div>
-                                    <input name="price" type="number" 
-                                        class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
+                                    <input name="price" type="number" value="{{ old('price') }}"
+                                        class="input input-bordered w-full pl-10 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                         placeholder="0" required />
                                 </div>
                             </div>
@@ -67,7 +96,7 @@
                                 <label class="label mb-1">
                                     <span class="label-text text-gray-700 font-semibold">Ukuran</span>
                                 </label>
-                                <input name="ukuran" type="text" 
+                                <input name="ukuran" type="text" value="{{ old('ukuran') }}"
                                     class="input input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg" 
                                     placeholder="Contoh: M, L, XL, 40, 42" />
                             </div>
@@ -91,14 +120,14 @@
                                 </label>
                                 
                                 <input name="image" type="file" id="image-input" 
-                                       accept="image/*" 
-                                       onchange="handleFileSelect(event)"
-                                       class="hidden md:block file-input file-input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
-                                              file:mr-4 file:py-2 file:px-4
-                                              file:rounded-l-lg file:border-0
-                                              file:text-sm file:font-semibold
-                                              file:bg-teal-50 file:text-teal-700
-                                              hover:file:bg-teal-100" />
+                                    accept="image/*" 
+                                    onchange="handleFileSelect(event)"
+                                    class="sr-only md:not-sr-only file-input file-input-bordered w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-l-lg file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-teal-50 file:text-teal-700
+                                    hover:file:bg-teal-100" />
 
                                 <div class="md:hidden grid grid-cols-2 gap-4 mb-2">
                                     <button type="button" onclick="openCamera()" 
@@ -127,6 +156,10 @@
                                 <label class="label md:hidden">
                                     <span class="label-text-alt text-gray-400 text-xs mt-1">Format: JPG, PNG (Max 2MB)</span>
                                 </label>
+
+                                @error('image')
+                                    <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div class="form-control w-full md:col-span-2">
@@ -135,7 +168,7 @@
                                 </label>
                                 <textarea name="deskripsi" rows="4"
                                     class="textarea textarea-bordered h-32 w-full focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-lg text-base" 
-                                    placeholder="Jelaskan detail barang, kondisi fisik, minus (jika ada), dan kelebihan lainnya..."></textarea>
+                                    placeholder="Jelaskan detail barang, kondisi fisik, minus (jika ada), dan kelebihan lainnya...">{{ old('deskripsi') }}</textarea>
                             </div>
 
                         </div>
@@ -173,15 +206,13 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                <div class="bg-gray-50 px-4 py-4 flex flex-col sm:flex-row-reverse gap-3 sm:px-6">
                     <button type="button" onclick="closeModal()" 
                         class="inline-flex w-full justify-center items-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all sm:w-auto">
                         Konfirmasi
                     </button>
-                    
                     <button type="button" onclick="cancelUpload()" 
-                        class="mt-3 sm:mt-0 inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
+                        class="inline-flex w-full justify-center items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all sm:w-auto">
                         Ganti Foto
                     </button>
                 </div>
@@ -190,6 +221,22 @@
     </div>
 
     <script>
+        // LOGIKA TOAST
+        const toastSuccess = document.getElementById('toast-success');
+        document.addEventListener("DOMContentLoaded", function() {
+            if (toastSuccess) {
+                setTimeout(() => toastSuccess.classList.remove('-translate-y-full', 'opacity-0'), 100);
+                setTimeout(() => closeToast(), 5000);
+            }
+        });
+        function closeToast() {
+            if(toastSuccess) {
+                toastSuccess.classList.add('-translate-y-full', 'opacity-0');
+                setTimeout(() => toastSuccess.style.display = 'none', 500);
+            }
+        }
+
+        // LOGIKA UPLOAD & MODAL
         const imageInput = document.getElementById("image-input");
         const modal = document.getElementById("preview-modal");
         const modalImage = document.getElementById("modal-image-preview");
@@ -198,53 +245,47 @@
         const fileInfoContainer = document.getElementById("file-info");
         const filenameDisplay = document.getElementById("filename-display");
 
-        // FUNGSI KHUSUS MOBILE: KAMERA
         function openCamera() {
             imageInput.setAttribute('capture', 'environment'); 
             imageInput.click();
         }
 
-        // FUNGSI KHUSUS MOBILE: GALERI
         function openGallery() {
             imageInput.removeAttribute('capture');
             imageInput.click();
         }
 
-        // SAAT FILE DIPILIH
         function handleFileSelect(event) {
             const file = event.target.files[0];
 
             if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("Ukuran file terlalu besar (Max 2MB). Silakan kompres atau pilih foto lain.");
+                    imageInput.value = ""; 
+                    return;
+                }
+
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
                     modalImage.src = e.target.result;
                     modalFilename.innerText = file.name;
                     filenameDisplay.innerText = file.name;
-                    
-                    // Tampilkan Modal
                     modal.classList.remove("hidden");
                 }
-                
                 reader.readAsDataURL(file);
             }
         }
 
-        // KONFIRMASI (Tutup Modal, Tampilkan Info di Mobile)
         function closeModal() {
             modal.classList.add("hidden");
             fileInfoContainer.classList.remove("hidden");
         }
 
-        // BATAL/RESET (Hapus File, Tutup Modal)
         function cancelUpload() {
             imageInput.value = ""; 
             fileInfoContainer.classList.add("hidden");
             filenameDisplay.innerText = "";
             modal.classList.add("hidden");
-            
-            // Khusus desktop: jika di cancel, kita perlu trigger ulang biar UI native reset (opsional)
-            // Tapi value="" sudah cukup mereset.
         }
     </script>
 
