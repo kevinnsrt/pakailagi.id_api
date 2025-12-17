@@ -44,6 +44,8 @@ public function getUserdata(Request $request){
         'id' => $data->id,
         'name' => $data->name,
         'number' => $data->number,
+        'latitude'=> $data->latitude,
+        'longitude' =>$data->longitude,
         'profile_picture' => $data->profile_picture,
     ]);
 }
