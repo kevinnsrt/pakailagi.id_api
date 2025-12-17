@@ -20,15 +20,13 @@ class WishlistController extends Controller
      */
     public function store(Request $request)
     {
-        $user = $request->user(); 
-
         $request->validate([
             'uid'        => 'required|string',
             'product_id' => 'required|string',
         ]);
 
         // Cegah duplicate wishlist item
-        $exists = Wishlist::where('uid', $user->id)
+        $exists = Wishlist::where('uid', $request->uid)
             ->where('product_id', $request->product_id)
             ->first();
 
