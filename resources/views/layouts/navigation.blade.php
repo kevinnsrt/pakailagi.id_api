@@ -1,13 +1,11 @@
 @php
     // LOGIKA ACTIVE STATE (SERVER SIDE)
-    // Kita set Index berdasarkan halaman yang sedang dibuka
     $activeIndex = -1;
 
     if (request()->routeIs('dashboard')) { 
         $activeIndex = 0; 
     } 
     elseif (request()->routeIs('barang') || request()->routeIs('tambah-barang')) { 
-        // Halaman Barang & Tambah Barang dianggap satu grup (Index 1)
         $activeIndex = 1; 
     } 
     elseif (request()->routeIs('history.admin')) { 
@@ -19,13 +17,10 @@
 @endphp
 
 <nav x-data="{ 
-        // Gunakan nilai index dari PHP
         activeIndex: {{ $activeIndex }},
         hoverIndex: null,
-        mobileMenuOpen: false,
-        mounted: false 
+        mobileMenuOpen: false
     }" 
-    x-init="setTimeout(() => mounted = true, 300)" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,10 +43,10 @@
                          x-cloak
                          :style="(() => {
                              let targetIndex = hoverIndex !== null ? hoverIndex : activeIndex;
-                             // Array refs harus sesuai jumlah menu (4 item)
                              let refs = [$refs.link0, $refs.link1, $refs.link2, $refs.link3];
                              let target = refs[targetIndex];
                              if(!target) return 'opacity: 0';
+                             // Presisi Pixel Desktop
                              return `left: ${target.offsetLeft + 4}px; width: ${target.offsetWidth - 8}px; opacity: 1;`;
                          })()">
                     </div>
@@ -62,19 +57,16 @@
                            :class="activeIndex === 0 ? 'text-teal-700 font-bold' : (hoverIndex === 0 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                            {{ __('Home') }}
                         </a>
-
                         <a href="{{ route('barang') }}" x-ref="link1" @mouseenter="hoverIndex = 1" @mouseleave="hoverIndex = null" 
                            class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" 
                            :class="activeIndex === 1 ? 'text-teal-700 font-bold' : (hoverIndex === 1 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                            {{ __('Produk') }}
                         </a>
-
                         <a href="{{ route('history.admin') }}" x-ref="link2" @mouseenter="hoverIndex = 2" @mouseleave="hoverIndex = null" 
                            class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" 
                            :class="activeIndex === 2 ? 'text-teal-700 font-bold' : (hoverIndex === 2 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
                            {{ __('History') }}
                         </a>
-
                         <a href="{{ route('promosi.index') }}" x-ref="link3" @mouseenter="hoverIndex = 3" @mouseleave="hoverIndex = null" 
                            class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" 
                            :class="activeIndex === 3 ? 'text-teal-700 font-bold' : (hoverIndex === 3 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
@@ -114,26 +106,39 @@
 
     <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 pb-safe">
         
-        <div class="relative grid grid-cols-4 h-16 w-full">
+        <div class="relative grid grid-cols-4 h-16 w-full" x-ref="mobileNavContainer">
             
-            <div class="absolute top-0 left-0 w-1/4 h-full pointer-events-none"
-                 x-show="activeIndex !== -1" 
-                 :class="mounted ? 'transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1)' : ''"
-                 style="transform: translateX({{ max(0, $activeIndex) * 100 }}%)">
-                
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-teal-500 rounded-b-full shadow-[0_0_10px_rgba(20,184,166,0.7)]"></div>
-                <div class="absolute top-0 inset-x-0 h-full bg-gradient-to-b from-teal-50/80 to-transparent mx-2 rounded-t-lg"></div>
+            <div class="absolute top-0 h-1 bg-teal-500 rounded-b-full shadow-[0_0_10px_rgba(20,184,166,0.6)] z-10 transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1)"
+                 x-show="activeIndex !== -1"
+                 x-cloak
+                 :style="(() => {
+                     // Ambil referensi ke elemen tombol mobile
+                     let refs = [$refs.mLink0, $refs.mLink1, $refs.mLink2, $refs.mLink3];
+                     let target = refs[activeIndex];
+                     
+                     // Jika target tidak ditemukan, sembunyikan
+                     if(!target) return 'opacity: 0;';
+                     
+                     // Kalkulasi posisi exact (left & width)
+                     // Tambah sedikit margin agar garis tidak memenuhi 100% lebar tombol
+                     let width = target.offsetWidth * 0.6; // 60% dari lebar tombol
+                     let left = target.offsetLeft + (target.offsetWidth - width) / 2; // Center alignment
+                     
+                     return `left: ${left}px; width: ${width}px; opacity: 1;`;
+                 })()">
+                 
+                 <div class="absolute top-0 -left-1/2 w-[200%] h-12 bg-gradient-to-b from-teal-50/50 to-transparent pointer-events-none"></div>
             </div>
 
-            <a href="{{ route('dashboard') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+            <a href="{{ route('dashboard') }}" x-ref="mLink0" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
                 <div class="transition-all duration-300 ease-out flex flex-col items-center"
                      :class="activeIndex === 0 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" :class="activeIndex === 0 ? 'drop-shadow-sm' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 0 ? 'opacity-100 font-bold' : 'opacity-80'">Home</span>
                 </div>
             </a>
 
-            <a href="{{ route('barang') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+            <a href="{{ route('barang') }}" x-ref="mLink1" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
                 <div class="transition-all duration-300 ease-out flex flex-col items-center"
                      :class="activeIndex === 1 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
                     <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -141,15 +146,15 @@
                 </div>
             </a>
 
-            <a href="{{ route('history.admin') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+            <a href="{{ route('history.admin') }}" x-ref="mLink2" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
                 <div class="transition-all duration-300 ease-out flex flex-col items-center"
                      :class="activeIndex === 2 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 2 ? 'opacity-100 font-bold' : 'opacity-80'">History</span>
                 </div>
             </a>
 
-            <a href="{{ route('promosi.index') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+            <a href="{{ route('promosi.index') }}" x-ref="mLink3" class="relative flex flex-col items-center justify-center w-full h-full group tap-highlight-transparent">
                 <div class="transition-all duration-300 ease-out flex flex-col items-center"
                      :class="activeIndex === 3 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
                     <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
