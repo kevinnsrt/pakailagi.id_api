@@ -37,9 +37,16 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs">
-                                                {{ substr($item->user->name ?? 'U', 0, 1) }}
-                                            </div>
+                                            @if (!empty($item->profile_picture))
+                                                <img src="{{ asset('storage/' . $item->profile_picture) }}" 
+                                                     alt="{{ $item->user->name }}" 
+                                                     class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                                            @else
+                                                <div class="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-xs border border-teal-200">
+                                                    {{ substr($item->user->name ?? 'U', 0, 1) }}
+                                                </div>
+                                            @endif
+                                            
                                             <div class="font-medium text-gray-900">
                                                 {{ $item->user->name ?? 'Guest' }}
                                             </div>
@@ -128,12 +135,21 @@
                                 </span>
                             </div>
                             
-                            <div class="text-sm text-gray-600 mb-4 space-y-1">
+                            <div class="text-sm text-gray-600 mb-4 space-y-2">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                    {{ $item->user->name ?? '-' }}
+                                    @if (!empty($item->profile_picture))
+                                        <img src="{{ asset('storage/' . $item->profile_picture) }}" 
+                                             class="w-5 h-5 rounded-full object-cover border border-gray-200">
+                                    @else
+                                        <div class="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-[10px] border border-teal-200">
+                                            {{ substr($item->user->name ?? 'U', 0, 1) }}
+                                        </div>
+                                    @endif
+                                    
+                                    <span class="font-medium">{{ $item->user->name ?? '-' }}</span>
                                 </div>
-                                <div class="flex items-start gap-2">
+
+                                <div class="flex items-start gap-2 pl-0.5">
                                     <svg class="w-4 h-4 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                     <span class="text-xs">
                                         Lat: {{ $item->user->latitude ?? '-' }}, <br>
