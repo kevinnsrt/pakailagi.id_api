@@ -19,7 +19,7 @@
                     <a href="{{ route('dashboard') }}">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo Aplikasi" class="block h-9 w-auto" />
                     </a>
-                    <p class="ml-3 font-['Comfortaa'] text-[#3E8A8E] text-xl font-bold hidden md:block">
+                    <p class="ml-3 font-['Comfortaa'] text-[#3E8A8E] text-xl font-bold">
                         pakailagi.id
                     </p>
                 </div>
@@ -66,81 +66,40 @@
                     </x-slot>
                 </x-dropdown>
             </div>
-
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = true" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-teal-600 hover:bg-teal-50 focus:outline-none transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
+            
             </div>
-        </div>
     </div>
 
-    <div class="relative z-50 sm:hidden" role="dialog" aria-modal="true" x-show="open" style="display: none;">
-        <div x-show="open" x-transition:enter="ease-in-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" @click="open = false"></div>
+    <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 pb-safe">
+        <div class="flex justify-around items-center h-16 px-1">
+            
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('dashboard') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[10px] font-medium">Home</span>
+            </a>
 
-        <div class="fixed inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute inset-0 overflow-hidden">
-                <div class="pointer-events-none fixed inset-y-0 left-0 flex max-w-full pr-10">
-                    <div x-show="open" x-transition:enter="transform transition ease-in-out duration-300" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in-out duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="pointer-events-auto relative w-screen max-w-xs">
-                        
-                        <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
-                            <div class="px-4 sm:px-6 mb-6 flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <img src="{{ asset('images/logo.png') }}" class="h-8 w-auto mr-2">
-                                    <h2 class="text-xl font-bold text-teal-600 font-['Comfortaa']">pakailagi.id</h2>
-                                </div>
-                                <button @click="open = false" type="button" class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none">
-                                    <span class="sr-only">Close panel</span>
-                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                                </button>
-                            </div>
-                            
-                            <div class="relative mt-2 flex-1 px-4 sm:px-6 space-y-2">
-                                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="rounded-lg">
-                                    {{ __('Dashboard') }}
-                                </x-responsive-nav-link>
-                                <x-responsive-nav-link :href="route('tambah-barang')" :active="request()->routeIs('tambah-barang')" class="rounded-lg">
-                                    {{ __('Tambah Barang') }}
-                                </x-responsive-nav-link>
-                                <x-responsive-nav-link :href="route('barang')" :active="request()->routeIs('barang')" class="rounded-lg">
-                                    {{ __('Barang') }}
-                                </x-responsive-nav-link>
-                                <x-responsive-nav-link :href="route('history.admin')" :active="request()->routeIs('history.admin')" class="rounded-lg">
-                                    {{ __('History Pesanan') }}
-                                </x-responsive-nav-link>
-                                <x-responsive-nav-link :href="route('promosi.index')" :active="request()->routeIs('promosi.index')" class="rounded-lg">
-                                    {{ __('Promosi') }}
-                                </x-responsive-nav-link>
+            <a href="{{ route('tambah-barang') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('tambah-barang') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <span class="text-[10px] font-medium">Tambah</span>
+            </a>
 
-                                <hr class="border-gray-100 my-4">
+            <a href="{{ route('barang') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('barang') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span class="text-[10px] font-medium">Produk</span>
+            </a>
 
-                                <div class="bg-gray-50 rounded-xl p-4 mt-4">
-                                    <div class="flex items-center mb-3">
-                                        <div class="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold mr-3">
-                                            {{ substr(Auth::user()->name, 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <div class="font-medium text-gray-900">{{ Auth::user()->name }}</div>
-                                            <div class="text-xs text-gray-500">{{ Auth::user()->email }}</div>
-                                        </div>
-                                    </div>
-                                    <x-responsive-nav-link :href="route('profile.edit')" class="justify-center text-center rounded-lg bg-white border border-gray-200 mb-2">
-                                        {{ __('Edit Profile') }}
-                                    </x-responsive-nav-link>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="w-full text-center py-2 bg-white border border-red-100 text-red-600 rounded-lg text-sm font-medium shadow-sm hover:bg-red-50 transition">
-                                            Log Out
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <a href="{{ route('history.admin') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('history.admin') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                <span class="text-[10px] font-medium">Order</span>
+            </a>
+
+            <a href="{{ route('profile.edit') }}" class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('profile.edit') ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600' }}">
+                <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-300 {{ request()->routeIs('profile.edit') ? 'border-teal-500 ring-1 ring-teal-500' : '' }}">
+                    <span class="text-xs font-bold">{{ substr(Auth::user()->name, 0, 1) }}</span>
                 </div>
-            </div>
+                <span class="text-[10px] font-medium">Akun</span>
+            </a>
+
         </div>
     </div>
 </nav>
