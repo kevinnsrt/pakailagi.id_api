@@ -11,8 +11,7 @@
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="bg-white shadow-sm sm:rounded-xl border border-gray-100 overflow-visible">
-                
+            <div class="bg-white shadow-sm sm:rounded-xl border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h3 class="text-lg font-medium text-gray-900">Daftar Transaksi</h3>
                     <span class="px-3 py-1 text-xs font-semibold text-teal-600 bg-teal-50 rounded-full border border-teal-100">
@@ -20,16 +19,16 @@
                     </span>
                 </div>
 
-                <div class="hidden md:block overflow-x-auto overflow-y-visible"> 
+                <div class="hidden md:block overflow-x-auto"> 
                     <table class="w-full text-left text-sm text-gray-500">
                         <thead class="bg-gray-50 text-xs uppercase text-gray-700">
                             <tr>
-                                <th class="px-6 py-4 font-semibold">Order ID</th>
-                                <th class="px-6 py-4 font-semibold">Pelanggan</th>
-                                <th class="px-6 py-4 font-semibold">Produk</th>
-                                <th class="px-6 py-4 font-semibold">Lokasi Pengiriman</th>
-                                <th class="px-6 py-4 font-semibold">Status</th>
-                                <th class="px-6 py-4 font-semibold text-right">Aksi</th>
+                                <th class="px-6 py-4">Order ID</th>
+                                <th class="px-6 py-4">Pelanggan</th>
+                                <th class="px-6 py-4">Produk</th>
+                                <th class="px-6 py-4">Lokasi Pengiriman</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 border-t border-gray-100">
@@ -49,29 +48,22 @@
                                     <td class="px-6 py-4">
                                         <span class="text-gray-900 font-medium">{{ $item->product->name ?? '-' }}</span>
                                     </td>
-                                    <td class="px-6 py-4 relative group"> 
+                                    <td class="px-6 py-4"> 
                                         <div class="flex flex-col text-xs text-gray-500 max-w-[200px]">
                                             <div class="flex items-start gap-1">
                                                 <svg class="w-3 h-3 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                                 
                                                 <a href="https://www.google.com/maps/search/?api=1&query={{ $item->user->latitude }},{{ $item->user->longitude }}" 
                                                    target="_blank"
-                                                   class="load-address leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150 z-10 relative" 
+                                                   class="load-address leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150" 
                                                    data-lat="{{ $item->user->latitude ?? '' }}" 
                                                    data-lng="{{ $item->user->longitude ?? '' }}"
-                                                   data-id="{{ $item->id }}"
-                                                   onmouseenter="showMap(this)"
-                                                   onmouseleave="hideMap(this)">
+                                                   onmouseenter="showGlobalMap(this)"
+                                                   onmouseleave="hideGlobalMap()">
                                                     <span class="text-gray-400">Memuat alamat...</span>
                                                     <br>
                                                     <span class="text-[10px] text-gray-400">({{ $item->user->latitude ?? '-' }}, {{ $item->user->longitude ?? '-' }})</span>
                                                 </a>
-
-                                                <div id="map-container-{{ $item->id }}" 
-                                                     class="hidden absolute left-0 bottom-full mb-2 w-64 h-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden pointer-events-none transition-opacity duration-300 opacity-0">
-                                                    <div id="map-{{ $item->id }}" class="w-full h-full"></div>
-                                                    <div class="absolute -bottom-1 left-4 w-3 h-3 bg-white border-b border-r border-gray-200 transform rotate-45"></div>
-                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -105,14 +97,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                            <p>Belum ada riwayat pesanan.</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">Belum ada pesanan.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -120,161 +105,96 @@
 
                 <div class="md:hidden flex flex-col divide-y divide-gray-100">
                     @forelse ($data as $item)
-                        <div class="p-4 bg-white hover:bg-gray-50 transition">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="text-xs text-gray-500">Order #{{ $item->id }}</span>
-                                    <h4 class="font-bold text-gray-900">{{ $item->product->name ?? 'Unknown Product' }}</h4>
-                                </div>
-                                @php
-                                    $statusClasses = match($item->status) {
-                                        'Selesai' => 'bg-green-50 text-green-700',
-                                        'Diproses' => 'bg-teal-50 text-teal-700',
-                                        'Dibatalkan' => 'bg-red-50 text-red-700',
-                                        default => 'bg-gray-100 text-gray-600',
-                                    };
-                                @endphp
-                                <span class="px-2 py-1 rounded text-xs font-semibold {{ $statusClasses }}">{{ $item->status }}</span>
+                        <div class="p-4 bg-white">
+                             <div class="flex items-start gap-2 pl-0.5">
+                                <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ $item->user->latitude }},{{ $item->user->longitude }}" target="_blank" class="load-address text-xs leading-snug text-teal-600 underline" data-lat="{{ $item->user->latitude }}" data-lng="{{ $item->user->longitude }}">
+                                    Memuat alamat...
+                                </a>
                             </div>
-                            
-                            <div class="text-sm text-gray-600 mb-4 space-y-2">
-                                <div class="flex items-center gap-2">
-                                    @if ($item->user && $item->user->profile_picture)
-                                        <img src="{{ asset('storage/' . $item->user->profile_picture) }}" class="w-5 h-5 rounded-full object-cover border border-gray-200">
-                                    @else
-                                        <div class="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-[10px] border border-teal-200">{{ substr($item->user->name ?? 'U', 0, 1) }}</div>
-                                    @endif
-                                    <span class="font-medium">{{ $item->user->name ?? '-' }}</span>
-                                </div>
-
-                                <div class="flex items-start gap-2 pl-0.5">
-                                    <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    
-                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $item->user->latitude }},{{ $item->user->longitude }}" 
-                                       target="_blank"
-                                       class="load-address text-xs leading-snug hover:text-teal-600 hover:underline cursor-pointer transition duration-150"
-                                       data-lat="{{ $item->user->latitude ?? '' }}" 
-                                       data-lng="{{ $item->user->longitude ?? '' }}">
-                                        <span class="text-gray-400">Memuat alamat...</span>
-                                    </a>
-                                </div>
-                            </div>
-
-                            @if ($item->status == 'Diproses')
-                                <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-100">
-                                    <form method="POST" action="{{ route('batal.pesanan', $item->id) }}" class="w-full">
-                                        @csrf
-                                        <button type="submit" class="w-full py-2 bg-white border border-gray-200 text-gray-700 hover:bg-red-50 hover:border-red-200 hover:text-red-600 text-xs font-medium rounded-lg transition">Batal</button>
-                                    </form>
-                                    <form method="POST" action="{{ route('proses.pesanan', $item->id) }}" class="w-full">
-                                        @csrf
-                                        <button type="submit" class="w-full py-2 bg-teal-600 text-white hover:bg-teal-700 text-xs font-medium rounded-lg shadow-sm transition">Proses Pesanan</button>
-                                    </form>
-                                </div>
-                            @endif
                         </div>
                     @empty
-                        <div class="p-8 text-center text-gray-500 text-sm">Tidak ada data pesanan.</div>
+                        <div class="p-8 text-center text-gray-500 text-sm">Tidak ada data.</div>
                     @endforelse
                 </div>
-
             </div>
         </div>
     </div>
 
-    <script>
-        // Object untuk menyimpan instance map agar tidak di-init berulang kali
-        const maps = {};
+    <div id="global-map-popup" 
+         class="fixed hidden z-[9999] w-72 h-56 bg-white border-2 border-teal-500 rounded-xl shadow-2xl overflow-hidden pointer-events-none transition-opacity duration-200 opacity-0">
+        <div id="global-map" class="w-full h-full bg-gray-100"></div>
+        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-teal-500 rotate-45"></div>
+    </div>
 
-        // FUNGSI 1: TAMPILKAN MAP SAAT HOVER
-        function showMap(element) {
-            const id = element.getAttribute('data-id');
+    <script>
+        let globalMap = null;
+        let globalMarker = null;
+        const popup = document.getElementById('global-map-popup');
+
+        function showGlobalMap(element) {
             const lat = element.getAttribute('data-lat');
             const lng = element.getAttribute('data-lng');
-            const container = document.getElementById(`map-container-${id}`);
-            const mapId = `map-${id}`;
 
-            // Validasi lat/lng
             if (!lat || !lng || lat === '-' || lng === '-') return;
 
-            // Tampilkan container
-            container.classList.remove('hidden');
-            // Sedikit delay untuk efek fade-in
-            setTimeout(() => {
-                container.classList.remove('opacity-0');
-            }, 10);
+            // 1. Hitung Posisi Popup agar muncul diatas kursor/elemen
+            const rect = element.getBoundingClientRect();
+            // Posisi: Horizontal tengah elemen, Vertikal di atas elemen (kurangi tinggi popup)
+            const topPos = rect.top - 240; // 240px diatas elemen (sesuai tinggi popup)
+            const leftPos = rect.left + (rect.width / 2) - 144; // 144px = setengah lebar popup (288px/2)
 
-            // Jika map belum pernah dibuat untuk item ini, buat baru
-            if (!maps[id]) {
-                const map = L.map(mapId, {
-                    zoomControl: false, // Hilangkan kontrol zoom agar bersih
-                    attributionControl: false // Hilangkan teks atribusi
-                }).setView([lat, lng], 15);
+            popup.style.top = `${topPos}px`;
+            popup.style.left = `${leftPos}px`;
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                }).addTo(map);
+            // 2. Tampilkan Popup
+            popup.classList.remove('hidden');
+            setTimeout(() => popup.classList.remove('opacity-0'), 10);
 
-                L.marker([lat, lng]).addTo(map);
-                
-                // Simpan instance map
-                maps[id] = map;
-            } else {
-                // Jika sudah ada, pastikan ukurannya benar (fix bug render abu-abu)
-                maps[id].invalidateSize();
+            // 3. Init Map (Hanya sekali seumur hidup page load)
+            if (!globalMap) {
+                globalMap = L.map('global-map', {
+                    zoomControl: false, 
+                    attributionControl: false
+                });
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(globalMap);
+                globalMarker = L.marker([0, 0]).addTo(globalMap);
             }
+
+            // 4. Update Posisi Map & Marker
+            globalMap.setView([lat, lng], 15);
+            globalMarker.setLatLng([lat, lng]);
+            
+            // Fix bug leaflet map gray area saat container hidden -> visible
+            globalMap.invalidateSize(); 
         }
 
-        // FUNGSI 2: SEMBUNYIKAN MAP SAAT LEAVE
-        function hideMap(element) {
-            const id = element.getAttribute('data-id');
-            const container = document.getElementById(`map-container-${id}`);
-            
-            // Efek fade-out
-            container.classList.add('opacity-0');
-            
-            // Sembunyikan elemen setelah transisi selesai
+        function hideGlobalMap() {
+            popup.classList.add('opacity-0');
             setTimeout(() => {
-                container.classList.add('hidden');
-            }, 300);
+                popup.classList.add('hidden');
+            }, 200);
         }
 
-        // FUNGSI 3: REVERSE GEOCODING (AMBIL NAMA JALAN)
+        // Logic Reverse Geocoding (Sama seperti sebelumnya)
         document.addEventListener("DOMContentLoaded", function() {
             const addressElements = document.querySelectorAll('.load-address');
-
             const fetchAddress = (lat, lng, element, delay) => {
                 setTimeout(() => {
-                    if (!lat || !lng || lat === '-' || lng === '-') {
-                        element.innerHTML = '<span class="text-gray-400 italic">Lokasi tidak tersedia</span>';
-                        element.removeAttribute('href');
-                        return;
+                    if (!lat || !lng || lat === '-') {
+                        element.innerText = 'Lokasi tidak tersedia'; return;
                     }
-
                     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.display_name) {
-                                const fullAddress = data.display_name;
-                                // Masukkan teks alamat ke dalam <a> tanpa menghapus span loading lat/lng di bawahnya jika ingin
-                                // Di sini kita replace semua isinya dengan alamat baru
-                                element.innerText = fullAddress;
-                                element.classList.add('text-gray-700'); 
-                            } else {
-                                element.innerText = "Alamat tidak ditemukan (Buka Peta)";
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching address:', error);
-                            element.innerText = "Gagal memuat alamat (Buka Peta)";
+                        .then(r => r.json()).then(d => {
+                            if (d.display_name) {
+                                element.innerText = d.display_name;
+                                element.classList.add('text-gray-700');
+                            } else element.innerText = "Alamat tidak ditemukan";
                         });
                 }, delay);
             };
-
             addressElements.forEach((el, index) => {
-                const lat = el.getAttribute('data-lat');
-                const lng = el.getAttribute('data-lng');
-                fetchAddress(lat, lng, el, index * 1200);
+                fetchAddress(el.getAttribute('data-lat'), el.getAttribute('data-lng'), el, index * 1200);
             });
         });
     </script>
