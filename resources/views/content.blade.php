@@ -222,7 +222,42 @@
             }
         }
 
-        // --- ANIMASI SCALE DARI TOMBOL (TRANSFORM ORIGIN) ---
+        // --- ANIMASI SCALE DARI TOMBOL (LOGIKA FIX) ---
+        // Fungsi ini menghitung koordinat tombol dan mengatur transform-origin
+        function animateFromButton(panel, buttonElement, overlay) {
+            // 1. Tampilkan wrapper dulu agar bisa diukur
+            // Pastikan panel dalam keadaan reset (tanpa transisi) dulu
+            panel.style.transition = 'none'; 
+            panel.classList.remove('scale-0', 'opacity-0'); 
+            
+            // 2. Hitung posisi
+            const rect = buttonElement.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+            
+            const btnX = rect.left + rect.width / 2;
+            const btnY = rect.top + rect.height / 2;
+            
+            const originX = btnX - panelRect.left;
+            const originY = btnY - panelRect.top;
+
+            // 3. Set Origin & Initial State
+            panel.style.transformOrigin = `${originX}px ${originY}px`;
+            panel.classList.add('scale-0', 'opacity-0'); // Sembunyikan lagi di titik asal
+
+            // 4. Force Reflow (Penting agar browser sadar perubahan posisi)
+            void panel.offsetWidth; 
+
+            // 5. Aktifkan Transisi & Mainkan Animasi
+            panel.style.transition = ''; // Hapus override inline style
+            // Tambahkan class transition tailwind jika sempat terhapus (opsional)
+            
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                panel.classList.remove('scale-0', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
         const editModal = document.getElementById('edit-modal');
         const editOverlay = document.getElementById('edit-overlay');
         const editPanel = document.getElementById('edit-panel');
@@ -232,31 +267,6 @@
         const deleteModal = document.getElementById('delete-modal');
         const deleteOverlay = document.getElementById('delete-overlay');
         const deletePanel = document.getElementById('delete-panel');
-
-        function animateModalOpen(panel, buttonElement) {
-            // 1. Dapatkan posisi tombol
-            const rect = buttonElement.getBoundingClientRect();
-            // 2. Dapatkan posisi panel (panel harus visible untuk diukur, tapi opacity 0)
-            // Karena panel di tengah (fixed), kita hitung offsetnya
-            
-            // Trik: Set origin relatif terhadap panel itu sendiri
-            // Origin X = (Posisi Tengah Tombol X) - (Posisi Kiri Panel)
-            // Origin Y = (Posisi Tengah Tombol Y) - (Posisi Atas Panel)
-            
-            const panelRect = panel.getBoundingClientRect();
-            
-            const originX = (rect.left + rect.width / 2) - panelRect.left;
-            const originY = (rect.top + rect.height / 2) - panelRect.top;
-
-            // Set Transform Origin CSS
-            panel.style.transformOrigin = `${originX}px ${originY}px`;
-
-            // Trigger Animasi
-            setTimeout(() => {
-                panel.classList.remove('scale-0', 'opacity-0');
-                panel.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
 
         function openEditModal(buttonElement) {
             const jsonString = buttonElement.getAttribute('data-json');
@@ -272,33 +282,27 @@
             document.getElementById('edit-ukuran').value = product.ukuran;
             document.getElementById('edit-deskripsi').value = product.deskripsi;
             
-            // Buka Modal dulu (masih invisible)
             editModal.classList.remove('hidden');
-            editOverlay.classList.remove('opacity-0');
-            
-            // Jalankan animasi dari tombol
-            animateModalOpen(editPanel, buttonElement);
+            animateFromButton(editPanel, buttonElement, editOverlay);
         }
 
         function closeEditModal() {
             editOverlay.classList.add('opacity-0');
             editPanel.classList.remove('scale-100', 'opacity-100');
             editPanel.classList.add('scale-0', 'opacity-0');
-            
             setTimeout(() => editModal.classList.add('hidden'), 300);
         }
 
         function openDeleteModal(buttonElement = null) {
             deleteModal.classList.remove('hidden');
-            deleteOverlay.classList.remove('opacity-0');
-
+            
             if(buttonElement) {
-                // Jika dibuka dari tombol (misal tombol hapus di dalam edit modal)
-                animateModalOpen(deletePanel, buttonElement);
+                animateFromButton(deletePanel, buttonElement, deleteOverlay);
             } else {
-                // Default bounce from center jika tidak ada tombol spesifik
+                // Fallback jika tidak ada button (jarang terjadi)
                 deletePanel.style.transformOrigin = 'center';
                 setTimeout(() => {
+                    deleteOverlay.classList.remove('opacity-0');
                     deletePanel.classList.remove('scale-0', 'opacity-0');
                     deletePanel.classList.add('scale-100', 'opacity-100');
                 }, 10);
