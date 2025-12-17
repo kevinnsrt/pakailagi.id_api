@@ -83,7 +83,7 @@
     <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
-        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center" onclick="if(event.target === this) closeEditModal()">
             
             <div id="edit-panel" class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
                 
@@ -164,7 +164,7 @@
     <div id="delete-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
-        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center" onclick="if(event.target === this) closeDeleteModal()">
             
             <div id="delete-panel" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full max-w-lg border border-gray-200" style="opacity: 0; transform: scale(0.95);">
                 
