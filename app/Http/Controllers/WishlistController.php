@@ -59,12 +59,13 @@ public function store(Request $request)
      */
     public function show(Request $request)
     {
+        $uid = $request->attributes->get('firebase_uid');
 
         $request->validate([
             'uid' => 'required|string',
         ]);
         $data = Wishlist::with('product')
-            ->where('uid', $request->uid)
+            ->where('uid', $uid)
             ->get()
             ->map(function ($wishlist) {
                 if ($wishlist->product && $wishlist->product->image_path) {
