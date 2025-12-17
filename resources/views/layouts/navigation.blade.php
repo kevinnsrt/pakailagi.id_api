@@ -1,19 +1,29 @@
 @php
-    // Tentukan Index Aktif di Server Side agar posisi awal presisi
+    // LOGIKA ACTIVE STATE (SERVER SIDE)
+    // Kita set Index berdasarkan halaman yang sedang dibuka
     $activeIndex = -1;
-    if (request()->routeIs('dashboard')) { $activeIndex = 0; }
-    elseif (request()->routeIs('tambah-barang')) { $activeIndex = 1; }
-    elseif (request()->routeIs('barang')) { $activeIndex = 2; }
-    elseif (request()->routeIs('history.admin')) { $activeIndex = 3; }
-    elseif (request()->routeIs('promosi.index')) { $activeIndex = 4; }
+
+    if (request()->routeIs('dashboard')) { 
+        $activeIndex = 0; 
+    } 
+    elseif (request()->routeIs('barang') || request()->routeIs('tambah-barang')) { 
+        // Halaman Barang & Tambah Barang dianggap satu grup (Index 1)
+        $activeIndex = 1; 
+    } 
+    elseif (request()->routeIs('history.admin')) { 
+        $activeIndex = 2; 
+    } 
+    elseif (request()->routeIs('promosi.index')) { 
+        $activeIndex = 3; 
+    }
 @endphp
 
 <nav x-data="{ 
-        // Gunakan nilai dari PHP
+        // Gunakan nilai index dari PHP
         activeIndex: {{ $activeIndex }},
         hoverIndex: null,
         mobileMenuOpen: false,
-        mounted: false // State untuk mencegah animasi saat loading
+        mounted: false 
     }" 
     x-init="setTimeout(() => mounted = true, 300)" 
     class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
@@ -32,12 +42,14 @@
                 </div>
 
                 <div class="hidden sm:ml-10 sm:flex sm:items-center relative h-full" x-ref="navContainer">
+                    
                     <div class="absolute bottom-0 h-1 bg-teal-600 rounded-full transition-all duration-300 ease-out z-0 pointer-events-none"
                          x-show="hoverIndex !== null || activeIndex !== -1"
                          x-cloak
                          :style="(() => {
                              let targetIndex = hoverIndex !== null ? hoverIndex : activeIndex;
-                             let refs = [$refs.link0, $refs.link1, $refs.link2, $refs.link3, $refs.link4];
+                             // Array refs harus sesuai jumlah menu (4 item)
+                             let refs = [$refs.link0, $refs.link1, $refs.link2, $refs.link3];
                              let target = refs[targetIndex];
                              if(!target) return 'opacity: 0';
                              return `left: ${target.offsetLeft + 4}px; width: ${target.offsetWidth - 8}px; opacity: 1;`;
@@ -45,11 +57,29 @@
                     </div>
 
                     <div class="flex space-x-1 h-full items-center">
-                        <a href="{{ route('dashboard') }}" x-ref="link0" @mouseenter="hoverIndex = 0" @mouseleave="hoverIndex = null" class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" :class="activeIndex === 0 ? 'text-teal-700 font-bold' : (hoverIndex === 0 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">{{ __('Dashboard') }}</a>
-                        <a href="{{ route('tambah-barang') }}" x-ref="link1" @mouseenter="hoverIndex = 1" @mouseleave="hoverIndex = null" class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" :class="activeIndex === 1 ? 'text-teal-700 font-bold' : (hoverIndex === 1 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">{{ __('Tambah Barang') }}</a>
-                        <a href="{{ route('barang') }}" x-ref="link2" @mouseenter="hoverIndex = 2" @mouseleave="hoverIndex = null" class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" :class="activeIndex === 2 ? 'text-teal-700 font-bold' : (hoverIndex === 2 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">{{ __('Barang') }}</a>
-                        <a href="{{ route('history.admin') }}" x-ref="link3" @mouseenter="hoverIndex = 3" @mouseleave="hoverIndex = null" class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" :class="activeIndex === 3 ? 'text-teal-700 font-bold' : (hoverIndex === 3 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">{{ __('History') }}</a>
-                        <a href="{{ route('promosi.index') }}" x-ref="link4" @mouseenter="hoverIndex = 4" @mouseleave="hoverIndex = null" class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" :class="activeIndex === 4 ? 'text-teal-700 font-bold' : (hoverIndex === 4 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">{{ __('Promosi') }}</a>
+                        <a href="{{ route('dashboard') }}" x-ref="link0" @mouseenter="hoverIndex = 0" @mouseleave="hoverIndex = null" 
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" 
+                           :class="activeIndex === 0 ? 'text-teal-700 font-bold' : (hoverIndex === 0 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           {{ __('Home') }}
+                        </a>
+
+                        <a href="{{ route('barang') }}" x-ref="link1" @mouseenter="hoverIndex = 1" @mouseleave="hoverIndex = null" 
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" 
+                           :class="activeIndex === 1 ? 'text-teal-700 font-bold' : (hoverIndex === 1 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           {{ __('Produk') }}
+                        </a>
+
+                        <a href="{{ route('history.admin') }}" x-ref="link2" @mouseenter="hoverIndex = 2" @mouseleave="hoverIndex = null" 
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" 
+                           :class="activeIndex === 2 ? 'text-teal-700 font-bold' : (hoverIndex === 2 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           {{ __('History') }}
+                        </a>
+
+                        <a href="{{ route('promosi.index') }}" x-ref="link3" @mouseenter="hoverIndex = 3" @mouseleave="hoverIndex = null" 
+                           class="px-4 py-2 text-sm font-medium transition-colors duration-200 inline-flex items-center h-full border-b-2 border-transparent" 
+                           :class="activeIndex === 3 ? 'text-teal-700 font-bold' : (hoverIndex === 3 ? 'text-teal-600' : 'text-gray-500 hover:text-gray-700')">
+                           {{ __('Promosi') }}
+                        </a>
                     </div>
                 </div>
             </div>
@@ -87,7 +117,7 @@
         <div class="relative grid grid-cols-4 h-16 w-full">
             
             <div class="absolute top-0 left-0 w-1/4 h-full pointer-events-none"
-                 x-show="activeIndex !== -1 && activeIndex < 4" 
+                 x-show="activeIndex !== -1" 
                  :class="mounted ? 'transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1)' : ''"
                  style="transform: translateX({{ max(0, $activeIndex) * 100 }}%)">
                 
@@ -103,27 +133,27 @@
                 </div>
             </a>
 
-            <a href="{{ route('tambah-barang') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
-                <div class="transition-all duration-300 ease-out flex flex-col items-center"
-                     :class="activeIndex === 1 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 1 ? 'opacity-100 font-bold' : 'opacity-80'">Tambah</span>
-                </div>
-            </a>
-
             <a href="{{ route('barang') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
                 <div class="transition-all duration-300 ease-out flex flex-col items-center"
-                     :class="activeIndex === 2 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
+                     :class="activeIndex === 1 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
                     <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 2 ? 'opacity-100 font-bold' : 'opacity-80'">Produk</span>
+                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 1 ? 'opacity-100 font-bold' : 'opacity-80'">Produk</span>
                 </div>
             </a>
 
             <a href="{{ route('history.admin') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
                 <div class="transition-all duration-300 ease-out flex flex-col items-center"
+                     :class="activeIndex === 2 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 2 ? 'opacity-100 font-bold' : 'opacity-80'">History</span>
+                </div>
+            </a>
+
+            <a href="{{ route('promosi.index') }}" class="relative flex flex-col items-center justify-center w-full h-full group">
+                <div class="transition-all duration-300 ease-out flex flex-col items-center"
                      :class="activeIndex === 3 ? '-translate-y-1 scale-110 text-teal-600' : 'text-gray-400 group-hover:text-gray-600'">
-                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 3 ? 'opacity-100 font-bold' : 'opacity-80'">Order</span>
+                    <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                    <span class="text-[10px] font-medium mt-1 transition-opacity duration-300" :class="activeIndex === 3 ? 'opacity-100 font-bold' : 'opacity-80'">Promosi</span>
                 </div>
             </a>
 
