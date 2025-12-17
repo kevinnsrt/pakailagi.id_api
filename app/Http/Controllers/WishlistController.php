@@ -74,22 +74,28 @@ public function store(Request $request)
         return response()->json($data);
     }
 
-    public function destroy(Request $request)
-    {
-        $wishlist = Wishlist::find($request->id);
+// hapus wishlist
+public function destroy(Request $request)
+{
+    $uid = $request->attributes->get('firebase_uid');
 
-        if (! $wishlist) {
-            return response()->json([
-                'status'  => 'failed',
-                'message' => 'Data wishlist tidak ditemukan',
-            ], 404);
-        }
+    $wishlist = Wishlist::where('id', $request->id)
+        ->where('uid', $uid)
+        ->first();
 
-        $wishlist->delete();
-
+    if (! $wishlist) {
         return response()->json([
-            'status'  => 'success',
-            'message' => 'Produk dihapus dari wishlist',
-        ]);
+            'status'  => 'failed',
+            'message' => 'Wishlist tidak ditemukan',
+        ], 404);
     }
+
+    $wishlist->delete();
+
+    return response()->json([
+        'status'  => 'success',
+        'message' => 'Produk dihapus dari wishlist',
+    ]);
+}
+
 }
