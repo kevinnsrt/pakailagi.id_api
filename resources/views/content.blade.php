@@ -11,16 +11,16 @@
     </x-slot>
 
     @if(session('success'))
-        <div id="toast-success" class="fixed top-0 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-500 ease-in-out -translate-y-full opacity-0">
-            <div class="mt-4 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow-xl border-t-4 border-teal-500" role="alert">
-                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-teal-500 bg-teal-100 rounded-lg">
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none">
+            <div class="mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl border-t-4 border-teal-500 pointer-events-auto" role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-teal-500 bg-teal-100 rounded-lg">
+                    <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                     </svg>
                 </div>
-                <div class="ml-3 text-sm font-normal text-gray-800">{{ session('success') }}</div>
-                <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 transition">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <div class="ml-4 text-base font-medium text-gray-800 flex-grow">{{ session('success') }}</div>
+                <button type="button" onclick="closeToast()" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-9 w-9 transition">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
                 </button>
@@ -160,7 +160,6 @@
     </div>
 
     <div id="delete-modal" class="hidden fixed inset-0 z-[60]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        
         <div id="delete-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0"></div>
 
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -170,7 +169,6 @@
                     
                     <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
-                            
                             <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                                 <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
@@ -210,7 +208,7 @@
     </form>
 
     <script>
-        // --- 1. NOTIFIKASI TOAST (Center Top, Slide Down) ---
+        // --- LOGIC TOAST NOTIFIKASI (SLIDE DOWN FROM TOP) ---
         const toastSuccess = document.getElementById('toast-success');
         document.addEventListener("DOMContentLoaded", function() {
             if (toastSuccess) {
@@ -225,7 +223,7 @@
             }
         }
 
-        // --- 2. MODAL EDIT (Slide Up Bottom Sheet) ---
+        // --- LOGIC EDIT MODAL (SLIDE FROM BOTTOM) ---
         const editModal = document.getElementById('edit-modal');
         const editOverlay = document.getElementById('edit-overlay');
         const editPanel = document.getElementById('edit-panel');
@@ -240,11 +238,11 @@
             document.getElementById('edit-ukuran').value = product.ukuran;
             document.getElementById('edit-deskripsi').value = product.deskripsi;
             
-            // Set URL Delete Form juga di sini
             const deleteForm = document.getElementById('delete-form');
             if(deleteForm) deleteForm.action = `/barang/${product.id}`;
 
             editModal.classList.remove('hidden');
+            // Timeout agar browser merender state hidden dulu sebelum animasi
             setTimeout(() => {
                 editOverlay.classList.remove('opacity-0');
                 editPanel.classList.remove('translate-y-full', 'sm:translate-y-full', 'sm:scale-95');
@@ -257,7 +255,7 @@
             setTimeout(() => editModal.classList.add('hidden'), 300);
         }
 
-        // --- 3. MODAL DELETE (Slide Up To Center) ---
+        // --- LOGIC DELETE MODAL (SLIDE UP TO CENTER) ---
         const deleteModal = document.getElementById('delete-modal');
         const deleteOverlay = document.getElementById('delete-overlay');
         const deletePanel = document.getElementById('delete-panel');
@@ -267,14 +265,14 @@
             deleteModal.classList.remove('hidden');
             setTimeout(() => {
                 deleteOverlay.classList.remove('opacity-0');
-                // Hapus translate-y-full dan opacity-0 agar naik ke tengah
+                // Hapus class posisi bawah agar naik ke tengah
                 deletePanel.classList.remove('translate-y-full', 'opacity-0');
             }, 10);
         }
 
         function closeDeleteModal() {
             deleteOverlay.classList.add('opacity-0');
-            // Kembalikan ke bawah dan transparan
+            // Kembalikan ke bawah dan invisible
             deletePanel.classList.add('translate-y-full', 'opacity-0');
             setTimeout(() => deleteModal.classList.add('hidden'), 300);
         }
