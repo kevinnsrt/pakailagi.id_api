@@ -18,7 +18,8 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased overflow-x-hidden"> <div class="min-h-screen bg-gray-100">
+    <body class="font-sans antialiased overflow-x-hidden"> 
+        <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
             @isset($header)
@@ -34,12 +35,10 @@
             </main>
         </div>
 
-<div id="global-toast-container" class="fixed top-24 right-0 z-[100] flex flex-col gap-3 pointer-events-none p-4 overflow-hidden w-full sm:w-auto items-end">
+        <div id="global-toast-container" class="fixed top-24 right-0 z-[100] flex flex-col gap-3 pointer-events-none p-4 overflow-hidden w-full sm:w-auto items-end">
             </div>
 
         <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-
-        <audio id="success-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -51,33 +50,40 @@
                         .then(data => {
                             if(data.server_time) lastCheckTime = data.server_time;
 
-                            // A. Pesanan Masuk (Diproses) -> Suara Biasa
+                            // A. Pesanan Masuk (Diproses) -> Suara 'Ting'
                             if (data.new_orders && data.new_orders.length > 0) {
-                                playSound('notif'); // Mainkan suara 1
+                                playSound('notif'); 
                                 data.new_orders.forEach(order => {
                                     showGlobalToast(
                                         `📦 Pesanan Baru!`, 
-                                        `${order.user ? order.user.name : 'User'} baru saja checkout.`, 
+                                        `${order.user ? order.user.name : 'Seseorang'} baru saja checkout.`, 
                                         'bg-teal-600'
                                     );
                                 });
                             }
 
-                            // B. Pesanan Selesai (Selesai) -> Suara Spesial (BARU)
+                            // B. Pesanan Selesai (Selesai) -> Suara Robot (Nominal)
                             if (data.completed_orders && data.completed_orders.length > 0) {
-                                playSound('success'); // Mainkan suara 2
                                 data.completed_orders.forEach(order => {
+                                    // 1. Tampilkan Visual Toast
+                                    // Gunakan Intl.NumberFormat untuk format Rp yang cantik di layar
+                                    let formattedPrice = new Intl.NumberFormat('id-ID').format(order.product.price);
+                                    
                                     showGlobalToast(
                                         `✅ Transaksi Selesai!`, 
-                                        `Pesanan atas nama ${order.user ? order.user.name : 'User'} telah selesai.`, 
-                                        'bg-green-600' // Warna Hijau Tua
+                                        `Dana Rp ${formattedPrice} telah diterima dari ${order.user ? order.user.name : 'User'}.`, 
+                                        'bg-green-600' 
                                     );
+
+                                    // 2. Ucapkan Nominal (Text to Speech)
+                                    // Contoh: "50000 rupiah, telah diterima"
+                                    let textToSpeak = `${order.product.price} rupiah, telah diterima`;
+                                    speakText(textToSpeak);
                                 });
                             }
 
-                            // C. Masuk Keranjang -> Suara Biasa
+                            // C. Masuk Keranjang -> Hanya Visual
                             if (data.new_carts && data.new_carts.length > 0) {
-                                // playSound('notif'); // Opsional: aktifkan jika ingin bunyi juga
                                 data.new_carts.forEach(cart => {
                                     const productName = cart.product ? cart.product.name : 'Produk';
                                     showGlobalToast(
@@ -92,17 +98,28 @@
                 }, 5000); 
             });
 
-            // Fungsi Play Sound Dinamis
-            function playSound(type) {
-                let audio;
-                if (type === 'success') {
-                    audio = document.getElementById('success-sound');
-                } else {
-                    audio = document.getElementById('notif-sound');
-                }
+            // --- FUNGSI TEXT TO SPEECH (SUARA ROBOT) ---
+            function speakText(text) {
+                if ('speechSynthesis' in window) {
+                    // Stop antrian suara sebelumnya agar tidak bertumpuk
+                    window.speechSynthesis.cancel(); 
 
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'id-ID'; // Bahasa Indonesia
+                    utterance.rate = 0.9;     // Kecepatan sedikit lambat agar jelas
+                    utterance.pitch = 1;      // Nada normal
+                    
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    console.warn("Browser tidak mendukung Text-to-Speech");
+                }
+            }
+
+            // Fungsi Play Sound File (Hanya untuk notif ting)
+            function playSound(type) {
+                let audio = document.getElementById('notif-sound');
                 if(audio) {
-                    audio.currentTime = 0; // Reset ke awal jika dimainkan beruntun
+                    audio.currentTime = 0; 
                     audio.play().catch(e => console.log("Audio autoplay waiting interaction"));
                 }
             }

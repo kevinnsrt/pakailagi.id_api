@@ -218,8 +218,8 @@ public function checkNewNotifications(Request $request)
             ->where('updated_at', '>', $lastCheck)
             ->get();
 
-        // 2. Cek Pesanan Selesai (BARU DITAMBAHKAN)
-        $completedOrders = Cart::with('user')
+        // 2. Cek Pesanan Selesai (Pastikan load 'product' untuk ambil harga)
+        $completedOrders = Cart::with(['user', 'product']) 
             ->where('status', 'Selesai')
             ->where('updated_at', '>', $lastCheck)
             ->get();
@@ -232,7 +232,7 @@ public function checkNewNotifications(Request $request)
 
         return response()->json([
             'new_orders' => $newOrders,
-            'completed_orders' => $completedOrders, // Kirim data selesai
+            'completed_orders' => $completedOrders,
             'new_carts'  => $newCarts,
             'server_time'=> now()->toDateTimeString()
         ]);
