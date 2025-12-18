@@ -40,6 +40,8 @@
 
         <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
+        <audio id="success-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 let lastCheckTime = new Date(Date.now() - 5000).toISOString().slice(0, 19).replace('T', ' ');
@@ -50,7 +52,7 @@
                         .then(data => {
                             if(data.server_time) lastCheckTime = data.server_time;
 
-                            // A. Pesanan Masuk (Diproses) -> Suara 'Ting'
+                            // A. Pesanan Masuk (Ting)
                             if (data.new_orders && data.new_orders.length > 0) {
                                 playSound('notif'); 
                                 data.new_orders.forEach(order => {
@@ -62,27 +64,25 @@
                                 });
                             }
 
-                            // B. Pesanan Selesai (Selesai) -> Suara Robot (Nominal)
+                            // B. Pesanan Selesai (Cha-Ching + Voice)
                             if (data.completed_orders && data.completed_orders.length > 0) {
                                 data.completed_orders.forEach(order => {
-                                    // 1. Tampilkan Visual Toast
-                                    // Gunakan Intl.NumberFormat untuk format Rp yang cantik di layar
+                                    // 1. Tampilkan Toast Visual
                                     let formattedPrice = new Intl.NumberFormat('id-ID').format(order.product.price);
                                     
                                     showGlobalToast(
                                         `✅ Transaksi Selesai!`, 
-                                        `Dana Rp ${formattedPrice} telah diterima dari ${order.user ? order.user.name : 'User'}.`, 
+                                        `Dana Rp ${formattedPrice} diterima dari ${order.user ? order.user.name : 'User'}.`, 
                                         'bg-green-600' 
                                     );
 
-                                    // 2. Ucapkan Nominal (Text to Speech)
-                                    // Contoh: "50000 rupiah, telah diterima"
+                                    // 2. Jalankan Sequence: Suara Kasir -> Suara Robot
                                     let textToSpeak = `${order.product.price} rupiah, telah diterima`;
-                                    speakText(textToSpeak);
+                                    playSuccessSequence(textToSpeak);
                                 });
                             }
 
-                            // C. Masuk Keranjang -> Hanya Visual
+                            // C. Masuk Keranjang
                             if (data.new_carts && data.new_carts.length > 0) {
                                 data.new_carts.forEach(cart => {
                                     const productName = cart.product ? cart.product.name : 'Produk';
@@ -98,29 +98,56 @@
                 }, 5000); 
             });
 
-            // --- FUNGSI TEXT TO SPEECH (SUARA ROBOT) ---
-            function speakText(text) {
-                if ('speechSynthesis' in window) {
-                    // Stop antrian suara sebelumnya agar tidak bertumpuk
-                    window.speechSynthesis.cancel(); 
+            // --- FUNGSI URUTAN SUARA (Sound effect dulu, baru ngomong) ---
+            function playSuccessSequence(text) {
+                const audio = document.getElementById('success-sound');
+                
+                if (audio) {
+                    audio.currentTime = 0;
+                    // Coba mainkan suara kasir
+                    let playPromise = audio.play();
 
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'id-ID'; // Bahasa Indonesia
-                    utterance.rate = 0.9;     // Kecepatan sedikit lambat agar jelas
-                    utterance.pitch = 1;      // Nada normal
-                    
-                    window.speechSynthesis.speak(utterance);
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            // Jika audio berhasil diputar, tunggu sampai selesai (onended) baru ngomong
+                            audio.onended = function() {
+                                speakText(text);
+                                // Hapus listener agar tidak double trigger di masa depan
+                                audio.onended = null; 
+                            };
+                        })
+                        .catch(error => {
+                            // Jika autoplay diblokir browser, langsung ngomong aja (fallback)
+                            console.log("Autoplay blocked, skipping straight to TTS");
+                            speakText(text);
+                        });
+                    }
                 } else {
-                    console.warn("Browser tidak mendukung Text-to-Speech");
+                    // Jika elemen audio tidak ada, langsung ngomong
+                    speakText(text);
                 }
             }
 
-            // Fungsi Play Sound File (Hanya untuk notif ting)
+            // --- FUNGSI TEXT TO SPEECH ---
+            function speakText(text) {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); 
+
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'id-ID'; 
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1;
+                    
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+
+            // Fungsi Play Sound Biasa
             function playSound(type) {
                 let audio = document.getElementById('notif-sound');
                 if(audio) {
                     audio.currentTime = 0; 
-                    audio.play().catch(e => console.log("Audio autoplay waiting interaction"));
+                    audio.play().catch(e => {});
                 }
             }
 
