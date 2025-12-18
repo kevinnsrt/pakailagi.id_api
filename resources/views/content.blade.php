@@ -61,15 +61,20 @@
 
     <div class="py-6 sm:py-6 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                 @forelse ($data as $item)
                     @php
+                        // 1. Definisikan Kondisi
                         $isSoldOut = $item->status === 'Sold Out';
+                        $isProcessing = $item->status === 'Diproses';
+                        
+                        // 2. Variable Pengunci (Locked jika Sold Out ATAU Diproses)
+                        $isLocked = $isSoldOut || $isProcessing;
                     @endphp
 
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transform transition-all duration-300 
-                        {{ $isSoldOut 
-                            ? 'grayscale opacity-75 pointer-events-none select-none bg-gray-50 cursor-not-allowed' 
+                        {{ $isLocked 
+                            ? 'grayscale opacity-80 pointer-events-none select-none bg-gray-50' 
                             : 'hover:shadow-xl hover:scale-[1.02]' 
                         }}">
                         
@@ -80,6 +85,13 @@
                                 <div class="absolute inset-0 bg-black/60 flex items-center justify-center z-20">
                                     <div class="border-2 border-white text-white px-3 py-1 sm:px-4 font-black text-sm sm:text-xl tracking-widest -rotate-12 uppercase opacity-90 shadow-2xl">
                                         SOLD OUT
+                                    </div>
+                                </div>
+                            
+                            @elseif($isProcessing)
+                                <div class="absolute inset-0 bg-orange-500/60 flex items-center justify-center z-20">
+                                    <div class="border-2 border-white text-white px-3 py-1 sm:px-4 font-black text-sm sm:text-xl tracking-widest -rotate-12 uppercase opacity-100 shadow-2xl">
+                                        DIKIRIM
                                     </div>
                                 </div>
                             @else
@@ -94,14 +106,15 @@
                                 <h3 class="text-sm sm:text-lg font-bold text-gray-900 line-clamp-1" title="{{ $item->name }}">{{ $item->name }}</h3>
                             </div>
                             
-                            <p class="text-base sm:text-xl font-bold {{ $isSoldOut ? 'text-gray-500' : 'text-teal-600' }} mb-2 sm:mb-3">
+                            <p class="text-base sm:text-xl font-bold {{ $isLocked ? 'text-gray-500' : 'text-teal-600' }} mb-2 sm:mb-3">
                                 Rp {{ number_format($item->price, 0, ',', '.') }}
                             </p>
 
                             <div class="flex flex-wrap items-center gap-1 sm:gap-2 mb-2 sm:mb-4 text-xs sm:text-sm">
                                 <span class="flex items-center text-gray-600 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium">{{ $item->ukuran }}</span>
                                 @php
-                                    if ($isSoldOut) {
+                                    // Jika locked, warna jadi abu-abu
+                                    if ($isLocked) {
                                         $condColor = 'text-gray-500 bg-gray-200 border-gray-300';
                                     } else {
                                         $condColor = match($item->kondisi) {
@@ -118,16 +131,25 @@
                             <p class="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-3 flex-grow">{{ $item->deskripsi }}</p>
                             
                             <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
+                                @php
+                                    if($isSoldOut) {
+                                        $btnText = 'Terjual';
+                                        $btnClass = 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-200';
+                                    } elseif($isProcessing) {
+                                        $btnText = 'Dalam Pengiriman';
+                                        $btnClass = 'bg-orange-200 text-orange-600 cursor-not-allowed border-orange-200'; // Warna beda untuk processing
+                                    } else {
+                                        $btnText = 'Edit';
+                                        $btnClass = 'bg-teal-600 text-white hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2';
+                                    }
+                                @endphp
+
                                 <button type="button" 
                                         onclick="openEditModal(this)" 
                                         data-json="{{ json_encode($item) }}"
-                                        {{ $isSoldOut ? 'disabled' : '' }}
-                                        class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs uppercase tracking-widest transition ease-in-out duration-150
-                                        {{ $isSoldOut 
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                                            : 'bg-teal-600 text-white hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2' 
-                                        }}">
-                                    {{ $isSoldOut ? 'Terkunci (Sold Out)' : 'Edit' }}
+                                        {{ $isLocked ? 'disabled' : '' }}
+                                        class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs uppercase tracking-widest transition ease-in-out duration-150 {{ $btnClass }}">
+                                    {{ $btnText }}
                                 </button>
                             </div>
                         </div>
@@ -140,8 +162,6 @@
                     </div>
                 @endforelse
             </div>
-        </div>
-    </div>
 
     <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div id="edit-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out opacity-0" onclick="closeEditModal()"></div>

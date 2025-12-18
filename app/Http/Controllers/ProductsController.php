@@ -111,8 +111,8 @@ class ProductsController extends Controller
         // 2. Cari produk berdasarkan ID
         $product = Product::findOrFail($id);
 
-        if ($product->status === 'Sold Out') {
-        return redirect()->back()->with('error', 'Barang yang sudah terjual tidak dapat diedit!');
+        if (in_array($product->status, ['Sold Out', 'Diproses'])) {
+            return redirect()->back()->with('error', 'Barang yang sudah terjual atau sedang diproses tidak dapat diedit!');
         }
 
         // 3. Siapkan data yang akan diupdate
