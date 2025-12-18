@@ -6,6 +6,7 @@ use App\Services\FirebaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Cart;
 
 class ProductsController extends Controller
 {
@@ -108,11 +109,19 @@ class ProductsController extends Controller
             'image'     => 'nullable|image|mimes:jpg,jpeg,png,svg|max:2048', 
         ]);
 
+        $hasTransaction = Cart::where('product_id', $id)
+        ->whereIn('status', ['Diproses', 'Dalam Pengiriman', 'Selesai'])
+        ->exists();
+
+        if ($hasTransaction) {
+            return redirect()->back()->with('error', 'Barang sedang diproses, dikirim, atau sudah selesai. Tidak dapat diedit!');
+        }
+
         // 2. Cari produk berdasarkan ID
         $product = Product::findOrFail($id);
 
-        if (in_array($product->status, ['Sold Out', 'Diproses'])) {
-            return redirect()->back()->with('error', 'Barang yang sudah terjual atau sedang diproses tidak dapat diedit!');
+        if ($product->status === 'Sold Out') {
+        return redirect()->back()->with('error', 'Barang yang sudah terjual tidak dapat diedit!');
         }
 
         // 3. Siapkan data yang akan diupdate

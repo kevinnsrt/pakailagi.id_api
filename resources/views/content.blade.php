@@ -64,12 +64,16 @@
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                 @forelse ($data as $item)
                     @php
-                        // 1. Definisikan Kondisi
-                        $isSoldOut = $item->status === 'Sold Out';
-                        $isProcessing = $item->status === 'Diproses';
-                        
-                        // 2. Variable Pengunci (Locked jika Sold Out ATAU Diproses)
-                        $isLocked = $isSoldOut || $isProcessing;
+                        // 1. Cek Status Barang (Asumsi status di Product disinkronkan dengan Cart)
+                        $status = $item->status; // Ambil status produk
+
+                        // 2. Definisikan kondisi spesifik
+                        $isSoldOut   = in_array($status, ['Sold Out', 'Selesai']);
+                        $isProcessing = $status === 'Diproses';
+                        $isShipping   = $status === 'Dalam Pengiriman';
+
+                        // 3. Logic Kunci: Terkunci jika salah satu kondisi terpenuhi
+                        $isLocked = $isSoldOut || $isProcessing || $isShipping;
                     @endphp
 
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transform transition-all duration-300 
@@ -91,9 +95,17 @@
                             @elseif($isProcessing)
                                 <div class="absolute inset-0 bg-orange-500/60 flex items-center justify-center z-20">
                                     <div class="border-2 border-white text-white px-3 py-1 sm:px-4 font-black text-sm sm:text-xl tracking-widest -rotate-12 uppercase opacity-100 shadow-2xl">
-                                        DIKIRIM
+                                        DIPROSES
                                     </div>
                                 </div>
+
+                            @elseif($isShipping)
+                                <div class="absolute inset-0 bg-blue-500/60 flex items-center justify-center z-20">
+                                    <div class="border-2 border-white text-white px-3 py-1 sm:px-4 font-black text-xs sm:text-lg tracking-widest -rotate-12 uppercase opacity-100 shadow-2xl text-center">
+                                        DALAM<br>PENGIRIMAN
+                                    </div>
+                                </div>
+
                             @else
                                 <div class="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
                                     <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold tracking-wide text-teal-700 bg-teal-50 rounded-full border border-teal-100 shadow-sm">{{ $item->kategori }}</span>
@@ -113,7 +125,6 @@
                             <div class="flex flex-wrap items-center gap-1 sm:gap-2 mb-2 sm:mb-4 text-xs sm:text-sm">
                                 <span class="flex items-center text-gray-600 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded font-medium">{{ $item->ukuran }}</span>
                                 @php
-                                    // Jika locked, warna jadi abu-abu
                                     if ($isLocked) {
                                         $condColor = 'text-gray-500 bg-gray-200 border-gray-300';
                                     } else {
@@ -136,8 +147,11 @@
                                         $btnText = 'Terjual';
                                         $btnClass = 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-200';
                                     } elseif($isProcessing) {
-                                        $btnText = 'Dalam Pengiriman';
-                                        $btnClass = 'bg-orange-200 text-orange-600 cursor-not-allowed border-orange-200'; // Warna beda untuk processing
+                                        $btnText = 'Sedang Diproses';
+                                        $btnClass = 'bg-orange-200 text-orange-600 cursor-not-allowed border-orange-200';
+                                    } elseif($isShipping) {
+                                        $btnText = 'Sedang Dikirim';
+                                        $btnClass = 'bg-blue-200 text-blue-600 cursor-not-allowed border-blue-200';
                                     } else {
                                         $btnText = 'Edit';
                                         $btnClass = 'bg-teal-600 text-white hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2';
