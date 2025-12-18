@@ -7,20 +7,39 @@
             
             <a href="{{ route('tambah-barang') }}" 
                class="group relative inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-600 text-white text-xs sm:text-sm font-bold tracking-wide rounded-xl shadow-md shadow-teal-500/30 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-teal-500/50 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 overflow-hidden">
-                
                 <div class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12 z-0"></div>
-
                 <div class="relative z-10 flex items-center gap-2">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
-
                     <span class="whitespace-nowrap">Tambah Baru</span>
                 </div>
             </a>
         </div>
     </x-slot>
 
+    {{-- TOAST ERROR (Jika ada yang mencoba bypass edit) --}}
+    @if(session('error'))
+        <div id="toast-error" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none px-4">
+            <div class="relative mt-6 flex items-center w-full max-w-lg p-5 text-red-600 bg-white rounded-xl shadow-2xl pointer-events-auto overflow-hidden border border-red-100">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-red-500 bg-red-100 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div class="ml-4 text-sm sm:text-base font-medium text-gray-800 flex-grow">{{ session('error') }}</div>
+                <button type="button" onclick="document.getElementById('toast-error').style.display='none'" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg p-2 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+        </div>
+        <script>
+            setTimeout(() => {
+                let t = document.getElementById('toast-error');
+                if(t) { t.classList.remove('-translate-y-full', 'opacity-0'); setTimeout(() => { t.classList.add('-translate-y-full', 'opacity-0'); }, 4000); }
+            }, 100);
+        </script>
+    @endif
+
+    {{-- TOAST SUCCESS --}}
     @if(session('success'))
         <div id="toast-success" class="fixed top-0 left-0 right-0 z-[100] flex justify-center transition-all duration-500 ease-in-out -translate-y-full opacity-0 pointer-events-none px-4">
             <div class="relative mt-6 flex items-center w-full max-w-lg p-5 text-gray-600 bg-white rounded-xl shadow-2xl pointer-events-auto overflow-hidden">
@@ -45,13 +64,12 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                 @forelse ($data as $item)
                     @php
-                        // Cek Status di View
                         $isSoldOut = $item->status === 'Sold Out';
                     @endphp
 
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full transform transition-all duration-300 
                         {{ $isSoldOut 
-                            ? 'grayscale opacity-70 pointer-events-none select-none bg-gray-50' 
+                            ? 'grayscale opacity-75 pointer-events-none select-none bg-gray-50 cursor-not-allowed' 
                             : 'hover:shadow-xl hover:scale-[1.02]' 
                         }}">
                         
@@ -106,10 +124,10 @@
                                         {{ $isSoldOut ? 'disabled' : '' }}
                                         class="w-full inline-flex justify-center items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-lg font-semibold text-[10px] sm:text-xs uppercase tracking-widest transition ease-in-out duration-150
                                         {{ $isSoldOut 
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-200' 
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                                             : 'bg-teal-600 text-white hover:bg-teal-700 focus:bg-teal-700 active:bg-teal-900 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2' 
                                         }}">
-                                    {{ $isSoldOut ? 'Terjual' : 'Edit' }}
+                                    {{ $isSoldOut ? 'Terkunci (Sold Out)' : 'Edit' }}
                                 </button>
                             </div>
                         </div>
