@@ -56,10 +56,10 @@
                             </a>
 
                             @if (Route::has('register'))
-                                <!-- <a href="{{ route('register') }}" 
+                                {{-- <a href="{{ route('register') }}" 
                                    class="w-full flex justify-center items-center px-4 py-3 bg-white border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-50 hover:text-teal-600 hover:border-teal-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    Register Akun Baru -->
-                                </a>
+                                    Register Akun Baru
+                                </a> --}}
                             @endif
                         </div>
                     @endauth

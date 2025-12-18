@@ -18,7 +18,8 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased overflow-x-hidden"> <div class="min-h-screen bg-gray-100">
+    <body class="font-sans antialiased overflow-x-hidden"> 
+        <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
             @isset($header)
@@ -34,7 +35,7 @@
             </main>
         </div>
 
-<div id="global-toast-container" class="fixed top-24 right-0 z-[100] flex flex-col gap-3 pointer-events-none p-4 overflow-hidden w-full sm:w-auto items-end">
+        <div id="global-toast-container" class="fixed top-24 right-0 z-[100] flex flex-col gap-3 pointer-events-none p-4 overflow-hidden w-full sm:w-auto items-end">
             </div>
 
         <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
@@ -51,33 +52,38 @@
                         .then(data => {
                             if(data.server_time) lastCheckTime = data.server_time;
 
-                            // A. Pesanan Masuk (Diproses) -> Suara Biasa
+                            // A. Pesanan Masuk (Ting)
                             if (data.new_orders && data.new_orders.length > 0) {
-                                playSound('notif'); // Mainkan suara 1
+                                playSound('notif'); 
                                 data.new_orders.forEach(order => {
                                     showGlobalToast(
                                         `📦 Pesanan Baru!`, 
-                                        `${order.user ? order.user.name : 'User'} baru saja checkout.`, 
+                                        `${order.user ? order.user.name : 'Seseorang'} baru saja checkout.`, 
                                         'bg-teal-600'
                                     );
                                 });
                             }
 
-                            // B. Pesanan Selesai (Selesai) -> Suara Spesial (BARU)
+                            // B. Pesanan Selesai (Cha-Ching + Voice)
                             if (data.completed_orders && data.completed_orders.length > 0) {
-                                playSound('success'); // Mainkan suara 2
                                 data.completed_orders.forEach(order => {
+                                    // 1. Tampilkan Toast Visual
+                                    let formattedPrice = new Intl.NumberFormat('id-ID').format(order.product.price);
+                                    
                                     showGlobalToast(
                                         `✅ Transaksi Selesai!`, 
-                                        `Pesanan atas nama ${order.user ? order.user.name : 'User'} telah selesai.`, 
-                                        'bg-green-600' // Warna Hijau Tua
+                                        `Dana Rp ${formattedPrice} diterima dari ${order.user ? order.user.name : 'User'}.`, 
+                                        'bg-green-600' 
                                     );
+
+                                    // 2. Jalankan Sequence: Suara Kasir -> Suara Robot
+                                    let textToSpeak = `${order.product.price} rupiah, telah diterima`;
+                                    playSuccessSequence(textToSpeak);
                                 });
                             }
 
-                            // C. Masuk Keranjang -> Suara Biasa
+                            // C. Masuk Keranjang
                             if (data.new_carts && data.new_carts.length > 0) {
-                                // playSound('notif'); // Opsional: aktifkan jika ingin bunyi juga
                                 data.new_carts.forEach(cart => {
                                     const productName = cart.product ? cart.product.name : 'Produk';
                                     showGlobalToast(
@@ -92,18 +98,56 @@
                 }, 5000); 
             });
 
-            // Fungsi Play Sound Dinamis
-            function playSound(type) {
-                let audio;
-                if (type === 'success') {
-                    audio = document.getElementById('success-sound');
-                } else {
-                    audio = document.getElementById('notif-sound');
-                }
+            // --- FUNGSI URUTAN SUARA (Sound effect dulu, baru ngomong) ---
+            function playSuccessSequence(text) {
+                const audio = document.getElementById('success-sound');
+                
+                if (audio) {
+                    audio.currentTime = 0;
+                    // Coba mainkan suara kasir
+                    let playPromise = audio.play();
 
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            // Jika audio berhasil diputar, tunggu sampai selesai (onended) baru ngomong
+                            audio.onended = function() {
+                                speakText(text);
+                                // Hapus listener agar tidak double trigger di masa depan
+                                audio.onended = null; 
+                            };
+                        })
+                        .catch(error => {
+                            // Jika autoplay diblokir browser, langsung ngomong aja (fallback)
+                            console.log("Autoplay blocked, skipping straight to TTS");
+                            speakText(text);
+                        });
+                    }
+                } else {
+                    // Jika elemen audio tidak ada, langsung ngomong
+                    speakText(text);
+                }
+            }
+
+            // --- FUNGSI TEXT TO SPEECH ---
+            function speakText(text) {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); 
+
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'id-ID'; 
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1;
+                    
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+
+            // Fungsi Play Sound Biasa
+            function playSound(type) {
+                let audio = document.getElementById('notif-sound');
                 if(audio) {
-                    audio.currentTime = 0; // Reset ke awal jika dimainkan beruntun
-                    audio.play().catch(e => console.log("Audio autoplay waiting interaction"));
+                    audio.currentTime = 0; 
+                    audio.play().catch(e => {});
                 }
             }
 

@@ -44,6 +44,7 @@ class CartController extends Controller
 
         $exists = Cart::where('uid',$uid)
         ->where('product_id',$request->product_id)
+        ->where('status', 'Dikeranjang')
         ->exists();
 
         if($exists){
@@ -71,11 +72,13 @@ class CartController extends Controller
 
         $data = Cart::with('product')
             ->where('uid', $uid)
-            // ->where('status','Dikeranjang')
             ->get()
             ->map(function($cart) {
                 if ($cart->product && $cart->product->image_path) {
-                    $cart->product->image_path = URL::to('/storage/' . $cart->product->image_path);
+                    // HANYA tambah prefix jika image_path BUKAN link internet (URL)
+                    if (!filter_var($cart->product->image_path, FILTER_VALIDATE_URL)) {
+                        $cart->product->image_path = asset('storage/' . $cart->product->image_path);
+                    }
                 }
                 return $cart;
             });
@@ -215,8 +218,8 @@ public function checkNewNotifications(Request $request)
             ->where('updated_at', '>', $lastCheck)
             ->get();
 
-        // 2. Cek Pesanan Selesai (BARU DITAMBAHKAN)
-        $completedOrders = Cart::with('user')
+        // 2. Cek Pesanan Selesai (Pastikan load 'product' untuk ambil harga)
+        $completedOrders = Cart::with(['user', 'product']) 
             ->where('status', 'Selesai')
             ->where('updated_at', '>', $lastCheck)
             ->get();
@@ -229,7 +232,7 @@ public function checkNewNotifications(Request $request)
 
         return response()->json([
             'new_orders' => $newOrders,
-            'completed_orders' => $completedOrders, // Kirim data selesai
+            'completed_orders' => $completedOrders,
             'new_carts'  => $newCarts,
             'server_time'=> now()->toDateTimeString()
         ]);
